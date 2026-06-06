@@ -143,7 +143,7 @@ export default function Match() {
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: flex-start;
+            justify-content: center;
             padding: 20px 12px;
             width: 100%;
             min-height: calc(100vh - 80px);
@@ -172,60 +172,26 @@ export default function Match() {
             position: relative;
           }
 
-          .header-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            background: linear-gradient(90deg, rgba(108,99,255,0.1), rgba(62,207,207,0.1));
-            border: 1px solid rgba(108,99,255,0.2);
-            padding: 6px 14px;
-            border-radius: 30px;
-            font-size: 13px;
-            font-weight: 700;
-            color: #fff;
-            margin-bottom: 12px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            backdrop-filter: blur(8px);
-          }
-          
-          .header-title {
-            font-size: 28px;
-            font-weight: 800;
-            background: linear-gradient(to right, #ffffff, #a5b4fc);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 8px;
-            letter-spacing: -0.5px;
-          }
-
-          .header-subtitle {
-            color: #94a3b8;
-            font-size: 14px;
-            max-width: 320px;
-            margin: 0 auto;
-            line-height: 1.5;
-          }
-
           .major-badge {
             display: inline-flex;
             align-items: center;
             gap: 6px;
             background: rgba(245, 158, 11, 0.1);
             border: 1px solid rgba(245, 158, 11, 0.2);
-            padding: 4px 12px;
+            padding: 6px 16px;
             border-radius: 20px;
-            font-size: 12px;
+            font-size: 13px;
             font-weight: 600;
             color: #fbbf24;
-            margin-top: 12px;
+            margin-top: 0;
             box-shadow: 0 2px 8px rgba(245, 158, 11, 0.05);
           }
 
           .card-container {
             position: relative;
             width: 100%;
-            max-width: 360px;
-            height: 500px;
+            max-width: 320px;
+            height: 420px;
             z-index: 10;
             perspective: 1000px;
           }
@@ -262,7 +228,7 @@ export default function Match() {
           .card-image-wrapper {
             position: relative;
             width: 100%;
-            height: 55%;
+            height: 50%;
             background: #1a1d29;
             display: flex;
             align-items: center;
@@ -279,8 +245,8 @@ export default function Match() {
           }
 
           .card-avatar-main {
-            width: 140px;
-            height: 140px;
+            width: 120px;
+            height: 120px;
             border-radius: 50%;
             border: 4px solid rgba(255,255,255,0.1);
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
@@ -290,13 +256,13 @@ export default function Match() {
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 48px;
+            font-size: 40px;
             font-weight: 800;
             color: #fff;
           }
 
           .card-content {
-            padding: 24px 20px;
+            padding: 20px 16px;
             flex-grow: 1;
             display: flex;
             flex-direction: column;
@@ -304,23 +270,23 @@ export default function Match() {
           }
 
           .candidate-name {
-            font-size: 24px;
+            font-size: 22px;
             font-weight: 800;
             color: #fff;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
             display: flex;
             align-items: center;
             gap: 8px;
           }
 
           .candidate-bio {
-            font-size: 14px;
+            font-size: 13px;
             color: #cbd5e1;
-            line-height: 1.5;
-            margin-bottom: 16px;
+            line-height: 1.4;
+            margin-bottom: 12px;
             font-style: italic;
             display: -webkit-box;
-            -webkit-line-clamp: 3;
+            -webkit-line-clamp: 2;
             -webkit-box-orient: vertical;
             overflow: hidden;
           }
@@ -328,7 +294,7 @@ export default function Match() {
           .tags-row {
             display: flex;
             flex-wrap: wrap;
-            gap: 8px;
+            gap: 6px;
             margin-bottom: auto;
           }
 
@@ -336,33 +302,33 @@ export default function Match() {
             background: rgba(255,255,255,0.06);
             border: 1px solid rgba(255,255,255,0.1);
             color: #e2e8f0;
-            padding: 6px 12px;
+            padding: 4px 10px;
             border-radius: 12px;
-            font-size: 12px;
+            font-size: 11px;
             font-weight: 600;
             display: inline-flex;
             align-items: center;
-            gap: 6px;
+            gap: 4px;
           }
 
           .action-buttons-container {
             display: flex;
             justify-content: center;
-            gap: 24px;
-            margin-top: 16px;
-            padding-bottom: 8px;
+            gap: 20px;
+            margin-top: 12px;
+            padding-bottom: 4px;
           }
 
           .action-btn {
-            width: 64px;
-            height: 64px;
+            width: 56px;
+            height: 56px;
             border-radius: 50%;
             border: none;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 28px;
+            font-size: 24px;
             transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
             position: relative;
             overflow: hidden;
@@ -412,7 +378,7 @@ export default function Match() {
             backdrop-filter: blur(12px);
             border: 1px dashed rgba(255, 255, 255, 0.15);
             border-radius: 24px;
-            padding: 40px 24px;
+            padding: 32px 20px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -423,8 +389,8 @@ export default function Match() {
           }
 
           .empty-icon {
-            font-size: 64px;
-            margin-bottom: 16px;
+            font-size: 56px;
+            margin-bottom: 12px;
             animation: float 3s ease-in-out infinite;
           }
 
@@ -436,26 +402,26 @@ export default function Match() {
 
           .empty-title {
             color: #fff;
-            font-size: 20px;
+            font-size: 18px;
             font-weight: 800;
-            margin-bottom: 12px;
+            margin-bottom: 10px;
           }
 
           .empty-desc {
             color: #94a3b8;
-            font-size: 14px;
-            line-height: 1.6;
-            margin-bottom: 24px;
+            font-size: 13px;
+            line-height: 1.5;
+            margin-bottom: 20px;
           }
 
           .btn-restart {
             background: linear-gradient(135deg, #6366f1, #4f46e5);
             color: white;
             border: none;
-            padding: 12px 28px;
-            border-radius: 14px;
+            padding: 10px 24px;
+            border-radius: 12px;
             font-weight: 700;
-            font-size: 15px;
+            font-size: 14px;
             cursor: pointer;
             box-shadow: 0 8px 20px rgba(99, 102, 241, 0.3);
             transition: all 0.2s;
@@ -605,13 +571,6 @@ export default function Match() {
 
         {/* Header Area */}
         <div className="header-section">
-          <div className="header-badge">
-            <span style={{fontSize: '16px'}}>🔥</span> Ghép Đôi Học Tập
-          </div>
-          <h1 className="header-title">Tìm Bạn Đồng Hành</h1>
-          <p className="header-subtitle">
-            Khám phá và kết nối với những người bạn cùng chung mục tiêu và đam mê học tập.
-          </p>
           {myMajor ? (
             <div className="major-badge">
               <span>🎯</span> Ngành: {myMajor}
