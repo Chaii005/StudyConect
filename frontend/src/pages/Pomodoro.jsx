@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../components/Toast';
 import { supabase } from '../config/supabaseClient';
@@ -18,6 +19,10 @@ export default function Pomodoro() {
   const [customHours, setCustomHours] = useState(3);
   const [customMinutes, setCustomMinutes] = useState(0);
   const [roomToDelete, setRoomToDelete] = useState(null);
+  const [showInviteModal, setShowInviteModal] = useState(false);
+
+  const location = useLocation();
+  const navigate = useNavigate();
 
   // Timer states (moved inside here for when in a room)
   const [secondsLeft, setSecondsLeft] = useState(25 * 60);
@@ -44,6 +49,22 @@ export default function Pomodoro() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeRoom]);
+
+  // Handle auto-join from URL parameter
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const joinRoomId = params.get('room');
+    if (joinRoomId && rooms.length > 0 && !activeRoom) {
+      const roomToJoin = rooms.find(r => String(r.id) === String(joinRoomId));
+      if (roomToJoin) {
+        // eslint-disable-next-line react-hooks/immutability
+        joinRoom(roomToJoin);
+        // Clear param so a page reload doesn't trigger it again
+        navigate('/pomodoro', { replace: true });
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location.search, rooms, activeRoom]);
 
   const fetchRooms = async () => {
     try {
@@ -240,32 +261,29 @@ export default function Pomodoro() {
         <div className="pomodoro-container">
           <style>{`
             .pomodoro-container { display: flex; flex-direction: column; align-items: center; padding: 20px 12px; width: 100%; min-height: calc(100vh - 80px); font-family: 'Inter', sans-serif; position: relative; }
-            .premium-card { background: linear-gradient(135deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.01) 100%); backdrop-filter: blur(24px); border: 1px solid rgba(255,255,255,0.08); border-radius: 20px; padding: 32px 24px; box-shadow: 0 20px 40px rgba(0,0,0,0.3); text-align: center; width: 100%; max-width: 380px; }
-            .timer-display-circle { width: 220px; height: 220px; border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; margin: 0 auto 30px; position: relative; background: radial-gradient(circle, rgba(255,255,255,0.02) 0%, rgba(0,0,0,0.2) 100%); box-shadow: inset 0 0 20px rgba(255,255,255,0.05), 0 0 30px rgba(239,68,68,0.1); transition: box-shadow 0.5s ease; }
+            .premium-card { background: linear-gradient(135deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.01) 100%); backdrop-filter: blur(24px); border: 1px solid rgba(255,255,255,0.08); border-radius: 24px; padding: 40px 24px; box-shadow: 0 20px 40px rgba(0,0,0,0.3); text-align: center; width: 100%; max-width: 420px; }
+            .timer-display-circle { width: 260px; height: 260px; border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; margin: 0 auto 36px; position: relative; background: radial-gradient(circle, rgba(255,255,255,0.02) 0%, rgba(0,0,0,0.2) 100%); box-shadow: inset 0 0 20px rgba(255,255,255,0.05), 0 0 30px rgba(239,68,68,0.1); transition: box-shadow 0.5s ease; }
             .timer-display-circle.running-glow { box-shadow: inset 0 0 20px rgba(255,255,255,0.05), 0 0 40px rgba(255,122,0,0.2); }
-            .btn-action { padding: 12px 28px; border-radius: 12px; font-weight: 700; font-size: 14px; cursor: pointer; border: none; transition: all 0.2s; }
+            .btn-action { padding: 14px 32px; border-radius: 14px; font-weight: 700; font-size: 15px; cursor: pointer; border: none; transition: all 0.2s; }
             .btn-primary-play { background: linear-gradient(135deg, #FF6B6B, #FF8E53); color: white; box-shadow: 0 8px 24px rgba(255,107,107,0.3); }
             .btn-primary-play:hover { transform: translateY(-2px); box-shadow: 0 12px 32px rgba(255,107,107,0.4); }
             .btn-secondary-action { background: rgba(255,255,255,0.05); color: #e2e8f0; border: 1px solid rgba(255,255,255,0.1); }
             .btn-secondary-action:hover { background: rgba(255,255,255,0.1); }
             .leave-btn { position: absolute; top: 16px; left: 16px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #cbd5e1; padding: 8px 16px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; display: flex; alignItems: center; gap: 6px; transition: all 0.2s; }
             .leave-btn:hover { background: rgba(244,63,94,0.1); color: #f43f5e; border-color: rgba(244,63,94,0.3); }
+            
+            .members-panel { margin-top: 32px; padding-top: 24px; border-top: 1px solid rgba(255,255,255,0.08); display: flex; flex-direction: column; align-items: center; }
+            .members-title { font-size: 13px; color: #94a3b8; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 16px; }
+            .members-list { display: flex; gap: -10px; justify-content: center; margin-bottom: 16px; }
+            .member-avatar { width: 40px; height: 40px; border-radius: 50%; border: 2px solid #1e293b; background: linear-gradient(135deg, #6366f1, #a855f7); display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 700; font-size: 14px; position: relative; margin-left: -10px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+            .member-avatar:first-child { margin-left: 0; }
+            .btn-invite { background: rgba(99,102,241,0.1); color: #818cf8; border: 1px dashed rgba(99,102,241,0.4); padding: 8px 20px; border-radius: 20px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 6px; }
+            .btn-invite:hover { background: rgba(99,102,241,0.2); border-color: rgba(99,102,241,0.6); transform: translateY(-1px); }
           `}</style>
           
           <button className="leave-btn" onClick={leaveRoom}>
             <span>←</span> Rời phòng
           </button>
-          
-          <div style={{ position: 'absolute', top: 16, right: 16 }}>
-            {activeRoom.creator_id === user?.id && (
-              <button 
-                onClick={() => handleDeleteRoom(activeRoom.id)}
-                style={{ background: 'rgba(239,68,68,0.1)', color: '#ef4444', border: '1px solid rgba(239,68,68,0.3)', padding: '8px 16px', borderRadius: '8px', fontSize: '13px', fontWeight: 600, cursor: 'pointer', transition: 'all 0.2s' }}
-              >
-                🗑 Xóa phòng
-              </button>
-            )}
-          </div>
 
           <div style={{ textAlign: 'center', marginBottom: '24px', marginTop: '20px' }}>
             <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', background: 'rgba(255, 107, 107, 0.1)', border: '1px solid rgba(255, 107, 107, 0.2)', padding: '6px 14px', borderRadius: '30px', fontSize: '13px', fontWeight: 700, color: '#FF6B6B', marginBottom: '12px' }}>
@@ -281,21 +299,21 @@ export default function Pomodoro() {
 
           <div className="premium-card">
             <div className={`timer-display-circle ${isRunning ? 'running-glow' : ''}`}>
-              <svg style={{ position: 'absolute', transform: 'rotate(-90deg)', width: '220px', height: '220px' }}>
-                <circle cx="110" cy="110" r="100" stroke="rgba(255,255,255,0.03)" strokeWidth="8" fill="transparent" />
+              <svg style={{ position: 'absolute', transform: 'rotate(-90deg)', width: '260px', height: '260px' }}>
+                <circle cx="130" cy="130" r="120" stroke="rgba(255,255,255,0.03)" strokeWidth="8" fill="transparent" />
                 <circle
-                  cx="110" cy="110" r="100"
+                  cx="130" cy="130" r="120"
                   stroke={isRunning ? '#FF8E53' : '#FF6B6B'}
                   strokeWidth="8" fill="transparent"
-                  strokeDasharray={2 * Math.PI * 100}
-                  strokeDashoffset={2 * Math.PI * 100 * (1 - progressPercent / 100)}
+                  strokeDasharray={2 * Math.PI * 120}
+                  strokeDashoffset={2 * Math.PI * 120 * (1 - progressPercent / 100)}
                   style={{ transition: 'stroke-dashoffset 0.3s linear, stroke 0.3s', strokeLinecap: 'round' }}
                 />
               </svg>
-              <span style={{ fontSize: '12px', fontWeight: 800, color: isRunning ? '#FF8E53' : '#FF6B6B', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '4px', zIndex: 1 }}>
+              <span style={{ fontSize: '13px', fontWeight: 800, color: isRunning ? '#FF8E53' : '#FF6B6B', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '4px', zIndex: 1 }}>
                 ⏳ {activeRoom.focus_time === 0 ? 'TÍNH GIỜ' : `${activeRoom.focus_time} Phút`}
               </span>
-              <span style={{ fontSize: '48px', fontWeight: 800, color: 'var(--text-primary)', fontFamily: 'monospace', zIndex: 1, letterSpacing: '-1px' }}>
+              <span style={{ fontSize: '56px', fontWeight: 800, color: 'var(--text-primary)', fontFamily: 'monospace', zIndex: 1, letterSpacing: '-1px' }}>
                 {fmtTime(secondsLeft)}
               </span>
             </div>
@@ -308,7 +326,60 @@ export default function Pomodoro() {
                 🔄 Đặt lại
               </button>
             </div>
+
+            <div className="members-panel">
+              <div className="members-title">Thành viên trong phòng</div>
+              <div className="members-list">
+                <div className="member-avatar" title={user?.user_metadata?.full_name || 'Bạn'}>
+                  {user?.user_metadata?.full_name ? user.user_metadata.full_name.charAt(0) : 'B'}
+                </div>
+                {/* Fake other members for demo, in real life we would fetch from pomodoro_room_members */}
+                {activeRoom.users?.full_name && activeRoom.creator_id !== user?.id && (
+                  <div className="member-avatar" style={{ background: 'linear-gradient(135deg, #10b981, #3b82f6)' }} title={activeRoom.users.full_name}>
+                    {activeRoom.users.full_name.charAt(0)}
+                  </div>
+                )}
+              </div>
+              <button className="btn-invite" onClick={() => setShowInviteModal(true)}>
+                <span>+</span> Thêm thành viên
+              </button>
+            </div>
           </div>
+          
+          {/* Invite Link Modal */}
+          {showInviteModal && (
+            <div className="modal-overlay" style={{ zIndex: 10000 }}>
+              <div className="modal-content" style={{ maxWidth: '400px', textAlign: 'center', padding: '32px 24px' }}>
+                <div style={{ fontSize: '48px', marginBottom: '16px' }}>🔗</div>
+                <h3 style={{ color: '#fff', fontSize: '20px', fontWeight: 800, margin: '0 0 12px 0' }}>Mời bạn bè cùng học</h3>
+                <p style={{ color: '#94a3b8', fontSize: '14px', lineHeight: 1.6, margin: '0 0 24px 0' }}>
+                  Sao chép liên kết dưới đây và gửi cho bạn bè để mời họ tham gia phòng học Pomodoro này.
+                </p>
+                <div style={{ display: 'flex', gap: '8px', marginBottom: '24px' }}>
+                  <input 
+                    type="text" 
+                    readOnly 
+                    value={`${window.location.origin}/pomodoro?room=${activeRoom.id}`} 
+                    className="form-input" 
+                    style={{ flex: 1, cursor: 'text', background: 'rgba(0,0,0,0.3)', color: '#cbd5e1' }} 
+                  />
+                  <button 
+                    onClick={() => {
+                      navigator.clipboard.writeText(`${window.location.origin}/pomodoro?room=${activeRoom.id}`);
+                      addToast('Đã sao chép liên kết!', 'success');
+                      setShowInviteModal(false);
+                    }}
+                    style={{ background: '#6366f1', color: '#fff', border: 'none', padding: '0 16px', borderRadius: '12px', fontWeight: 600, cursor: 'pointer', transition: 'all 0.2s' }}
+                  >
+                    Sao chép
+                  </button>
+                </div>
+                <button onClick={() => setShowInviteModal(false)} style={{ background: 'transparent', color: '#94a3b8', border: 'none', fontWeight: 600, cursor: 'pointer', fontSize: '14px' }}>
+                  Đóng
+                </button>
+              </div>
+            </div>
+          )}
           
           {/* Delete Confirmation Modal for Active Room */}
           {roomToDelete && (
