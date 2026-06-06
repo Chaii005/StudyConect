@@ -90,10 +90,28 @@ export default function GroupChatPanel({
       )
     : [];
 
+  const scrollContainerRef = useRef(null);
+  const isFirstRender = useRef(true);
+
   // Auto-scroll to bottom on new messages
   useEffect(() => {
-    chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [chatMessages]);
+    const container = scrollContainerRef.current;
+    const lastMsg = chatMessages[chatMessages.length - 1];
+    const isMyLastMsg = lastMsg && String(lastMsg.userId) === String(user?.id);
+
+    if (isFirstRender.current || isMyLastMsg) {
+      chatEndRef.current?.scrollIntoView({ behavior: isFirstRender.current ? 'auto' : 'smooth' });
+      isFirstRender.current = false;
+      return;
+    }
+
+    if (container) {
+      const isNearBottom = container.scrollHeight - container.scrollTop - container.clientHeight < 150;
+      if (isNearBottom) {
+        chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+  }, [chatMessages, user?.id]);
 
   const openContextMenu = (e, msg) => {
     e.preventDefault();
@@ -287,6 +305,7 @@ export default function GroupChatPanel({
 
       {/* Messages */}
       <div
+        ref={scrollContainerRef}
         className="chat-scroll"
         style={{
           flex: 1,
