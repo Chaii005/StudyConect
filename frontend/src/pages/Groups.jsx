@@ -1023,21 +1023,21 @@ export default function Groups() {
       </div>
       <style>{`
         .groups-page-container {
-          padding: 40px 16px;
+          padding: 24px 16px;
           max-width: 1100px;
           margin: 0 auto;
           font-family: 'Inter', sans-serif;
         }
         .page-title {
-          font-size: 32px;
+          font-size: 24px;
           font-weight: 800;
           color: #fff;
-          margin: 0 0 8px 0;
+          margin: 0 0 6px 0;
           line-height: 1.2;
         }
         .page-subtitle {
           color: #94a3b8;
-          font-size: 15px;
+          font-size: 14px;
           margin: 0;
         }
         .premium-panel {
@@ -1045,15 +1045,15 @@ export default function Groups() {
           backdrop-filter: blur(20px);
           -webkit-backdrop-filter: blur(20px);
           border: 1px solid rgba(255, 255, 255, 0.08);
-          border-radius: 24px;
-          box-shadow: 0 20px 40px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.05);
+          border-radius: 20px;
+          box-shadow: 0 10px 30px rgba(0,0,0,0.1), inset 0 1px 0 rgba(255,255,255,0.05);
         }
         .search-panel {
           display: flex;
           align-items: center;
           gap: 12px;
-          padding: 16px 24px;
-          margin-bottom: 32px;
+          padding: 12px 20px;
+          margin-bottom: 24px;
           max-width: 500px;
           transition: all 0.3s;
         }
@@ -1064,13 +1064,13 @@ export default function Groups() {
         }
         .search-input {
           background: none; border: none; outline: none; flex: 1;
-          color: #fff; font-size: 15px; font-family: inherit;
+          color: #fff; font-size: 14px; font-family: inherit;
         }
         .group-card {
           background: rgba(255,255,255,0.03);
           border: 1px solid rgba(255,255,255,0.08);
-          border-radius: 20px;
-          padding: 24px;
+          border-radius: 16px;
+          padding: 16px;
           display: flex;
           flex-direction: column;
           gap: 0;

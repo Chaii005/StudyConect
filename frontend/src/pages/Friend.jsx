@@ -57,10 +57,10 @@ function PersonCard({ person, actions, isOnline }) {
       <div style={{ position: 'relative', flexShrink: 0 }}>
         {person.friendSince ? (
           <Link to={`/friends/${person.userId}`} style={{ display: 'flex', textDecoration: 'none' }}>
-            <Avatar src={person.avatar} initial={person.initial} color={colorOf(person.fullName)} size={48} />
+            <Avatar src={person.avatar} initial={person.initial} color={colorOf(person.fullName)} size={40} />
           </Link>
         ) : (
-          <Avatar src={person.avatar} initial={person.initial} color={colorOf(person.fullName)} size={48} />
+          <Avatar src={person.avatar} initial={person.initial} color={colorOf(person.fullName)} size={40} />
         )}
         {person.friendSince && (
           <span style={{
@@ -406,8 +406,8 @@ export default function Friends() {
       <main className="friend-page-container">
           {/* Header */}
           <div className="premium-panel">
-            <h1 style={{ fontSize: '28px', fontWeight: 800, marginBottom: '8px', color: '#fff' }}>Kết bạn</h1>
-            <p style={{ fontSize: '15px', color: '#94a3b8', marginBottom: '24px' }}>
+            <h1 style={{ fontSize: '24px', fontWeight: 800, marginBottom: '6px', color: '#fff' }}>Kết bạn</h1>
+            <p style={{ fontSize: '14px', color: '#94a3b8', marginBottom: '20px' }}>
               Kết nối với sinh viên cùng trường, cùng ngành và mở rộng mạng lưới học tập.
             </p>
 
@@ -617,7 +617,7 @@ export default function Friends() {
 
       <style>{`
         .friend-page-container {
-          padding: 40px 16px;
+          padding: 24px 16px;
           max-width: 1000px;
           margin: 0 auto;
           font-family: 'Inter', sans-serif;
@@ -627,10 +627,10 @@ export default function Friends() {
           backdrop-filter: blur(20px);
           -webkit-backdrop-filter: blur(20px);
           border: 1px solid rgba(255, 255, 255, 0.08);
-          border-radius: 24px;
-          padding: 32px;
-          box-shadow: 0 20px 40px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.05);
-          margin-bottom: 24px;
+          border-radius: 20px;
+          padding: 20px 24px;
+          box-shadow: 0 10px 30px rgba(0,0,0,0.1), inset 0 1px 0 rgba(255,255,255,0.05);
+          margin-bottom: 20px;
         }
         .search-container {
           display: flex;
@@ -705,13 +705,13 @@ export default function Friends() {
         .person-card {
           background: rgba(255,255,255,0.03);
           border: 1px solid rgba(255,255,255,0.08);
-          border-radius: 16px;
-          padding: 16px 20px;
+          border-radius: 14px;
+          padding: 12px 16px;
           display: flex;
           align-items: center;
-          gap: 16px;
+          gap: 12px;
           transition: all 0.3s;
-          margin-bottom: 12px;
+          margin-bottom: 10px;
         }
         .person-card:hover {
           background: rgba(255,255,255,0.06);
