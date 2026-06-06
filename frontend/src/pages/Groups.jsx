@@ -936,7 +936,11 @@ export default function Groups() {
                 transition: 'all 0.3s ease',
                 boxShadow: 'var(--shadow)',
               }}
-              onMouseEnter={e => { e.currentTarget.style.color = 'var(--text-primary)'; e.currentTarget.style.borderColor = 'rgba(108,99,255,0.4)'; }}
+              onMouseEnter={e => { 
+                e.currentTarget.style.color = 'var(--text-primary)'; 
+                e.currentTarget.style.borderColor = 'rgba(108,99,255,0.4)'; 
+                setIsSearchExpanded(true);
+              }}
               onMouseLeave={e => { e.currentTarget.style.color = 'var(--text-muted)'; e.currentTarget.style.borderColor = 'var(--border)'; }}
             >
               🔍
