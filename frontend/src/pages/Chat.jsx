@@ -51,6 +51,33 @@ function fmtFull(iso) {
   return new Date(iso).toLocaleString('vi-VN', { hour: '2-digit', minute: '2-digit', day: '2-digit', month: '2-digit' });
 }
 
+function formatBytes(bytes, decimals = 2) {
+  if (bytes === 0) return '0 Bytes';
+  const k = 1024;
+  const dm = decimals < 0 ? 0 : decimals;
+  const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+  return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+}
+
+const downloadBaseFile = (base64Data, filename) => {
+  fetch(base64Data)
+    .then(res => res.blob())
+    .then(blob => {
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(url);
+    })
+    .catch(err => {
+      console.error('File download failed:', err);
+    });
+};
+
 // ── Emoji list ───────────────────────────────────────────────────
 const EMOJI_LIST = [
   '😀','😂','😍','🥰','😎','🤩','😢','😭','😡','🤔',
@@ -505,6 +532,7 @@ function ConversationView({ user, friend, friends, onBack, onlineUserIds, onNick
   const [bgInputVal, setBgInputVal] = useState('');
   const [bgFilePreview, setBgFilePreview] = useState('');
   const [viewingImage, setViewingImage] = useState(null);
+  const [attachedFile, setAttachedFile] = useState(null);
 
   useEffect(() => {
     const n = localStorage.getItem(`sc_nickname_${user.id}_${friend.userId}`) || '';
@@ -667,20 +695,35 @@ function ConversationView({ user, friend, friends, onBack, onlineUserIds, onNick
       await sendMessage(user.id, friend.userId, text.trim());
       setInput('');
       await load();
+      bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
     } catch { /* ignore */ }
     finally { setSending(false); }
   };
 
-  const handleSendImage = async (dataUrl, caption) => {
+  const handleSendAttachment = async (dataUrl, caption) => {
     if (!dataUrl || sending) return;
     setSending(true);
     setImgPreview(null);
     try {
-      await sendMessage(user.id, friend.userId, dataUrl, 'image');
+      const isImage = attachedFile?.type?.startsWith('image/') || dataUrl.startsWith('data:image');
+      
+      if (isImage) {
+        await sendMessage(user.id, friend.userId, dataUrl, 'image');
+      } else {
+        const fileData = {
+          fileName: attachedFile?.name || 'document.file',
+          fileType: attachedFile?.type || 'application/octet-stream',
+          fileData: dataUrl,
+          fileSize: formatBytes(attachedFile?.size || 0)
+        };
+        await sendMessage(user.id, friend.userId, '', 'text', fileData);
+      }
+      
       if (caption?.trim()) {
         await sendMessage(user.id, friend.userId, caption.trim());
-        setInput('');
       }
+      setInput('');
+      setAttachedFile(null);
       await load();
       bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
     } catch { /* ignore */ }
@@ -694,10 +737,15 @@ function ConversationView({ user, friend, friends, onBack, onlineUserIds, onNick
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (!file) return;
+    const MAX_FILE_SIZE = 20 * 1024 * 1024;
+    if (file.size > MAX_FILE_SIZE) {
+      alert('File đính kèm quá lớn! Vui lòng chọn file nhỏ hơn 20MB.');
+      return;
+    }
+    setAttachedFile(file);
     const reader = new FileReader();
     reader.onload = (ev) => {
       setImgPreview(ev.target.result);
-      // Scroll to bottom so preview bar is visible
       setTimeout(() => bottomRef.current?.scrollIntoView({ behavior: 'smooth' }), 50);
     };
     reader.readAsDataURL(file);
@@ -1179,6 +1227,18 @@ function ConversationView({ user, friend, friends, onBack, onlineUserIds, onNick
                         onClick={() => setViewingImage(m.content)}
                         style={{ maxWidth: '300px', maxHeight: '350px', borderRadius: '12px', display: 'block', objectFit: 'cover', cursor: 'zoom-in' }} 
                       />
+                    ) : m.fileAttachment ? (
+                      <div>
+                        {m.content && <div style={{ marginBottom: '8px' }}>{m.content}</div>}
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', background: isMine ? 'rgba(0,0,0,0.15)' : 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.1)', padding: '10px', borderRadius: '8px', minWidth: '200px' }}>
+                          <span style={{ fontSize: '24px' }}>📎</span>
+                          <div style={{ flex: 1, overflow: 'hidden' }}>
+                            <div style={{ fontSize: '14px', fontWeight: 600, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', color: isMine ? 'white' : 'var(--text-primary)' }}>{m.fileAttachment.fileName}</div>
+                            <div style={{ fontSize: '11px', color: isMine ? 'rgba(255,255,255,0.65)' : 'var(--text-muted)' }}>{m.fileAttachment.fileSize}</div>
+                          </div>
+                          <button onClick={() => downloadBaseFile(m.fileAttachment.fileData, m.fileAttachment.fileName)} style={{ background: isMine ? 'white' : 'var(--primary)', color: isMine ? 'var(--primary)' : 'white', padding: '6px 12px', borderRadius: '6px', border: 'none', cursor: 'pointer', fontWeight: 700, fontSize: '12px' }}>Tải về</button>
+                        </div>
+                      </div>
                     ) : m.content}
                   </div>
 
@@ -1232,13 +1292,19 @@ function ConversationView({ user, friend, friends, onBack, onlineUserIds, onNick
         </button>
       )}
 
-      {/* Image preview + caption */}
+      {/* Image/File preview + caption */}
       {imgPreview && (
         <div style={{ padding: '10px 20px 0', borderTop: '1px solid var(--border)', background: 'var(--bg-card)' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px' }}>
             <div style={{ position: 'relative', flexShrink: 0 }}>
-              <img src={imgPreview} alt="preview" style={{ height: '60px', width: '60px', borderRadius: '8px', objectFit: 'cover', display: 'block' }} />
-              <button onClick={() => setImgPreview(null)} style={{
+              {attachedFile?.type?.startsWith('image/') || imgPreview.startsWith('data:image') ? (
+                <img src={imgPreview} alt="preview" style={{ height: '60px', width: '60px', borderRadius: '8px', objectFit: 'cover', display: 'block' }} />
+              ) : (
+                <div style={{ height: '60px', width: '60px', borderRadius: '8px', background: 'var(--bg-input)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '24px' }}>
+                  📎
+                </div>
+              )}
+              <button onClick={() => { setImgPreview(null); setAttachedFile(null); }} style={{
                 position: 'absolute', top: '-6px', right: '-6px',
                 background: 'rgba(0,0,0,0.6)', border: 'none', borderRadius: '50%',
                 width: '18px', height: '18px', cursor: 'pointer', color: 'white',
@@ -1246,14 +1312,14 @@ function ConversationView({ user, friend, friends, onBack, onlineUserIds, onNick
               }}>✕</button>
             </div>
             <div style={{ flex: 1, fontSize: '12px', color: 'var(--text-muted)' }}>
-              Thêm chú thích (tuỳ chọn) hoặc gửi ảnh riêng
+              {attachedFile?.name || 'Thêm chú thích (tuỳ chọn) hoặc gửi riêng'}
             </div>
           </div>
           <div style={{ display: 'flex', gap: '8px', alignItems: 'center', paddingBottom: '10px' }}>
             <input
               value={input}
               onChange={e => setInput(e.target.value)}
-              onKeyDown={e => { if (e.key === 'Enter') handleSendImage(imgPreview, input); }}
+              onKeyDown={e => { if (e.key === 'Enter') handleSendAttachment(imgPreview, input); }}
               placeholder="Thêm chú thích..."
               style={{
                 flex: 1, background: 'var(--bg-input)', border: '1px solid var(--border)',
@@ -1265,18 +1331,18 @@ function ConversationView({ user, friend, friends, onBack, onlineUserIds, onNick
               onBlur={e => e.currentTarget.style.borderColor = 'var(--border)'}
             />
             <button
-              onClick={() => handleSendImage(imgPreview, null)}
+              onClick={() => handleSendAttachment(imgPreview, null)}
               disabled={sending}
-              title="Gửi ảnh riêng"
+              title="Gửi file riêng"
               style={{ background: 'var(--bg-input)', color: 'var(--text-secondary)', border: '1px solid var(--border)', padding: '8px 12px', borderRadius: '10px', cursor: 'pointer', fontWeight: 600, fontFamily: 'inherit', fontSize: '12px', flexShrink: 0 }}>
-              Chỉ gửi ảnh
+              Chỉ gửi file
             </button>
             <button
-              onClick={() => handleSendImage(imgPreview, input)}
+              onClick={() => handleSendAttachment(imgPreview, input)}
               disabled={sending}
-              title="Gửi ảnh + tin nhắn"
+              title="Gửi file + tin nhắn"
               style={{ background: 'linear-gradient(135deg, var(--primary), #5b53e0)', color: 'white', border: 'none', padding: '8px 14px', borderRadius: '10px', cursor: 'pointer', fontWeight: 700, fontFamily: 'inherit', fontSize: '12px', flexShrink: 0 }}>
-              Gửi {input.trim() ? '+ tin nhắn' : 'ảnh'}
+              Gửi {input.trim() ? '+ tin nhắn' : 'file'}
             </button>
           </div>
         </div>
@@ -1305,8 +1371,8 @@ function ConversationView({ user, friend, friends, onBack, onlineUserIds, onNick
             </svg>
           </button>
 
-          <input ref={fileInputRef} type="file" accept="image/*" onChange={handleFileChange} style={{ display: 'none' }} />
-          <button onClick={() => fileInputRef.current?.click()} title="Gửi ảnh" style={{
+          <input ref={fileInputRef} type="file" accept="*/*" onChange={handleFileChange} style={{ display: 'none' }} />
+          <button onClick={() => fileInputRef.current?.click()} title="Gửi file/ảnh" style={{
             background: 'var(--bg-input)', border: '1px solid var(--border)',
             borderRadius: '12px', width: '40px', height: '40px', cursor: 'pointer', fontSize: '18px',
             display: 'flex', alignItems: 'center', justifyContent: 'center',

@@ -25,6 +25,7 @@ export const refreshCache = async (userId) => {
         toUserId: String(raw.receiver_id),
         content: raw.content,
         type: raw.content?.startsWith('[chat_background]:') ? 'background' : ((raw.content?.startsWith('data:image') || (raw.content?.startsWith('http') && (raw.content?.match(/\.(jpeg|jpg|gif|png)/i) || raw.content?.includes('supabase')))) ? 'image' : 'text'),
+        fileAttachment: raw.file_attachment || null,
         createdAt: raw.created_at,
         read: raw.is_read
       }));
@@ -35,11 +36,11 @@ export const refreshCache = async (userId) => {
 };
 
 // ─── GỬI TIN NHẮN ────────────────────────────────────────
-// type: 'text' | 'image'
-export const sendMessage = async (fromUserId, toUserId, content, type = 'text') => {
-  if (type === 'text' && !content?.trim()) throw new Error('Nội dung tin nhắn không được trống.');
+// type: 'text' | 'image' | 'file'
+export const sendMessage = async (fromUserId, toUserId, content, type = 'text', fileAttachment = null) => {
+  if (type === 'text' && !content?.trim() && !fileAttachment) throw new Error('Nội dung tin nhắn không được trống.');
 
-  const cleanContent = type === 'text' ? content.trim() : content;
+  const cleanContent = type === 'text' && content ? content.trim() : (content || '');
   
   const { data, error } = await supabase
     .from('messages')
@@ -49,6 +50,7 @@ export const sendMessage = async (fromUserId, toUserId, content, type = 'text') 
         receiver_id: parseInt(toUserId, 10),
         group_id: null,
         content: cleanContent,
+        file_attachment: fileAttachment,
         is_read: false
       }
     ])
@@ -64,6 +66,7 @@ export const sendMessage = async (fromUserId, toUserId, content, type = 'text') 
     fromUserId: String(raw.sender_id),
     toUserId: String(raw.receiver_id),
     content: raw.content,
+    fileAttachment: raw.file_attachment || null,
     type: (raw.content?.startsWith('data:image') || (raw.content?.startsWith('http') && (raw.content?.match(/\.(jpeg|jpg|gif|png)/i) || raw.content?.includes('supabase')))) ? 'image' : 'text',
     createdAt: raw.created_at,
     read: raw.is_read
@@ -103,6 +106,7 @@ export const getConversation = async (userId, friendId) => {
         fromUserId: String(raw.sender_id),
         toUserId: String(raw.receiver_id),
         content: raw.content,
+        fileAttachment: raw.file_attachment || null,
         type: (raw.content?.startsWith('data:image') || (raw.content?.startsWith('http') && (raw.content?.match(/\.(jpeg|jpg|gif|png)/i) || raw.content?.includes('supabase')))) ? 'image' : 'text',
         createdAt: raw.created_at,
         read: raw.is_read
