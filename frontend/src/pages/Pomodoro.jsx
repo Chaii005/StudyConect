@@ -24,6 +24,7 @@ export default function Pomodoro() {
 
   useEffect(() => {
     if (!activeRoom) {
+      // eslint-disable-next-line react-hooks/immutability
       fetchRooms();
       // Setup realtime subscription for rooms
       const channel = supabase
@@ -169,6 +170,7 @@ export default function Pomodoro() {
 
   useEffect(() => {
     if (secondsLeft <= 0 && isRunning) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setIsRunning(false);
       playBeep('alarm');
       addToast('⏰ Đã hết thời gian! Hãy nghỉ ngơi chút nhé.', 'success');
