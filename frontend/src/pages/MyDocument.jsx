@@ -472,12 +472,12 @@ export default function MyDocuments() {
 
     {/* Delete Confirm Modal */}
     {deleteConfirm && (
-      <div style={{
+      <div onClick={() => setDeleteConfirm(null)} style={{
         position: 'fixed', inset: 0, zIndex: 5000,
         background: 'rgba(0,0,0,0.7)', display: 'flex', alignItems: 'center', justifyContent: 'center',
         padding: '24px',
       }}>
-        <div style={{
+        <div onClick={e => e.stopPropagation()} style={{
           background: 'var(--bg-card)', borderRadius: 'var(--radius)', padding: '28px 32px',
           maxWidth: '420px', width: '100%', border: '1px solid var(--border)', textAlign: 'center',
         }}>

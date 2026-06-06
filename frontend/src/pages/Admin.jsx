@@ -29,8 +29,8 @@ function MembersModal({ group, users, onClose }) {
   if (!group) return null;
   const list = users.filter((u) => (group.members || []).includes(u.id));
   return (
-    <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.65)', backdropFilter: 'blur(5px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 10000 }}>
-      <div style={{ background: 'var(--bg-card)', width: '100%', maxWidth: '640px', borderRadius: 'var(--radius-lg)', border: '1px solid var(--border)', padding: '30px', boxShadow: 'var(--shadow-glow)', maxHeight: '90vh', overflowY: 'auto', overscrollBehavior: 'contain' }}>
+    <div onClick={onClose} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.65)', backdropFilter: 'blur(5px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 10000 }}>
+      <div onClick={(e) => e.stopPropagation()} style={{ background: 'var(--bg-card)', width: '100%', maxWidth: '640px', borderRadius: 'var(--radius-lg)', border: '1px solid var(--border)', padding: '30px', boxShadow: 'var(--shadow-glow)', maxHeight: '90vh', overflowY: 'auto', overscrollBehavior: 'contain' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
           <div>
             <h3 style={{ fontSize: '20px', fontWeight: 750, color: 'var(--text-primary)', margin: 0 }}>👥 Thành viên phòng học</h3>

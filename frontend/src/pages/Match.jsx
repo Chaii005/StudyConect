@@ -658,8 +658,8 @@ export default function Match() {
 
         {/* Matched Modal */}
         {matchData && (
-          <div className="match-modal-overlay">
-            <div className="match-modal-content">
+          <div className="match-modal-overlay" onClick={() => setMatchData(null)}>
+            <div className="match-modal-content" onClick={(e) => e.stopPropagation()}>
               <div className="match-title-effect">MATCHED!</div>
               <p style={{ color: '#94a3b8', fontSize: '15px', marginBottom: '10px' }}>
                 Bạn và <strong style={{ color: '#fff' }}>{matchData.full_name}</strong> đã trở thành bạn học!
