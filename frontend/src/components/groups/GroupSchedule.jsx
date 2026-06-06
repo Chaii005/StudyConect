@@ -152,7 +152,16 @@ export default function GroupSchedule({
                 {group.meetingMode === 'offline' ? 'Địa điểm gặp mặt' : 'Link phòng học *'}
               </label>
               {group.meetingMode === 'offline' ? (
-                <div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                  {overrideLocation && group?.location && (
+                    <div style={{ padding: '8px 12px', borderRadius: '8px', background: 'rgba(255,255,255,0.04)', border: '1px solid var(--border)' }}>
+                      <span style={{ display: 'block', fontSize: 10, textTransform: 'uppercase', marginBottom: 4, color: 'var(--text-muted)', letterSpacing: '0.05em' }}>Địa điểm mặc định</span>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-primary)' }}>{getLocationStr(group.location)}</span>
+                        <button type="button" onClick={() => { setOverrideLocation(false); setNewScheduleLocation(''); setGeoPreview(null); }} style={{ background: 'none', border: 'none', color: '#10b981', fontSize: 11, fontWeight: 700, cursor: 'pointer', padding: 0 }}>Dùng lại</button>
+                      </div>
+                    </div>
+                  )}
                   <div className="form-input-wrap" style={{ position: 'relative' }}>
                     <input
                       type="text"

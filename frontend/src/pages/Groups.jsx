@@ -8,7 +8,7 @@ import { sendGroupInvite, getGroupInvitesSent } from '../services/groupInviteSer
 import AppLayout from '../layouts/AppLayout';
 import ConfirmModal from '../components/ConfirmModal';
 
-import { geocodeAddress } from '../utils/geocoding';
+import { geocodeAddress, staticMapUrl, googleMapsSearchUrl } from '../utils/geocoding';
 
 const SIDEBAR_ITEMS = [
   { label: 'Chat', to: '/chat' },
@@ -177,8 +177,28 @@ function CreateGroupModal({ formData, setFormData, meetingMode, setMeetingMode, 
                   </div>
 
                   {selectedLocation && (
-                    <div style={{ fontSize: 11, color: '#10b981', display: 'flex', alignItems: 'center', gap: 5, padding: '4px 6px', background: 'rgba(16,185,129,0.08)', borderRadius: 6, border: '1px solid rgba(16,185,129,0.2)' }}>
-                      <span>✓ Đã chọn: {selectedLocation.name}</span>
+                    <div style={{ marginTop: 10, borderRadius: 12, overflow: 'hidden', border: '1px solid rgba(16,185,129,0.3)', background: 'rgba(16,185,129,0.05)' }}>
+                      {selectedLocation.lat && selectedLocation.lng && (
+                        <img
+                          src={staticMapUrl({ lat: selectedLocation.lat, lng: selectedLocation.lng })}
+                          alt="Bản đồ địa điểm"
+                          style={{ width: '100%', height: 140, objectFit: 'cover', display: 'block' }}
+                          onError={(e) => { e.currentTarget.style.display = 'none'; }}
+                        />
+                      )}
+                      <div style={{ padding: '10px 14px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8 }}>
+                        <div style={{ fontSize: 12, fontWeight: 700, color: '#10b981' }}>
+                          ✓ Đã chọn: {selectedLocation.name}
+                        </div>
+                        <a
+                          href={googleMapsSearchUrl(selectedLocation.name)}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          style={{ flexShrink: 0, display: 'inline-flex', alignItems: 'center', gap: 5, fontSize: 11, fontWeight: 700, color: '#fff', background: 'linear-gradient(135deg,#10b981,#059669)', padding: '5px 10px', borderRadius: 6, textDecoration: 'none' }}
+                        >
+                          Mở Maps
+                        </a>
+                      </div>
                     </div>
                   )}
                 </div>
