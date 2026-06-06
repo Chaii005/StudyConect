@@ -1798,23 +1798,23 @@ function FriendList({ user, friends, onSelect, lastMessages, onlineUserIds }) {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', flex: 1, minHeight: 0 }}>
-      <div style={{ padding: '12px 16px', flexShrink: 0 }}>
+      <div style={{ padding: '12px', flexShrink: 0 }}>
         <div style={{
           display: 'flex', alignItems: 'center', gap: '8px',
-          background: 'var(--bg-input)', border: '1px solid var(--border)',
-          borderRadius: '20px', padding: '10px 16px', transition: 'border-color 0.2s',
+          background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)',
+          borderRadius: '12px', padding: '8px 12px', transition: 'border-color 0.2s',
         }}>
-          <span style={{ fontSize: '14px', color: 'var(--text-muted)' }}></span>
+          <span style={{ fontSize: '14px', color: 'var(--text-muted)' }}>🔍</span>
           <input
             placeholder="Tìm kiếm bạn bè..."
             value={search}
             onChange={e => setSearch(e.target.value)}
-            style={{ background: 'none', border: 'none', outline: 'none', flex: 1, color: 'var(--text-primary)', fontSize: '14px', fontFamily: 'inherit' }}
+            style={{ background: 'none', border: 'none', outline: 'none', flex: 1, color: '#fff', fontSize: '13px', fontFamily: 'inherit' }}
           />
         </div>
       </div>
 
-      <div style={{ flex: 1, minHeight: 0, overflowY: 'auto', overscrollBehavior: 'contain', scrollbarWidth: 'thin', scrollbarColor: 'var(--border) transparent' }}>
+      <div style={{ flex: 1, minHeight: 0, overflowY: 'auto', overscrollBehavior: 'contain', scrollbarWidth: 'thin', scrollbarColor: 'var(--border) transparent', paddingBottom: '12px' }}>
         {filtered.length === 0 ? (
           <div style={{ textAlign: 'center', padding: '40px 20px', color: 'var(--text-muted)', fontSize: '14px' }}>
             {friends.length === 0 ? (
@@ -1838,15 +1838,22 @@ function FriendList({ user, friends, onSelect, lastMessages, onlineUserIds }) {
             const nickname = localStorage.getItem(`sc_nickname_${user.id}_${f.userId}`) || f.fullName;
             return (
               <button key={f.requestId} onClick={() => onSelect(f)} style={{
-                width: '100%', background: 'none', border: 'none', cursor: 'pointer',
-                display: 'flex', alignItems: 'center', gap: '12px',
-                padding: '12px 16px', textAlign: 'left', transition: 'background 0.15s',
+                width: 'calc(100% - 16px)', margin: '0 8px 4px 8px', background: 'transparent', border: '1px solid transparent', cursor: 'pointer',
+                display: 'flex', alignItems: 'center', gap: '10px',
+                padding: '8px 10px', textAlign: 'left', transition: 'all 0.2s',
+                borderRadius: '10px'
               }}
-                onMouseEnter={e => e.currentTarget.style.background = 'var(--bg-input)'}
-                onMouseLeave={e => e.currentTarget.style.background = 'none'}
+                onMouseEnter={e => {
+                  e.currentTarget.style.background = 'rgba(255,255,255,0.04)';
+                  e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)';
+                }}
+                onMouseLeave={e => {
+                  e.currentTarget.style.background = 'transparent';
+                  e.currentTarget.style.borderColor = 'transparent';
+                }}
               >
                 <div style={{ position: 'relative', flexShrink: 0 }}>
-                  <Avatar src={f.avatar} initial={f.initial} color={colorOf(f.fullName)} size={48} />
+                  <Avatar src={f.avatar} initial={f.initial} color={colorOf(f.fullName)} size={40} />
                   <div style={{
                     position: 'absolute',
                     bottom: 1,
@@ -1860,12 +1867,12 @@ function FriendList({ user, friends, onSelect, lastMessages, onlineUserIds }) {
                   }} />
                 </div>
               <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '6px', marginBottom: '3px' }}>
-                  <span style={{ fontWeight: unread > 0 ? 700 : 600, fontSize: '14px', color: 'var(--text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{nickname}</span>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '6px', marginBottom: '2px' }}>
+                  <span style={{ fontWeight: unread > 0 ? 700 : 600, fontSize: '13px', color: '#fff', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{nickname}</span>
                   {last && <span style={{ fontSize: '11px', color: 'var(--text-muted)', flexShrink: 0 }}>{fmtTime(last.createdAt)}</span>}
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '6px' }}>
-                  <span style={{ fontSize: '13px', color: unread > 0 ? 'var(--text-secondary)' : 'var(--text-muted)', fontWeight: unread > 0 ? 600 : 400, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', flex: 1 }}>
+                  <span style={{ fontSize: '12px', color: unread > 0 ? '#cbd5e1' : '#94a3b8', fontWeight: unread > 0 ? 600 : 400, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', flex: 1 }}>
                     {last
                       ? (last.type === 'image' || last.content?.startsWith('data:image')
                         ? (String(last.fromUserId) === String(user.id) ? 'Bạn đã gửi ảnh ️' : 'Đã gửi ảnh ️')
@@ -1987,7 +1994,7 @@ export default function Chat() {
             overflow: 'hidden', display: 'flex', flexDirection: 'column', height: '100%',
           }}>
             <div style={{
-              padding: '16px 20px', borderBottom: '1px solid var(--border)',
+              padding: '12px 16px', borderBottom: '1px solid var(--border)',
               background: 'var(--bg-input)', flexShrink: 0,
               display: 'flex', alignItems: 'center', gap: '12px',
             }}>
