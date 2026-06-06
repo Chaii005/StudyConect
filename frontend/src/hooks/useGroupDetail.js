@@ -443,7 +443,8 @@ export default function useGroupDetail(groupId, user, addToast) {
   const openEditSchedule = (sched) => {
     setEditingSchedule(sched);
     setEditScheduleTopic(sched.topic);
-    setEditScheduleDateTime(sched.dateTime ? sched.dateTime.slice(0, 16) : '');
+    const dateObj = new Date(sched.dateTime);
+    setEditScheduleDateTime(sched.dateTime ? new Date(dateObj.getTime() - dateObj.getTimezoneOffset() * 60000).toISOString().slice(0, 16) : '');
     setEditScheduleLocation(sched.location || '');
     setEditScheduleDesc(sched.description || '');
   };
@@ -465,7 +466,7 @@ export default function useGroupDetail(groupId, user, addToast) {
       setIsSubmittingSchedule(true);
       await updateSchedule(editingSchedule.id, {
         topic: editScheduleTopic.trim(),
-        dateTime: editScheduleDateTime,
+        dateTime: new Date(editScheduleDateTime).toISOString(),
         location: editScheduleLocation.trim(),
         description: editScheduleDesc.trim(),
       });
@@ -482,7 +483,8 @@ export default function useGroupDetail(groupId, user, addToast) {
   const openEditDeadline = (dl) => {
     setEditingDeadline(dl);
     setEditDeadlineTitle(dl.title);
-    setEditDeadlineDueDate(dl.dueDate ? dl.dueDate.slice(0, 16) : '');
+    const dateObj = new Date(dl.dueDate);
+    setEditDeadlineDueDate(dl.dueDate ? new Date(dateObj.getTime() - dateObj.getTimezoneOffset() * 60000).toISOString().slice(0, 16) : '');
     setEditDeadlineDesc(dl.description || '');
     setEditDeadlineAssignee(dl.assigneeId || 'all');
   };
@@ -508,7 +510,7 @@ export default function useGroupDetail(groupId, user, addToast) {
       })() : null;
       await updateDeadline(editingDeadline.id, {
         title: editDeadlineTitle.trim(),
-        dueDate: editDeadlineDueDate,
+        dueDate: new Date(editDeadlineDueDate).toISOString(),
         description: editDeadlineDesc.trim(),
         assigneeId: editDeadlineAssignee !== 'all' ? editDeadlineAssignee : null,
         assigneeName: assigneeMember,
@@ -593,7 +595,7 @@ export default function useGroupDetail(groupId, user, addToast) {
       setIsSubmittingSchedule(true);
       await createSchedule(groupId, {
         topic: newScheduleTopic.trim(),
-        dateTime: newScheduleDateTime,
+        dateTime: new Date(newScheduleDateTime).toISOString(),
         location: locationValue,
         locationLat: null,
         locationLng: null,
@@ -649,7 +651,7 @@ export default function useGroupDetail(groupId, user, addToast) {
       })() : null;
       await createDeadline(groupId, {
         title: newDeadlineTitle.trim(),
-        dueDate: newDeadlineDueDate,
+        dueDate: new Date(newDeadlineDueDate).toISOString(),
         description: newDeadlineDesc.trim(),
         creatorId: user.id,
         assigneeId: newDeadlineAssignee !== 'all' ? newDeadlineAssignee : null,
