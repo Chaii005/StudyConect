@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../components/Toast';
 import { supabase } from '../config/supabaseClient';
@@ -19,9 +19,6 @@ export default function Pomodoro() {
   const [customHours, setCustomHours] = useState(3);
   const [customMinutes, setCustomMinutes] = useState(0);
   const [roomToDelete, setRoomToDelete] = useState(null);
-  const [showInviteModal, setShowInviteModal] = useState(false);
-  const [showMembers, setShowMembers] = useState(false);
-  const location = useLocation();
   const navigate = useNavigate();
 
   // Timer states (moved inside here for when in a room)
@@ -49,22 +46,6 @@ export default function Pomodoro() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeRoom]);
-
-  // Handle auto-join from URL parameter
-  useEffect(() => {
-    const params = new URLSearchParams(location.search);
-    const joinRoomId = params.get('room');
-    if (joinRoomId && rooms.length > 0 && !activeRoom) {
-      const roomToJoin = rooms.find(r => String(r.id) === String(joinRoomId));
-      if (roomToJoin) {
-        // eslint-disable-next-line react-hooks/immutability
-        joinRoom(roomToJoin);
-        // Clear param so a page reload doesn't trigger it again
-        navigate('/pomodoro', { replace: true });
-      }
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [location.search, rooms, activeRoom]);
 
   const fetchRooms = async () => {
     try {
@@ -271,20 +252,6 @@ export default function Pomodoro() {
             .btn-secondary-action:hover { background: rgba(255,255,255,0.1); }
             .leave-btn { position: absolute; top: 16px; left: 16px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #cbd5e1; padding: 8px 16px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; display: flex; alignItems: center; gap: 6px; transition: all 0.2s; }
             .leave-btn:hover { background: rgba(244,63,94,0.1); color: #f43f5e; border-color: rgba(244,63,94,0.3); }
-            
-            .members-panel { margin-top: 24px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.08); display: flex; flex-direction: column; align-items: center; }
-            .members-title { font-size: 13px; color: #94a3b8; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; display: flex; align-items: center; justify-content: center; gap: 6px; cursor: pointer; transition: color 0.2s; }
-            .members-title:hover { color: #fff; }
-            .members-list { display: flex; gap: -10px; justify-content: center; margin-bottom: 16px; }
-            .member-avatar { width: 36px; height: 36px; border-radius: 50%; border: 2px solid #1e293b; background: linear-gradient(135deg, #6366f1, #a855f7); display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 700; font-size: 13px; position: relative; margin-left: -10px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
-            .member-avatar:first-child { margin-left: 0; }
-            .btn-invite { background: rgba(99,102,241,0.1); color: #818cf8; border: 1px dashed rgba(99,102,241,0.4); padding: 8px 20px; border-radius: 20px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 6px; }
-            .btn-invite:hover { background: rgba(99,102,241,0.2); border-color: rgba(99,102,241,0.6); transform: translateY(-1px); }
-            
-            @keyframes slideDown {
-              from { opacity: 0; transform: translateY(-10px); }
-              to { opacity: 1; transform: translateY(0); }
-            }
           `}</style>
           
           <button className="leave-btn" onClick={leaveRoom}>
@@ -332,68 +299,7 @@ export default function Pomodoro() {
                 🔄 Đặt lại
               </button>
             </div>
-
-            <div className="members-panel">
-              <div className="members-title" onClick={() => setShowMembers(!showMembers)}>
-                👥 Thành viên trong phòng
-                <span style={{ transform: showMembers ? 'rotate(180deg)' : 'rotate(0)', transition: 'transform 0.2s' }}>▼</span>
-              </div>
-              
-              {showMembers && (
-                <div style={{ marginTop: '16px', display: 'flex', flexDirection: 'column', alignItems: 'center', animation: 'slideDown 0.3s cubic-bezier(0.4, 0, 0.2, 1)' }}>
-                  <div className="members-list">
-                    <div className="member-avatar" title={user?.user_metadata?.full_name || 'Bạn'}>
-                      {user?.user_metadata?.full_name ? user.user_metadata.full_name.charAt(0) : 'B'}
-                    </div>
-                    {/* Fake other members for demo, in real life we would fetch from pomodoro_room_members */}
-                    {activeRoom.users?.full_name && activeRoom.creator_id !== user?.id && (
-                      <div className="member-avatar" style={{ background: 'linear-gradient(135deg, #10b981, #3b82f6)' }} title={activeRoom.users.full_name}>
-                        {activeRoom.users.full_name.charAt(0)}
-                      </div>
-                    )}
-                  </div>
-                  <button className="btn-invite" onClick={() => setShowInviteModal(true)}>
-                    <span>+</span> Thêm thành viên
-                  </button>
-                </div>
-              )}
-            </div>
           </div>
-          
-          {/* Invite Link Modal */}
-          {showInviteModal && (
-            <div className="modal-overlay" style={{ zIndex: 10000 }}>
-              <div className="modal-content" style={{ maxWidth: '400px', textAlign: 'center', padding: '32px 24px' }}>
-                <div style={{ fontSize: '48px', marginBottom: '16px' }}>🔗</div>
-                <h3 style={{ color: '#fff', fontSize: '20px', fontWeight: 800, margin: '0 0 12px 0' }}>Mời bạn bè cùng học</h3>
-                <p style={{ color: '#94a3b8', fontSize: '14px', lineHeight: 1.6, margin: '0 0 24px 0' }}>
-                  Sao chép liên kết dưới đây và gửi cho bạn bè để mời họ tham gia phòng học Pomodoro này.
-                </p>
-                <div style={{ display: 'flex', gap: '8px', marginBottom: '24px' }}>
-                  <input 
-                    type="text" 
-                    readOnly 
-                    value={`${window.location.origin}/pomodoro?room=${activeRoom.id}`} 
-                    className="form-input" 
-                    style={{ flex: 1, cursor: 'text', background: 'rgba(0,0,0,0.3)', color: '#cbd5e1' }} 
-                  />
-                  <button 
-                    onClick={() => {
-                      navigator.clipboard.writeText(`${window.location.origin}/pomodoro?room=${activeRoom.id}`);
-                      addToast('Đã sao chép liên kết!', 'success');
-                      setShowInviteModal(false);
-                    }}
-                    style={{ background: '#6366f1', color: '#fff', border: 'none', padding: '0 16px', borderRadius: '12px', fontWeight: 600, cursor: 'pointer', transition: 'all 0.2s' }}
-                  >
-                    Sao chép
-                  </button>
-                </div>
-                <button onClick={() => setShowInviteModal(false)} style={{ background: 'transparent', color: '#94a3b8', border: 'none', fontWeight: 600, cursor: 'pointer', fontSize: '14px' }}>
-                  Đóng
-                </button>
-              </div>
-            </div>
-          )}
           
           {/* Delete Confirmation Modal for Active Room */}
           {roomToDelete && (
