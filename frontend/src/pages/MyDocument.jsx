@@ -239,72 +239,81 @@ export default function MyDocuments() {
 
       {/* Main content */}
       <main className="document-page-container">
-          {/* Header + Stats */}
-          <div className="premium-panel">
-            <h1 style={{ fontSize: '20px', fontWeight: 800, marginBottom: '4px', color: '#fff' }}>Tài liệu của tôi</h1>
-            <p style={{ fontSize: '13px', color: '#94a3b8', marginBottom: '12px' }}>
-              Tất cả tài liệu bạn đã tải lên trong các nhóm học.
-            </p>
+          {/* Header, Stats, Search, Filters - Only show if user has files */}
+          {files.length > 0 && (
+            <>
+              <div className="premium-panel">
+                <h1 style={{ fontSize: '20px', fontWeight: 800, marginBottom: '4px', color: '#fff' }}>Tài liệu của tôi</h1>
+                <p style={{ fontSize: '13px', color: '#94a3b8', marginBottom: '12px' }}>
+                  Tất cả tài liệu bạn đã tải lên trong các nhóm học.
+                </p>
 
-            {/* Stats row */}
-            <div style={{ display: 'flex', gap: '8px', marginBottom: '12px', flexWrap: 'wrap' }}>
-              {[
-                { label: 'Tổng tài liệu', value: files.length },
-                { label: 'Nhóm đã chia sẻ', value: new Set(files.map(f => f.groupId)).size },
-              ].map(s => (
-                <div key={s.label} className="stat-box">
-                  <div style={{ fontSize: '18px', fontWeight: 800, color: '#818cf8' }}>{s.value}</div>
-                  <div style={{ fontSize: '11px', color: '#94a3b8', marginTop: '2px' }}>{s.label}</div>
+                {/* Stats row */}
+                <div style={{ display: 'flex', gap: '8px', marginBottom: '12px', flexWrap: 'wrap' }}>
+                  {[
+                    { label: 'Tổng tài liệu', value: files.length },
+                    { label: 'Nhóm đã chia sẻ', value: new Set(files.map(f => f.groupId)).size },
+                  ].map(s => (
+                    <div key={s.label} className="stat-box">
+                      <div style={{ fontSize: '18px', fontWeight: 800, color: '#818cf8' }}>{s.value}</div>
+                      <div style={{ fontSize: '11px', color: '#94a3b8', marginTop: '2px' }}>{s.label}</div>
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
 
-            {/* Search */}
-            <div className="search-container">
-              <span style={{ fontSize: '14px' }}>🔍</span>
-              <input
-                className="search-input"
-                placeholder="Tìm tên tài liệu hoặc tên nhóm..."
-                value={search}
-                onChange={e => setSearch(e.target.value)}
-              />
-            </div>
-          </div>
+                {/* Search */}
+                <div className="search-container">
+                  <span style={{ fontSize: '14px' }}>🔍</span>
+                  <input
+                    className="search-input"
+                    placeholder="Tìm tên tài liệu hoặc tên nhóm..."
+                    value={search}
+                    onChange={e => setSearch(e.target.value)}
+                  />
+                </div>
+              </div>
 
-          {/* Type filter */}
-          <div style={{ display: 'flex', gap: '8px', marginBottom: '16px', overflowX: 'auto', paddingBottom: '4px', width: '100%' }}>
-            {typeOptions.map(opt => (
-              <button key={opt.value} onClick={() => setFilterType(opt.value)} className={`filter-btn ${filterType === opt.value ? 'active' : ''}`}>
-                {opt.label}
-              </button>
-            ))}
-          </div>
+              {/* Type filter */}
+              <div style={{ display: 'flex', gap: '8px', marginBottom: '16px', overflowX: 'auto', paddingBottom: '4px', width: '100%' }}>
+                {typeOptions.map(opt => (
+                  <button key={opt.value} onClick={() => setFilterType(opt.value)} className={`filter-btn ${filterType === opt.value ? 'active' : ''}`}>
+                    {opt.label}
+                  </button>
+                ))}
+              </div>
+            </>
+          )}
 
           {/* File list */}
           {loading ? (
             <div style={{ textAlign: 'center', padding: '60px', color: '#94a3b8', width: '100%' }}>
               Đang tải tài liệu...
             </div>
+          ) : files.length === 0 ? (
+            <div style={{ textAlign: 'center', padding: '60px 16px', marginTop: '20px' }}>
+              <div style={{ fontSize: '18px', fontWeight: 700, color: '#fff', marginBottom: '8px' }}>
+                Chưa có tài liệu nào
+              </div>
+              <div style={{ fontSize: '14px', color: '#94a3b8', marginBottom: '24px' }}>
+                Vào các nhóm học để tải lên tài liệu đầu tiên của bạn.
+              </div>
+              <Link to="/groups" style={{
+                display: 'inline-block',
+                padding: '10px 24px', borderRadius: '12px',
+                background: 'linear-gradient(135deg, #6366f1, #8b5cf6)', color: 'white',
+                textDecoration: 'none', fontSize: '14px', fontWeight: 700,
+                boxShadow: '0 4px 15px rgba(99,102,241,0.3)', transition: 'all 0.2s'
+              }}>Đến nhóm học</Link>
+            </div>
           ) : filtered.length === 0 ? (
             <div className="premium-panel" style={{ textAlign: 'center', padding: '32px 16px' }}>
               <div style={{ fontSize: '32px', marginBottom: '12px' }}>📫</div>
               <div style={{ fontSize: '15px', fontWeight: 700, color: '#fff', marginBottom: '6px' }}>
-                {files.length === 0 ? 'Chưa có tài liệu nào' : 'Không tìm thấy tài liệu'}
+                Không tìm thấy tài liệu
               </div>
               <div style={{ fontSize: '12px', color: '#94a3b8' }}>
-                {files.length === 0
-                  ? 'Vào các nhóm học để tải lên tài liệu đầu tiên của bạn.'
-                  : 'Thử thay đổi từ khóa hoặc bộ lọc khác.'}
+                Thử thay đổi từ khóa hoặc bộ lọc khác.
               </div>
-              {files.length === 0 && (
-                <Link to="/groups" style={{
-                  display: 'inline-block', marginTop: '16px',
-                  padding: '8px 20px', borderRadius: '12px',
-                  background: 'linear-gradient(135deg, #6366f1, #8b5cf6)', color: 'white',
-                  textDecoration: 'none', fontSize: '13px', fontWeight: 700,
-                  boxShadow: '0 4px 15px rgba(99,102,241,0.3)', transition: 'all 0.2s'
-                }}>Đến nhóm học</Link>
-              )}
             </div>
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0', width: '100%' }}>
