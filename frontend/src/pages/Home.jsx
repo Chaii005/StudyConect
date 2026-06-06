@@ -74,7 +74,6 @@ const NAV_ICONS = {
 const NAV_ITEMS = [
   { icon: 'home', label: 'Trang chủ', to: '/', key: 'home' },
   { icon: 'match', label: 'Ghép học tập', to: '/match', key: 'match' },
-  { icon: 'pomodoro', label: 'Tự học Pomodoro', to: '/pomodoro', key: 'pomodoro' },
   { icon: 'groups', label: 'Nhóm học', to: '/groups', key: 'groups' },
   { icon: 'schedule', label: 'Lịch & Deadline', to: '/schedule', key: 'schedule' },
   { icon: 'friends', label: 'Kết bạn', to: '/friends', key: 'friends' },

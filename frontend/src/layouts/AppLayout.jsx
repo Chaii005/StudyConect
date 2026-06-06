@@ -68,7 +68,6 @@ const NAV_ICONS = {
 const NAV_ITEMS = [
   { icon: 'home', label: 'Trang chủ', to: '/', key: 'home' },
   { icon: 'match', label: 'Ghép học tập', to: '/match', key: 'match' },
-  { icon: 'pomodoro', label: 'Tự học Pomodoro', to: '/pomodoro', key: 'pomodoro' },
   { icon: 'groups', label: 'Nhóm học', to: '/groups', key: 'groups' },
   { icon: 'schedule', label: 'Lịch & Deadline', to: '/schedule', key: 'schedule' },
   { icon: 'friends', label: 'Kết bạn', to: '/friends', key: 'friends' },
@@ -385,9 +384,6 @@ export default function AppLayout({ children, hideNavbar = false, hideSidebar = 
             </Link>
             <Link to="/match" style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '12px', borderRadius: '8px', textDecoration: 'none', color: location.pathname === '/match' ? 'var(--primary-light)' : 'var(--text-primary)', background: location.pathname === '/match' ? 'rgba(108,99,255,0.1)' : 'none', fontWeight: 600, fontSize: '14px' }}>
               <span>🤝</span> Ghép học tập
-            </Link>
-            <Link to="/pomodoro" style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '12px', borderRadius: '8px', textDecoration: 'none', color: location.pathname === '/pomodoro' ? 'var(--primary-light)' : 'var(--text-primary)', background: location.pathname === '/pomodoro' ? 'rgba(108,99,255,0.1)' : 'none', fontWeight: 600, fontSize: '14px' }}>
-              <span>🍅</span> Tự học Pomodoro
             </Link>
             <Link to="/flashcards" style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '12px', borderRadius: '8px', textDecoration: 'none', color: location.pathname === '/flashcards' ? 'var(--primary-light)' : 'var(--text-primary)', background: location.pathname === '/flashcards' ? 'rgba(108,99,255,0.1)' : 'none', fontWeight: 600, fontSize: '14px' }}>
               <span>🗂️</span> Thẻ học &amp; Trắc nghiệm
