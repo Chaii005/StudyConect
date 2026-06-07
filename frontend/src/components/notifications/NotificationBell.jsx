@@ -25,19 +25,19 @@ export default function NotificationBell({ style }) {
   const [pos, setPos] = useState({ top: 0, left: 0 });
   const btnRef = useRef(null);
 
-  // Tính vị trí dropdown ngay dưới nút chuông
+  // Tính vị trí dropdown ngay dưới nút chuông, không đè lên sidebar
   const calcPos = () => {
     if (!btnRef.current) return;
     const rect = btnRef.current.getBoundingClientRect();
-    const dropW = 300;
+    const dropW = 280;
     const gap = 8;
-    let left = rect.left;
-    // Không cho tràn ra phải màn hình
+    // Đặt sang phải của nút chuông (không đè lên sidebar)
+    let left = rect.right + gap;
+    // Nếu tràn phải màn hình thì đẩy vào
     if (left + dropW > window.innerWidth - gap) {
       left = window.innerWidth - dropW - gap;
     }
-    if (left < gap) left = gap;
-    setPos({ top: rect.bottom + gap, left });
+    setPos({ top: rect.top, left });
   };
 
   const handleOpen = () => {
@@ -138,7 +138,7 @@ export default function NotificationBell({ style }) {
             position: 'fixed',
             top: pos.top,
             left: pos.left,
-            width: 300,
+            width: 280,
             background: 'var(--bg-card)',
             border: '1px solid var(--border)',
             borderRadius: '14px',
@@ -191,7 +191,7 @@ export default function NotificationBell({ style }) {
             {/* Danh sách — scroll trong khung cố định */}
             <div style={{
               overflowY: 'auto',
-              maxHeight: '380px',
+              maxHeight: '160px',
               overscrollBehavior: 'contain',
             }}>
               {notifs.length === 0 ? (
