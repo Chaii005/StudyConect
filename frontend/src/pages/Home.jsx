@@ -312,17 +312,19 @@ export default function Home() {
 
           {/* MIDDLE COLUMN: Feed - only this scrolls */}
           <main style={{ minWidth: 0, height: '100%', overflowY: 'auto', paddingRight: '4px' }} className="no-scrollbar">
-            {/* Create Question Box */}
-            <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '18px', padding: '16px 18px', marginBottom: '14px', display: 'flex', gap: '12px', alignItems: 'center' }}>
-              <Avatar src={user?.avatar} initial={user?.fullName || 'U'} size={42} />
-              <button
-                onClick={() => setShowCreateModal(true)}
-                style={{ flex: 1, background: 'var(--bg-input)', border: '1px solid var(--border)', borderRadius: '24px', padding: '12px 18px', color: 'var(--text-muted)', fontSize: '14px', textAlign: 'left', cursor: 'pointer', fontFamily: 'inherit', transition: 'all 0.2s ease' }}
-                onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'rgba(99, 102, 241, 0.4)'; e.currentTarget.style.background = 'rgba(99, 102, 241, 0.05)'; }}
-                onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'var(--border)'; e.currentTarget.style.background = 'var(--bg-input)'; }}
-              >
-                Bạn có câu hỏi học tập nào không? Đăng ngay...
-              </button>
+            {/* Create Question Box - Sticky Top */}
+            <div style={{ position: 'sticky', top: 0, zIndex: 20, background: 'var(--bg)', paddingBottom: '14px' }}>
+              <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '18px', padding: '16px 18px', display: 'flex', gap: '12px', alignItems: 'center' }}>
+                <Avatar src={user?.avatar} initial={user?.fullName || 'U'} size={42} />
+                <button
+                  onClick={() => setShowCreateModal(true)}
+                  style={{ flex: 1, background: 'var(--bg-input)', border: '1px solid var(--border)', borderRadius: '24px', padding: '12px 18px', color: 'var(--text-muted)', fontSize: '14px', textAlign: 'left', cursor: 'pointer', fontFamily: 'inherit', transition: 'all 0.2s ease' }}
+                  onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'rgba(99, 102, 241, 0.4)'; e.currentTarget.style.background = 'rgba(99, 102, 241, 0.05)'; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'var(--border)'; e.currentTarget.style.background = 'var(--bg-input)'; }}
+                >
+                  Bạn có câu hỏi học tập nào không? Đăng ngay...
+                </button>
+              </div>
             </div>
 
 
@@ -337,7 +339,7 @@ export default function Home() {
           </main>
  
           {/* RIGHT COLUMN: fixed, does not scroll with posts */}
-          <aside className="no-scrollbar" style={{ position: 'sticky', top: 0, alignSelf: 'start', display: 'flex', flexDirection: 'column', gap: '14px', maxHeight: '100vh', overflowY: 'auto' }}>
+          <aside className="no-scrollbar" style={{ position: 'sticky', top: 0, alignSelf: 'start', display: 'flex', flexDirection: 'column', gap: '14px', maxHeight: '100%', overflowY: 'auto' }}>
             <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '18px', overflow: 'hidden', boxShadow: 'var(--shadow)', display: 'flex', flexDirection: 'column', maxHeight: '420px' }}>
 
               {/* ─ Header chung ─ */}
