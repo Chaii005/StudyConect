@@ -118,7 +118,19 @@ export const getConversation = async (userId, friendId) => {
 
   data.forEach(raw => {
     if (raw.content?.startsWith('[chat_background]:')) {
+      // Cập nhật background mới nhất
       background = raw.content.replace('[chat_background]:', '');
+      // Vẫn đưa vào danh sách messages để hiển thị thông báo hệ thống
+      messages.push({
+        id: String(raw.id),
+        fromUserId: String(raw.sender_id),
+        toUserId: String(raw.receiver_id),
+        content: raw.content,
+        fileAttachment: null,
+        type: 'background',
+        createdAt: raw.created_at,
+        read: raw.is_read
+      });
     } else {
       messages.push({
         id: String(raw.id),
