@@ -22,13 +22,37 @@ export default function NotificationBell({ style }) {
   } = useNotificationContext();
 
   const [open, setOpen] = useState(false);
-  const containerRef = useRef(null);
+  const [pos, setPos] = useState({ top: 0, left: 0 });
+  const btnRef = useRef(null);
+
+  // Tính vị trí dropdown ngay dưới nút chuông
+  const calcPos = () => {
+    if (!btnRef.current) return;
+    const rect = btnRef.current.getBoundingClientRect();
+    const dropW = 300;
+    const gap = 8;
+    let left = rect.left;
+    // Không cho tràn ra phải màn hình
+    if (left + dropW > window.innerWidth - gap) {
+      left = window.innerWidth - dropW - gap;
+    }
+    if (left < gap) left = gap;
+    setPos({ top: rect.bottom + gap, left });
+  };
+
+  const handleOpen = () => {
+    if (!open) calcPos();
+    setOpen((o) => {
+      if (o) markAllRead();
+      return !o;
+    });
+  };
 
   // Đóng khi click ra ngoài
   useEffect(() => {
     if (!open) return;
     const handler = (e) => {
-      if (containerRef.current && !containerRef.current.contains(e.target)) {
+      if (btnRef.current && !btnRef.current.closest('[data-notif-root]')?.contains(e.target)) {
         markAllRead();
         setOpen(false);
       }
@@ -37,35 +61,17 @@ export default function NotificationBell({ style }) {
     return () => document.removeEventListener('mousedown', handler);
   }, [open, markAllRead]);
 
-  const handleOpen = () => {
-    setOpen((o) => {
-      if (o) markAllRead();
-      return !o;
-    });
-  };
-
   const handleActionClick = (n) => {
     markAllRead();
     setOpen(false);
-    if (n.type === 'groupmsg') {
-      navigate(`/groups/${n.groupId}?tab=chat`);
-    } else if (n.type === 'groupcall') {
-      navigate(`/groups/${n.groupId}?tab=chat`);
-    } else if (n.type === 'fileupload') {
-      navigate(`/groups/${n.groupId}?tab=documents`);
-    } else if (n.type === 'groupjoin' || n.type === 'groupdeputy' || n.type === 'othergroupjoin') {
-      navigate(`/groups/${n.groupId}`);
-    } else if (n.type === 'schedule') {
-      navigate(`/groups/${n.groupId}?tab=schedule`);
-    } else if (n.type === 'deadline' || n.type === 'deadline-urgent') {
-      navigate(`/groups/${n.groupId}?tab=deadlines`);
-    } else if (n.type === 'comment' || n.type === 'like') {
-      navigate('/');
-    } else if (n.type === 'friendaccept') {
-      navigate('/friends');
-    } else if (n.type === 'joinrequest') {
-      navigate(`/groups/${n.groupId}`);
-    }
+    if (n.type === 'groupmsg' || n.type === 'groupcall') navigate(`/groups/${n.groupId}?tab=chat`);
+    else if (n.type === 'fileupload') navigate(`/groups/${n.groupId}?tab=documents`);
+    else if (['groupjoin','groupdeputy','othergroupjoin'].includes(n.type)) navigate(`/groups/${n.groupId}`);
+    else if (n.type === 'schedule') navigate(`/groups/${n.groupId}?tab=schedule`);
+    else if (n.type === 'deadline' || n.type === 'deadline-urgent') navigate(`/groups/${n.groupId}?tab=deadlines`);
+    else if (n.type === 'comment' || n.type === 'like') navigate('/');
+    else if (n.type === 'friendaccept') navigate('/friends');
+    else if (n.type === 'joinrequest') navigate(`/groups/${n.groupId}`);
   };
 
   const onAcceptInvite = (n) => { acceptInvite(n.inviteId); };
@@ -74,9 +80,10 @@ export default function NotificationBell({ style }) {
   const onDeclineFriend = (n) => { declineFriendRequest(n.requestId); };
 
   return (
-    <div ref={containerRef} style={{ position: 'relative' }}>
+    <div data-notif-root style={{ position: 'relative', display: 'inline-flex' }}>
       {/* Nút chuông */}
       <button
+        ref={btnRef}
         onClick={handleOpen}
         title="Thông báo"
         style={{
@@ -92,32 +99,26 @@ export default function NotificationBell({ style }) {
           position: 'relative',
           transition: 'background 0.2s',
           padding: 0,
+          flexShrink: 0,
           ...style,
         }}
         onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(108,99,255,0.1)'; }}
         onMouseLeave={(e) => { e.currentTarget.style.background = open ? 'rgba(108,99,255,0.15)' : 'transparent'; }}
       >
-        <span style={{ fontSize: 18, lineHeight: 1, flexShrink: 0 }}>🔔</span>
+        <span style={{ fontSize: 18, lineHeight: 1 }}>🔔</span>
         {unreadCount > 0 && (
           <span style={{
             position: 'absolute',
-            top: '-3px',
-            right: '-3px',
+            top: '-3px', right: '-3px',
             background: '#ef4444',
             color: '#fff',
             borderRadius: '50%',
-            minWidth: '16px',
-            height: '16px',
-            fontSize: '9px',
-            fontWeight: 800,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            padding: '0 4px',
-            lineHeight: 1,
-            whiteSpace: 'nowrap',
+            minWidth: '16px', height: '16px',
+            fontSize: '9px', fontWeight: 800,
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            padding: '0 4px', lineHeight: 1, whiteSpace: 'nowrap',
             boxSizing: 'border-box',
-            boxShadow: '0 0 6px rgba(239, 68, 68, 0.6)',
+            boxShadow: '0 0 6px rgba(239,68,68,0.6)',
             zIndex: 2,
           }}>
             {unreadCount > 99 ? '99+' : unreadCount}
@@ -125,104 +126,103 @@ export default function NotificationBell({ style }) {
         )}
       </button>
 
-      {/* Dropdown thông báo — đặt ngay dưới chuông, căn phải */}
+      {/* Dropdown — dùng fixed để không bị clip bởi overflow của sidebar */}
       {open && (
-        <div style={{
-          position: 'absolute',
-          top: 'calc(100% + 8px)',
-          right: 0,
-          width: 320,
-          background: 'var(--bg-card)',
-          border: '1px solid var(--border)',
-          borderRadius: '14px',
-          boxShadow: '0 8px 32px rgba(0,0,0,0.45)',
-          zIndex: 9000,
-          display: 'flex',
-          flexDirection: 'column',
-          overflow: 'hidden',
-        }}>
-          {/* Header */}
+        <>
+          {/* Backdrop */}
+          <div
+            onClick={() => { markAllRead(); setOpen(false); }}
+            style={{ position: 'fixed', inset: 0, zIndex: 8998 }}
+          />
           <div style={{
-            padding: '14px 16px',
-            borderBottom: '1px solid var(--border)',
+            position: 'fixed',
+            top: pos.top,
+            left: pos.left,
+            width: 300,
+            background: 'var(--bg-card)',
+            border: '1px solid var(--border)',
+            borderRadius: '14px',
+            boxShadow: '0 8px 32px rgba(0,0,0,0.45)',
+            zIndex: 8999,
             display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            flexShrink: 0,
+            flexDirection: 'column',
+            overflow: 'hidden',
           }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <span style={{ fontWeight: 700, fontSize: 15 }}>🔔 Thông báo</span>
-              <button
-                onClick={toggleToast}
-                title={toastEnabled ? 'Tắt thông báo nổi (Popup)' : 'Bật thông báo nổi (Popup)'}
-                style={{
-                  background: 'none',
-                  border: 'none',
-                  cursor: 'pointer',
-                  fontSize: 16,
-                  padding: '2px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  opacity: toastEnabled ? 1 : 0.5,
-                  filter: toastEnabled ? 'none' : 'grayscale(100%)',
-                  transition: 'all 0.2s',
-                }}
-              >
-                {toastEnabled ? '🔊' : '🔇'}
-              </button>
-            </div>
-            {notifs.length > 0 && (
-              <button
-                onClick={markAllRead}
-                style={{
-                  background: 'none',
-                  border: 'none',
-                  color: 'var(--primary)',
-                  fontSize: 12,
-                  cursor: 'pointer',
-                  fontWeight: 600,
-                }}
-              >
-                Đánh dấu đã đọc
-              </button>
-            )}
-          </div>
-
-          {/* Danh sách thông báo — có scroll, chiều cao cố định */}
-          <div style={{
-            overflowY: 'auto',
-            maxHeight: '360px',
-            overscrollBehavior: 'contain',
-          }}>
-            {notifs.length === 0 ? (
-              <div style={{ padding: '32px 16px', textAlign: 'center', color: 'var(--text-muted)', fontSize: 14 }}>
-                Không có thông báo nào
+            {/* Header */}
+            <div style={{
+              padding: '12px 14px',
+              borderBottom: '1px solid var(--border)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              flexShrink: 0,
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <span style={{ fontWeight: 700, fontSize: 14 }}>🔔 Thông báo</span>
+                <button
+                  onClick={toggleToast}
+                  title={toastEnabled ? 'Tắt popup' : 'Bật popup'}
+                  style={{
+                    background: 'none', border: 'none', cursor: 'pointer',
+                    fontSize: 15, padding: '2px',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    opacity: toastEnabled ? 1 : 0.5,
+                    filter: toastEnabled ? 'none' : 'grayscale(100%)',
+                    transition: 'all 0.2s',
+                  }}
+                >
+                  {toastEnabled ? '🔊' : '🔇'}
+                </button>
               </div>
-            ) : (
-              notifs.map((n) => {
-                const isUnread = !seen.has(n.key);
-                const procKey = n.inviteId || n.requestId;
-                const proc = processing[procKey];
-                return (
-                  <NotificationItem
-                    key={n.key}
-                    notification={n}
-                    isUnread={isUnread}
-                    isProcessing={proc}
-                    onAccept={onAcceptInvite}
-                    onDecline={onDeclineInvite}
-                    onAcceptFriend={onAcceptFriend}
-                    onDeclineFriend={onDeclineFriend}
-                    onAcceptJoinRequest={(notif) => acceptJoinReq(notif.requestId, notif.groupId, notif.fromUserId)}
-                    onDeclineJoinRequest={(notif) => declineJoinReq(notif.requestId)}
-                    onActionClick={handleActionClick}
-                  />
-                );
-              })
-            )}
+              {notifs.length > 0 && (
+                <button
+                  onClick={markAllRead}
+                  style={{
+                    background: 'none', border: 'none',
+                    color: 'var(--primary)', fontSize: 11,
+                    cursor: 'pointer', fontWeight: 600,
+                  }}
+                >
+                  Đánh dấu đã đọc
+                </button>
+              )}
+            </div>
+
+            {/* Danh sách — scroll trong khung cố định */}
+            <div style={{
+              overflowY: 'auto',
+              maxHeight: '380px',
+              overscrollBehavior: 'contain',
+            }}>
+              {notifs.length === 0 ? (
+                <div style={{ padding: '32px 16px', textAlign: 'center', color: 'var(--text-muted)', fontSize: 13 }}>
+                  Không có thông báo nào
+                </div>
+              ) : (
+                notifs.map((n) => {
+                  const isUnread = !seen.has(n.key);
+                  const procKey = n.inviteId || n.requestId;
+                  const proc = processing[procKey];
+                  return (
+                    <NotificationItem
+                      key={n.key}
+                      notification={n}
+                      isUnread={isUnread}
+                      isProcessing={proc}
+                      onAccept={onAcceptInvite}
+                      onDecline={onDeclineInvite}
+                      onAcceptFriend={onAcceptFriend}
+                      onDeclineFriend={onDeclineFriend}
+                      onAcceptJoinRequest={(notif) => acceptJoinReq(notif.requestId, notif.groupId, notif.fromUserId)}
+                      onDeclineJoinRequest={(notif) => declineJoinReq(notif.requestId)}
+                      onActionClick={handleActionClick}
+                    />
+                  );
+                })
+              )}
+            </div>
           </div>
-        </div>
+        </>
       )}
     </div>
   );
