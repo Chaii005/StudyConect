@@ -397,7 +397,6 @@ export default function PrivateCall() {
   const [camOn, setCamOn] = useState(true);
   const [localMirrored, setLocalMirrored] = useState(true);
   const [showControls, setShowControls] = useState(true);
-  const [layoutMode, setLayoutMode] = useState('pip'); // 'pip' hoặc 'grid'
   const [pipSwapped, setPipSwapped] = useState(false);
   const hideTimer = useRef(null);
 
@@ -538,107 +537,68 @@ export default function PrivateCall() {
           </div>
         </div>
 
-        {/* ── Video Area ── */}
         <div style={{
           flex: 1, position: 'relative', overflow: 'hidden',
-          display: 'flex', padding: layoutMode === 'grid' ? (isFullscreen ? '24px' : '40px') : 0,
+          display: 'flex', padding: 0,
         }}>
-          {layoutMode === 'grid' ? (
-            <div style={{
-              display: 'flex', flex: 1, gap: '20px',
-              flexDirection: typeof window !== 'undefined' && window.innerWidth < 768 ? 'column' : 'row',
-              justifyContent: 'center',
-              alignItems: 'center',
-            }}>
-              <div style={{ flex: 1, width: '100%', height: '100%', borderRadius: '24px', overflow: 'hidden', border: '1px solid rgba(255,255,255,0.1)' }}>
-                <VideoTile
-                  stream={remoteStream}
-                  name={friendName}
-                  avatar={friendAvatar}
-                  muted={false}
-                  camOff={!remoteStream}
-                  mirrored={false}
-                  style={{ width: '100%', height: '100%', borderRadius: 0 }}
-                />
-              </div>
-              <div
-                style={{ flex: 1, width: '100%', height: '100%', borderRadius: '24px', overflow: 'hidden', border: '1px solid rgba(255,255,255,0.1)', cursor: 'pointer' }}
-                onClick={() => setLocalMirrored(m => !m)}
-                title="Nhấn để lật camera"
-              >
-                <VideoTile
-                  stream={localStream}
-                  name={user?.fullName || 'Bạn'}
-                  avatar={user?.avatar}
-                  muted={true}
-                  camOff={!camOn}
-                  mirrored={localMirrored}
-                  style={{ width: '100%', height: '100%', borderRadius: 0 }}
-                />
-              </div>
-            </div>
-          ) : (
-            <>
-              {/* Video chính — chiếm toàn màn hình */}
-              <VideoTile
-                stream={pipSwapped ? localStream : remoteStream}
-                name={pipSwapped ? (user?.fullName || 'Bạn') : friendName}
-                avatar={pipSwapped ? user?.avatar : friendAvatar}
-                muted={pipSwapped ? true : false}
-                camOff={pipSwapped ? !camOn : !remoteStream}
-                mirrored={pipSwapped ? localMirrored : false}
-                style={{ position: 'absolute', inset: 0, borderRadius: 0 }}
-              />
+          {/* Video chính — chiếm toàn màn hình */}
+          <VideoTile
+            stream={pipSwapped ? localStream : remoteStream}
+            name={pipSwapped ? (user?.fullName || 'Bạn') : friendName}
+            avatar={pipSwapped ? user?.avatar : friendAvatar}
+            muted={pipSwapped ? true : false}
+            camOff={pipSwapped ? !camOn : !remoteStream}
+            mirrored={pipSwapped ? localMirrored : false}
+            style={{ position: 'absolute', inset: 0, borderRadius: 0 }}
+          />
 
-              {/* Video phụ — Picture in Picture (góc dưới phải) */}
-              <div
-                style={{
-                  position: 'absolute',
-                  bottom: showControls ? '120px' : '30px',
-                  right: '30px',
-                  width: '180px', height: '260px',
-                  borderRadius: '16px',
-                  overflow: 'hidden',
-                  border: '2px solid rgba(255,255,255,0.2)',
-                  boxShadow: '0 8px 30px rgba(0,0,0,0.5)',
-                  transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                  zIndex: 40, cursor: 'pointer',
-                  animation: 'pc-fade-in 0.4s ease forwards',
-                }}
-                onClick={() => setPipSwapped(s => !s)}
-                title="Nhấn để đổi màn hình chính"
-              >
-                <VideoTile
-                  stream={pipSwapped ? remoteStream : localStream}
-                  name={pipSwapped ? friendName : (user?.fullName || 'Bạn')}
-                  avatar={pipSwapped ? friendAvatar : user?.avatar}
-                  muted={pipSwapped ? false : true}
-                  camOff={pipSwapped ? !remoteStream : !camOn}
-                  mirrored={pipSwapped ? false : localMirrored}
-                  style={{ borderRadius: 0, width: '100%', height: '100%' }}
-                />
-                <div style={{
-                  position: 'absolute', top: '8px', right: '8px',
-                  background: 'rgba(0,0,0,0.65)', borderRadius: '6px',
-                  padding: '6px 10px', fontSize: '11px', color: '#fff',
-                  fontWeight: 600, display: 'flex', alignItems: 'center', gap: '6px',
-                  boxShadow: '0 2px 8px rgba(0,0,0,0.3)',
-                  transition: 'all 0.2s',
-                }}
-                onMouseEnter={e => e.currentTarget.style.background = 'rgba(0,0,0,0.85)'}
-                onMouseLeave={e => e.currentTarget.style.background = 'rgba(0,0,0,0.65)'}
-                >
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                    <polyline points="15 3 21 3 21 9"></polyline>
-                    <polyline points="9 21 3 21 3 15"></polyline>
-                    <line x1="21" y1="3" x2="14" y2="10"></line>
-                    <line x1="3" y1="21" x2="10" y2="14"></line>
-                  </svg>
-                  Phóng to
-                </div>
-              </div>
-            </>
-          )}
+          {/* Video phụ — Picture in Picture (góc dưới phải) */}
+          <div
+            style={{
+              position: 'absolute',
+              bottom: showControls ? '120px' : '30px',
+              right: '30px',
+              width: '180px', height: '260px',
+              borderRadius: '16px',
+              overflow: 'hidden',
+              border: '2px solid rgba(255,255,255,0.2)',
+              boxShadow: '0 8px 30px rgba(0,0,0,0.5)',
+              transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+              zIndex: 40, cursor: 'pointer',
+              animation: 'pc-fade-in 0.4s ease forwards',
+            }}
+            onClick={() => setPipSwapped(s => !s)}
+            title="Nhấn để đổi màn hình chính"
+          >
+            <VideoTile
+              stream={pipSwapped ? remoteStream : localStream}
+              name={pipSwapped ? friendName : (user?.fullName || 'Bạn')}
+              avatar={pipSwapped ? friendAvatar : user?.avatar}
+              muted={pipSwapped ? false : true}
+              camOff={pipSwapped ? !remoteStream : !camOn}
+              mirrored={pipSwapped ? false : localMirrored}
+              style={{ borderRadius: 0, width: '100%', height: '100%' }}
+            />
+            <div style={{
+              position: 'absolute', top: '8px', right: '8px',
+              background: 'rgba(0,0,0,0.65)', borderRadius: '6px',
+              padding: '6px 10px', fontSize: '11px', color: '#fff',
+              fontWeight: 600, display: 'flex', alignItems: 'center', gap: '6px',
+              boxShadow: '0 2px 8px rgba(0,0,0,0.3)',
+              transition: 'all 0.2s',
+            }}
+            onMouseEnter={e => e.currentTarget.style.background = 'rgba(0,0,0,0.85)'}
+            onMouseLeave={e => e.currentTarget.style.background = 'rgba(0,0,0,0.65)'}
+            >
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="15 3 21 3 21 9"></polyline>
+                <polyline points="9 21 3 21 3 15"></polyline>
+                <line x1="21" y1="3" x2="14" y2="10"></line>
+                <line x1="3" y1="21" x2="10" y2="14"></line>
+              </svg>
+              Phóng to
+            </div>
+          </div>
 
           {/* Lỗi */}
           {error && (
@@ -696,15 +656,6 @@ export default function PrivateCall() {
             {/* Mic */}
             <CtrlBtn onClick={() => setMicOn(m => !m)} title={micOn ? 'Tắt mic' : 'Bật mic'} active={micOn}>
               {micOn ? '🎙️' : '🔇'}
-            </CtrlBtn>
-
-            {/* Chuyển đổi Layout (PiP / Grid) */}
-            <CtrlBtn
-              onClick={() => setLayoutMode(prev => prev === 'pip' ? 'grid' : 'pip')}
-              title={layoutMode === 'pip' ? 'Chia đôi màn hình' : 'Ảnh trong ảnh'}
-              active={true}
-            >
-              {layoutMode === 'pip' ? '🔲' : '🔳'}
             </CtrlBtn>
 
             {/* Kết thúc cuộc gọi — nút lớn ở giữa */}
