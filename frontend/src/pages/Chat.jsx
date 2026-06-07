@@ -1894,11 +1894,11 @@ function ConversationView({ user, friend, friends, onBack, onlineUserIds, onNick
             )}
 
             {/* Action buttons */}
-            <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+            <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
               <button
                 onClick={() => handleSaveBg('')}
                 style={{
-                  width: '100%',
+                  flex: 1,
                   padding: '12px',
                   background: 'none',
                   border: '1px solid rgba(239, 68, 68, 0.3)',
@@ -1908,7 +1908,6 @@ function ConversationView({ user, friend, friends, onBack, onlineUserIds, onNick
                   cursor: 'pointer',
                   fontSize: '13px',
                   fontWeight: 600,
-                  marginBottom: '4px',
                   transition: 'all 0.2s',
                 }}
                 onMouseEnter={e => {
@@ -1918,7 +1917,7 @@ function ConversationView({ user, friend, friends, onBack, onlineUserIds, onNick
                   e.currentTarget.style.background = 'none';
                 }}
               >
-                Khôi phục mặc định
+                Về mặc định
               </button>
               
               <button
