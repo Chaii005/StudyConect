@@ -36,7 +36,11 @@
    ═══════════════════════════════════════════ */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-html { scroll-behavior: smooth; }
+html { 
+  scroll-behavior: smooth; 
+  overflow: hidden;
+  height: 100%;
+}
 
 h1, h2, h3, h4, h5, h6 {
   font-family: 'Plus Jakarta Sans', sans-serif;
@@ -51,8 +55,14 @@ body {
     radial-gradient(circle at 90% 80%, rgba(255, 122, 0, 0.02) 0%, transparent 45%);
   color: var(--text-primary);
   line-height: 1.6;
-  min-height: 100vh;
+  height: 100%;
+  overflow: hidden;
   overscroll-behavior: none;
+}
+
+#root {
+  height: 100%;
+  overflow: hidden;
 }
 
 /* GLOBAL BUTTON STYLES */
