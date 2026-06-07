@@ -73,7 +73,7 @@ function PersonCard({ person, actions, isOnline }) {
         )}
       </div>
       <div style={{ flex: 1, minWidth: 0 }}>
-        <div style={{ fontWeight: 700, fontSize: '16px', color: 'var(--text-primary)', marginBottom: '4px', display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+        <div style={{ fontWeight: 700, fontSize: '18px', color: 'var(--text-primary)', marginBottom: '4px', display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
           {person.friendSince ? (
             <Link to={`/friends/${person.userId}`} style={{ 
               color: 'var(--text-primary)', 
@@ -101,12 +101,12 @@ function PersonCard({ person, actions, isOnline }) {
           )}
         </div>
         {person.university && (
-          <div style={{ fontSize: '13px', color: 'var(--text-muted)', marginBottom: '3px' }}>
+          <div style={{ fontSize: '14px', color: 'var(--text-muted)', marginBottom: '3px' }}>
               {person.university}
           </div>
         )}
         {person.major && (
-          <div style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>
+          <div style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>
             {person.major}
           </div>
         )}
@@ -617,9 +617,10 @@ export default function Friends() {
 
       <style>{`
         .friend-page-container {
-          padding: 24px 28px;
-          max-width: 860px;
-          margin: 0 auto;
+          padding: 24px 24px;
+          max-width: 100%;
+          width: 100%;
+          box-sizing: border-box;
         }
         .premium-panel {
           background: linear-gradient(135deg, rgba(108,99,255,0.10) 0%, rgba(255,122,0,0.07) 100%);
@@ -627,7 +628,7 @@ export default function Friends() {
           -webkit-backdrop-filter: blur(20px);
           border: 1px solid rgba(108,99,255,0.20);
           border-radius: 20px;
-          padding: 24px 28px;
+          padding: 28px 32px;
           box-shadow: 0 4px 24px rgba(108,99,255,0.08);
           margin-bottom: 20px;
         }
@@ -704,13 +705,13 @@ export default function Friends() {
         .person-card {
           background: var(--bg-card);
           border: 1px solid var(--border);
-          border-radius: 18px;
-          padding: 18px 22px;
+          border-radius: 20px;
+          padding: 22px 28px;
           display: flex;
           align-items: center;
-          gap: 16px;
+          gap: 20px;
           transition: all 0.25s ease;
-          margin-bottom: 10px;
+          margin-bottom: 12px;
         }
         .person-card:hover {
           background: rgba(108,99,255,0.05);
