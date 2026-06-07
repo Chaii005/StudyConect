@@ -25,19 +25,26 @@ export default function NotificationBell({ style }) {
   const [pos, setPos] = useState({ top: 0, left: 0, width: 280 });
   const btnRef = useRef(null);
 
-  // Dropdown nằm trong vùng sidebar, dưới chuông, không đè content
   const calcPos = () => {
     if (!btnRef.current) return;
     const rect = btnRef.current.getBoundingClientRect();
-    const gap = 6;
-    // Lấy sidebar (element cha gần nhất có class aside hoặc tính từ rect.left về 0)
-    // Dropdown rộng bằng từ left=8 đến rect.right (tức nằm gọn trong sidebar)
-    const dropW = Math.max(rect.right - 8, 200); // rộng bằng sidebar tính từ lề
-    setPos({
-      top: rect.bottom + gap,
-      left: 8,
-      width: Math.min(dropW, rect.right), // không vượt quá mép phải sidebar
-    });
+    // Tìm khung profile cha (card chứa chuông + avatar)
+    const card = btnRef.current.closest('[data-profile-card]');
+    if (card) {
+      const cardRect = card.getBoundingClientRect();
+      setPos({
+        top: cardRect.bottom + 6,
+        left: cardRect.left,
+        width: cardRect.width,
+      });
+    } else {
+      // fallback
+      setPos({
+        top: rect.bottom + 6,
+        left: 8,
+        width: rect.right - 8,
+      });
+    }
   };
 
   const handleOpen = () => {
@@ -48,11 +55,10 @@ export default function NotificationBell({ style }) {
     });
   };
 
-  // Đóng khi click ra ngoài
   useEffect(() => {
     if (!open) return;
     const handler = (e) => {
-      if (btnRef.current && !btnRef.current.closest('[data-notif-root]')?.contains(e.target)) {
+      if (btnRef.current && !document.querySelector('[data-notif-dropdown]')?.contains(e.target) && !btnRef.current.contains(e.target)) {
         markAllRead();
         setOpen(false);
       }
@@ -80,8 +86,7 @@ export default function NotificationBell({ style }) {
   const onDeclineFriend = (n) => { declineFriendRequest(n.requestId); };
 
   return (
-    <div data-notif-root style={{ position: 'relative', display: 'inline-flex' }}>
-      {/* Nút chuông */}
+    <div style={{ position: 'relative', display: 'inline-flex' }}>
       <button
         ref={btnRef}
         onClick={handleOpen}
@@ -110,8 +115,7 @@ export default function NotificationBell({ style }) {
           <span style={{
             position: 'absolute',
             top: '-3px', right: '-3px',
-            background: '#ef4444',
-            color: '#fff',
+            background: '#ef4444', color: '#fff',
             borderRadius: '50%',
             minWidth: '16px', height: '16px',
             fontSize: '9px', fontWeight: 800,
@@ -126,28 +130,29 @@ export default function NotificationBell({ style }) {
         )}
       </button>
 
-      {/* Dropdown — fixed, nằm gọn trong vùng sidebar */}
       {open && (
         <>
-          {/* Backdrop */}
           <div
             onClick={() => { markAllRead(); setOpen(false); }}
             style={{ position: 'fixed', inset: 0, zIndex: 8998 }}
           />
-          <div style={{
-            position: 'fixed',
-            top: pos.top,
-            left: pos.left,
-            width: pos.width,
-            background: 'var(--bg-card)',
-            border: '1px solid var(--border)',
-            borderRadius: '14px',
-            boxShadow: '0 8px 32px rgba(0,0,0,0.45)',
-            zIndex: 8999,
-            display: 'flex',
-            flexDirection: 'column',
-            overflow: 'hidden',
-          }}>
+          <div
+            data-notif-dropdown
+            style={{
+              position: 'fixed',
+              top: pos.top,
+              left: pos.left,
+              width: pos.width,
+              background: 'var(--bg-card)',
+              border: '1px solid var(--border)',
+              borderRadius: '14px',
+              boxShadow: '0 8px 32px rgba(0,0,0,0.45)',
+              zIndex: 8999,
+              display: 'flex',
+              flexDirection: 'column',
+              overflow: 'hidden',
+            }}
+          >
             {/* Header */}
             <div style={{
               padding: '12px 14px',
@@ -188,7 +193,7 @@ export default function NotificationBell({ style }) {
               )}
             </div>
 
-            {/* Danh sách — scroll, ~2 items */}
+            {/* Danh sách scroll ~2 items */}
             <div style={{
               overflowY: 'auto',
               maxHeight: '160px',
