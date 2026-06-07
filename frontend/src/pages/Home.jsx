@@ -106,6 +106,7 @@ export default function Home() {
     const fetchSearchSuggestions = async () => {
       try {
         const data = await getSearchSuggestions();
+        // eslint-disable-next-line no-undef
         setSearchData(data);
       } catch (err) {
         console.error('Error loading search suggestions:', err);
