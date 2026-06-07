@@ -116,6 +116,9 @@ export const NotificationProvider = ({ children }) => {
                 icon = '🔔';
             }
 
+            // Chặn tuyệt đối - không hiện toast cho tin nhắn đổi hình nền
+            if (n.body?.includes('[chat_background]') || n.key?.startsWith('bgchange:')) continue;
+
             // Trigger Toast popup (Display for 5 seconds as requested)
             addToast(n.body, 'notification', 5000, link, icon);
           }
