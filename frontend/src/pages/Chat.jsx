@@ -1810,12 +1810,12 @@ function ConversationView({ user, friend, friends, onBack, onlineUserIds, onNick
             style={{
               background: '#15152a',
               border: '1px solid rgba(255, 255, 255, 0.08)',
-              borderRadius: '24px',
-              padding: '28px',
-              width: '420px',
-              maxWidth: '100%',
+              borderRadius: '20px',
+              padding: '20px',
+              width: '340px',
+              maxWidth: 'calc(100vw - 40px)',
               boxShadow: '0 24px 64px rgba(0, 0, 0, 0.7)',
-              maxHeight: '90vh',
+              maxHeight: '85vh',
               overflowY: 'auto',
             }}
             onClick={e => e.stopPropagation()}
@@ -1906,7 +1906,7 @@ function ConversationView({ user, friend, friends, onBack, onlineUserIds, onNick
                 <div
                   style={{
                     width: '100%',
-                    height: '160px',
+                    height: '120px',
                     borderRadius: '14px',
                     background: `linear-gradient(rgba(10, 10, 20, 0.5), rgba(10, 10, 20, 0.5)), url(${bgFilePreview}) ${bgPos}/cover no-repeat`,
                     border: '1px solid rgba(255, 255, 255, 0.08)',
