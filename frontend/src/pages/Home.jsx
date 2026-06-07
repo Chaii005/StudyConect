@@ -308,10 +308,10 @@ export default function Home() {
         </span>
       ))}
       <div style={{ height: '100%', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 300px', gap: '24px', height: '100%' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 300px', gap: '24px', height: '100%', alignItems: 'stretch' }}>
 
           {/* MIDDLE COLUMN: Feed */}
-          <main style={{ minWidth: 0, height: '100%', display: 'flex', flexDirection: 'column', paddingRight: '4px' }}>
+          <main style={{ minWidth: 0, minHeight: 0, display: 'flex', flexDirection: 'column', paddingRight: '4px', overflow: 'hidden' }}>
             {/* Create Question Box - Fixed Top */}
             <div style={{ flexShrink: 0, paddingBottom: '14px', zIndex: 20 }}>
               <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '18px', padding: '16px 18px', display: 'flex', gap: '12px', alignItems: 'center' }}>
@@ -328,7 +328,7 @@ export default function Home() {
             </div>
 
             {/* Post List - Scrollable Area */}
-            <div className="no-scrollbar" style={{ flex: 1, minHeight: 0, overflowY: 'auto' }}>
+            <div className="no-scrollbar" style={{ flex: 1, height: 0, overflowY: 'auto' }}>
               <PostList
                 posts={sortedPosts}
                 currentUser={user}
