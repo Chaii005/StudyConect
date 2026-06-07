@@ -101,19 +101,6 @@ export default function Home() {
     };
   }, [user?.id]);
 
-  // Fetch all search suggestions on mount
-  useEffect(() => {
-    const fetchSearchSuggestions = async () => {
-      try {
-        const data = await getSearchSuggestions();
-        // eslint-disable-next-line no-undef
-        setSearchData(data);
-      } catch (err) {
-        console.error('Error loading search suggestions:', err);
-      }
-    };
-    fetchSearchSuggestions();
-  }, []);
 
 
   // Fetch database posts
