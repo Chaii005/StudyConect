@@ -13,11 +13,13 @@ const parseRaw = (raw) => ({
   fileAttachment: raw.file_attachment || null,
   type: raw.content?.startsWith('[chat_background]:')
     ? 'background'
-    : (raw.content?.startsWith('data:image') ||
-      (raw.content?.startsWith('http') &&
-        (raw.content?.match(/\.(jpeg|jpg|gif|png)/i) || raw.content?.includes('supabase'))))
-      ? 'image'
-      : 'text',
+    : raw.content?.startsWith('[chat_nickname]:')
+      ? 'nickname'
+      : (raw.content?.startsWith('data:image') ||
+        (raw.content?.startsWith('http') &&
+          (raw.content?.match(/\.(jpeg|jpg|gif|png)/i) || raw.content?.includes('supabase'))))
+        ? 'image'
+        : 'text',
   createdAt: raw.created_at,
   read: raw.is_read,
 });

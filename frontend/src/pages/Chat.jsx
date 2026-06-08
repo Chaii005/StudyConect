@@ -550,17 +550,22 @@ function ConversationView({ user, friend, friends, onBack, onlineUserIds, onNick
     setShowRenameModal(true);
   };
 
-  const handleSaveRename = () => {
+  const handleSaveRename = async () => {
     const cleanName = renameVal.trim();
-    if (cleanName === '') {
-      localStorage.removeItem(`sc_nickname_${user.id}_${friend.userId}`);
-      setNickname('');
-    } else {
-      localStorage.setItem(`sc_nickname_${user.id}_${friend.userId}`, cleanName);
-      setNickname(cleanName);
+    try {
+      await sendMessage(user.id, friend.userId, `[chat_nickname]:${cleanName}`, 'text');
+      if (cleanName === '') {
+        localStorage.removeItem(`sc_nickname_${user.id}_${friend.userId}`);
+        setNickname('');
+      } else {
+        localStorage.setItem(`sc_nickname_${user.id}_${friend.userId}`, cleanName);
+        setNickname(cleanName);
+      }
+      setShowRenameModal(false);
+      if (onNicknameChange) onNicknameChange();
+    } catch (err) {
+      console.error('Error saving nickname:', err);
     }
-    setShowRenameModal(false);
-    if (onNicknameChange) onNicknameChange();
   };
 
   const handleClearChat = async () => {
@@ -661,14 +666,30 @@ function ConversationView({ user, friend, friends, onBack, onlineUserIds, onNick
       }
       prevBgRef.current = newBg;
       setChatBg(newBg);
+
+      // Cập nhật nickname từ cache nếu có tin nickname do Tôi gửi
+      const lastNickMsg = cached.messages
+        .filter(m => m.content?.startsWith('[chat_nickname]:') && String(m.fromUserId) === String(user.id))
+        .slice(-1)[0];
+      if (lastNickMsg) {
+        const val = lastNickMsg.content.replace('[chat_nickname]:', '');
+        if (val) {
+          localStorage.setItem(`sc_nickname_${user.id}_${friend.userId}`, val);
+          setNickname(val);
+        } else {
+          localStorage.removeItem(`sc_nickname_${user.id}_${friend.userId}`);
+          setNickname('');
+        }
+      }
     }
 
     // Bước 2: Sync DB ngầm để lấy tin mới
     const res = await getConversation(user.id, friend.userId);
-    setMessages(res.messages || []);
+    const msgs = res.messages || [];
+    setMessages(msgs);
     const newBg = res.background || '';
     if (prevBgRef.current !== null && newBg !== prevBgRef.current) {
-      const lastBgMsg = (res.messages || []).filter(m => m.content?.startsWith('[chat_background]')).slice(-1)[0];
+      const lastBgMsg = msgs.filter(m => m.content?.startsWith('[chat_background]')).slice(-1)[0];
       if (lastBgMsg && String(lastBgMsg.fromUserId) !== String(user.id)) {
         setBgToast({ name: nickname || friend.fullName });
         setTimeout(() => setBgToast(null), 4000);
@@ -676,9 +697,26 @@ function ConversationView({ user, friend, friends, onBack, onlineUserIds, onNick
     }
     prevBgRef.current = newBg;
     setChatBg(newBg);
+
+    // Cập nhật nickname từ DB mới nếu có tin nickname do Tôi gửi
+    const lastNickMsg = msgs
+      .filter(m => m.content?.startsWith('[chat_nickname]:') && String(m.fromUserId) === String(user.id))
+      .slice(-1)[0];
+    if (lastNickMsg) {
+      const val = lastNickMsg.content.replace('[chat_nickname]:', '');
+      if (val) {
+        localStorage.setItem(`sc_nickname_${user.id}_${friend.userId}`, val);
+        setNickname(val);
+      } else {
+        localStorage.removeItem(`sc_nickname_${user.id}_${friend.userId}`);
+        setNickname('');
+      }
+      if (onNicknameChange) onNicknameChange();
+    }
+
     setReactions(loadReactions());
     await markAsRead(user.id, friend.userId);
-  }, [user.id, friend.userId, loadReactions, nickname, friend.fullName]);
+  }, [user.id, friend.userId, loadReactions, nickname, friend.fullName, onNicknameChange]);
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -1258,6 +1296,27 @@ function ConversationView({ user, friend, friends, onBack, onlineUserIds, onNick
               <div key={m.id} style={{ textAlign: 'center', margin: '16px 0', fontSize: '12px', color: 'var(--text-muted)' }}>
                 <span style={{ padding: '6px 16px', borderRadius: '16px', background: 'rgba(0,0,0,0.4)', color: 'white', border: '1px solid rgba(255,255,255,0.1)', backdropFilter: 'blur(4px)' }}>
                   {isMine ? 'Bạn đã thay đổi hình nền' : `${nickname || friend.fullName} đã thay đổi hình nền`}
+                </span>
+              </div>
+            );
+          }
+
+          if (m.content?.startsWith('[chat_nickname]:')) {
+            const cleanNick = m.content.replace('[chat_nickname]:', '');
+            let msgText = '';
+            if (isMine) {
+              msgText = cleanNick
+                ? `Bạn đã thay đổi biệt danh thành "${cleanNick}"`
+                : 'Bạn đã xóa biệt danh';
+            } else {
+              msgText = cleanNick
+                ? `${friend.fullName} đã thay đổi biệt danh của bạn thành "${cleanNick}"`
+                : `${friend.fullName} đã xóa biệt danh`;
+            }
+            return (
+              <div key={m.id} style={{ textAlign: 'center', margin: '16px 0', fontSize: '12px', color: 'var(--text-muted)' }}>
+                <span style={{ padding: '6px 16px', borderRadius: '16px', background: 'rgba(0,0,0,0.4)', color: 'white', border: '1px solid rgba(255,255,255,0.1)', backdropFilter: 'blur(4px)' }}>
+                  {msgText}
                 </span>
               </div>
             );
@@ -2145,11 +2204,13 @@ function FriendList({ user, friends, onSelect, lastMessages, onlineUserIds }) {
                     {last
                       ? (last.content?.startsWith('[chat_background]')
                         ? (String(last.fromUserId) === String(user.id) ? 'Bạn đã thay đổi hình nền' : `${nickname} đã thay đổi hình nền`)
-                        : (last.type === 'image' || last.content?.startsWith('data:image')
-                          ? (String(last.fromUserId) === String(user.id) ? 'Bạn đã gửi ảnh' : 'Đã gửi ảnh')
-                          : last.fileAttachment
-                            ? (String(last.fromUserId) === String(user.id) ? 'Bạn đã gửi một tệp' : 'Đã gửi một tệp')
-                            : (String(last.fromUserId) === String(user.id) ? 'Bạn: ' : '') + last.content))
+                        : last.content?.startsWith('[chat_nickname]')
+                          ? (String(last.fromUserId) === String(user.id) ? 'Bạn đã thay đổi biệt danh' : `${nickname} đã thay đổi biệt danh`)
+                          : (last.type === 'image' || last.content?.startsWith('data:image')
+                            ? (String(last.fromUserId) === String(user.id) ? 'Bạn đã gửi ảnh' : 'Đã gửi ảnh')
+                            : last.fileAttachment
+                              ? (String(last.fromUserId) === String(user.id) ? 'Bạn đã gửi một tệp' : 'Đã gửi một tệp')
+                              : (String(last.fromUserId) === String(user.id) ? 'Bạn: ' : '') + last.content))
                       : 'Bắt đầu nhắn tin...'}
                   </span>
                   {unread > 0 && (
