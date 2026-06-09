@@ -117,7 +117,7 @@ function EmojiPicker({ onSelect, onClose }) {
         overscrollBehavior: 'contain',
       }}>
         {EMOJI_LIST.map(em => (
-          <button key={em} onClick={() => onSelect(em)} style={{
+          <button key={em} onClick={() => onSelect(em)} onMouseDown={e => e.preventDefault()} style={{
             background: 'none', border: 'none', cursor: 'pointer',
             fontSize: '20px', padding: '4px', borderRadius: '6px',
             transition: 'background 0.12s', lineHeight: 1,
@@ -1315,6 +1315,7 @@ function ConversationView({ user, friend, friends, onBack, onlineUserIds, onNick
 
           if (m.content?.startsWith('[chat_nickname]:')) {
             const cleanNick = m.content.replace('[chat_nickname]:', '');
+            // eslint-disable-next-line no-useless-assignment
             let msgText = '';
             if (isMine) {
               msgText = cleanNick

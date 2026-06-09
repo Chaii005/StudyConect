@@ -785,6 +785,7 @@ export default function GroupChatPanel({
                 <button
                   key={emoji}
                   type="button"
+                  onMouseDown={(e) => e.preventDefault()}
                   onClick={() => {
                     const inp = chatInputRef.current;
                     if (inp) {
