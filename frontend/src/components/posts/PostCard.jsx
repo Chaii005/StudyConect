@@ -178,10 +178,38 @@ export default function PostCard({ post, currentUser, onLike, onDelete, onCommen
         )}
       </div>
 
+      {/* Tagged users / groups chips */}
+      {((post.taggedUsers && post.taggedUsers.length > 0) || (post.taggedGroups && post.taggedGroups.length > 0)) && (
+        <div style={{ padding: '0 18px 12px', display: 'flex', flexWrap: 'wrap', gap: '6px', alignItems: 'center' }}>
+          <span style={{ fontSize: '12px', color: 'var(--text-muted)', marginRight: '2px' }}>Cùng với:</span>
+          {(post.taggedUserNames || []).map((name, i) => (
+            <span key={`tu:${i}`} style={{
+              display: 'inline-flex', alignItems: 'center', gap: '4px',
+              padding: '3px 10px', borderRadius: '20px',
+              background: 'rgba(108,99,255,0.12)', border: '1px solid rgba(108,99,255,0.25)',
+              color: 'var(--primary-light)', fontSize: '12px', fontWeight: 700,
+            }}>
+              👤 @{name}
+            </span>
+          ))}
+          {(post.taggedGroupNames || []).map((name, i) => (
+            <span key={`tg:${i}`} style={{
+              display: 'inline-flex', alignItems: 'center', gap: '4px',
+              padding: '3px 10px', borderRadius: '20px',
+              background: 'rgba(255,122,0,0.1)', border: '1px solid rgba(255,122,0,0.25)',
+              color: 'var(--secondary)', fontSize: '12px', fontWeight: 700,
+            }}>
+              👥 @{name}
+            </span>
+          ))}
+        </div>
+      )}
+
       {/* Stats row */}
       <div
         style={{
           display: 'flex',
+
           alignItems: 'center',
           justifyContent: 'space-between',
           padding: '0 18px 10px',

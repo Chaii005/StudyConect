@@ -735,9 +735,49 @@ export default function useNotifications(userId) {
       } catch (err) {
         console.warn('Error parsing local files:', err);
       }
+      // Post Tag Notifications (from localStorage)
+      try {
+        const postTagNotifs = JSON.parse(localStorage.getItem('sc_post_tag_notifs') || '[]');
+        postTagNotifs
+          .filter(n => (now - new Date(n.createdAt)) < ONE_DAY_MS)
+          .forEach(n => {
+            if (n.type === 'posttag_user' && String(n.receiverId) === String(uid)) {
+              const key = `posttag:${n.id}`;
+              if (!notifsList.some(x => x.key === key)) {
+                notifsList.push({
+                  key,
+                  type: 'posttag_user',
+                  title: '🏷️ Bạn được tag trong một bài viết',
+                  body: `${n.taggerName || 'Ai đó'} đã tag bạn trong một bài viết`,
+                  createdAt: n.createdAt,
+                  postId: n.postId,
+                });
+              }
+            }
+            if (n.type === 'posttag_group' && userGroupIds.has(Number(n.groupId))) {
+              const key = `posttagg:${n.id}`;
+              if (!notifsList.some(x => x.key === key)) {
+                const gMem = joinedMembers && joinedMembers.find(m => Number(m.group_id) === Number(n.groupId));
+                const gName = gMem?.study_groups?.name || 'Nhóm học';
+                notifsList.push({
+                  key,
+                  type: 'posttag_group',
+                  title: `🏷️ Nhóm "${gName}" được tag`,
+                  body: `${n.taggerName || 'Ai đó'} đã tag nhóm "${gName}" trong một bài viết`,
+                  createdAt: n.createdAt,
+                  postId: n.postId,
+                  groupId: n.groupId,
+                });
+              }
+            }
+          });
+      } catch (err) {
+        console.warn('Error parsing post tag notifications:', err);
+      }
 
       notifsList.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
       setNotifs(notifsList);
+
 
       // Refresh seen set from localStorage just in case
       try {

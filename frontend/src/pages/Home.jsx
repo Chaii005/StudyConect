@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 import { getUserSchedulesAndDeadlines, getPosts, deletePost, createComment, toggleLikePost, togglePinPost } from '@/services/interactionService';
 import { getFriends } from '@/services/friendService';
+import { getAllGroups } from '@/services/groupService';
 import { supabase } from '@/config/supabaseClient';
 import AppLayout from '@/layouts/AppLayout';
 import Avatar from '@/components/common/Avatar';
@@ -36,6 +37,7 @@ export default function Home() {
   });
   const [confirmConfig, setConfirmConfig] = useState(null);
   const [friends, setFriends] = useState([]);
+  const [myLeaderGroups, setMyLeaderGroups] = useState([]);
   const [onlineUserIds, setOnlineUserIds] = useState([]);
   const [particles, setParticles] = useState([]); // { id, x, y, char, delay, leftOffset }
 
@@ -59,15 +61,22 @@ export default function Home() {
   // Fetch friends list
   useEffect(() => {
     if (!user?.id) return;
-    const fetchFriendsList = async () => {
+    const loadFriendsAndGroups = async () => {
       try {
         const list = await getFriends(user.id);
         setFriends(list);
       } catch (err) {
         console.warn('Error fetching friends:', err);
       }
+      try {
+        const allGroups = await getAllGroups();
+        const leaderGroups = allGroups.filter(g => String(g.creatorId) === String(user.id));
+        setMyLeaderGroups(leaderGroups);
+      } catch (err) {
+        console.warn('Error fetching groups:', err);
+      }
     };
-    fetchFriendsList();
+    loadFriendsAndGroups();
   }, [user?.id]);
 
   // Subscribe to real-time presence channel
@@ -522,6 +531,8 @@ export default function Home() {
       {showCreateModal && (
         <CreatePostModal
           user={user}
+          friends={friends}
+          myLeaderGroups={myLeaderGroups}
           onClose={() => setShowCreateModal(false)}
           onSubmit={(newPost) => setPosts([newPost, ...posts])}
         />
