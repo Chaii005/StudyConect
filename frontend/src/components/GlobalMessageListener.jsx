@@ -307,6 +307,32 @@ export default function GlobalMessageListener() {
         } catch { /* ignore */ }
       })
 
+      // ⑪ Tag trong bài viết (mentions)
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'post_tags' }, async (payload) => {
+        const t = payload.new;
+        try {
+          const { data: post } = await supabase.from('posts').select('user_id').eq('id', t.post_id).single();
+          if (!post) return;
+          if (String(post.user_id) === String(uid)) return; // Không tự thông báo cho chính mình
+
+          const { data: tagger } = await supabase.from('users').select('full_name').eq('id', post.user_id).single();
+          const taggerName = tagger?.full_name || 'Ai đó';
+
+          if (t.target_type === 'user' && String(t.target_id) === String(uid)) {
+            addToast(
+              `🏷️ ${taggerName} đã tag bạn trong một bài viết`,
+              'notification', 6000, '/', '🏷️'
+            );
+          } else if (t.target_type === 'group' && userGroupIds.has(Number(t.target_id))) {
+            const { data: group } = await supabase.from('study_groups').select('name').eq('id', t.target_id).single();
+            addToast(
+              `🏷️ ${taggerName} đã tag nhóm "${group?.name || 'nhóm'}" trong một bài viết`,
+              'notification', 6000, '/', '🏷️'
+            );
+          }
+        } catch { /* ignore */ }
+      })
+
       .subscribe((status) => {
         console.log('[Realtime] Kênh thông báo:', status);
       });
