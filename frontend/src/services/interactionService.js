@@ -178,7 +178,7 @@ export const createPost = async (groupId, { content, userId, tag, taggedUsers = 
     tagRows.push({ post_id: postId, target_type: 'group', target_id: String(gid) });
   });
   if (tagRows.length > 0) {
-    await supabase.from('post_tags').insert(tagRows).catch(() => null);
+    try { await supabase.from('post_tags').insert(tagRows); } catch { /* bảng chưa tồn tại thì bỏ qua */ }
   }
 
   // ── Gửi thông báo via localStorage ───────────────────────────────
