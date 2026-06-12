@@ -96,11 +96,11 @@ export default function GlobalMessageListener() {
               if (rId && window.location.pathname.startsWith(`/room/${rId}`)) return;
 
               const text = raw.replace(/^\[meetroom:[^\]]+\]\s*/, '');
-              addToast(`📞 ${text} — Nhóm "${sender?.full_name || ''}"`, 'info', 6000, `/groups/${msg.group_id}?tab=chat`, '📞');
+              addToast(`Cuộc gọi mới từ ${sender?.full_name || ''}`, 'info', 6000, `/groups/${msg.group_id}?tab=chat`, '📞');
               return;
             }
             addToast(
-              `[👥 ${group?.name || 'Nhóm'}] ${sender?.full_name || 'Thành viên'}: ${raw}`,
+              `[${group?.name || 'Nhóm'}] ${sender?.full_name || 'Thành viên'}: ${raw}`,
               'message', 6000,
               `/groups/${msg.group_id}?tab=chat`,
               '👥'
@@ -116,9 +116,9 @@ export default function GlobalMessageListener() {
             const { data: sender } = await supabase.from('users').select('full_name').eq('id', msg.sender_id).single();
             const name = localStorage.getItem(`sc_nickname_${uid}_${msg.sender_id}`) || sender?.full_name || 'Người dùng';
             const text = (msg.content?.startsWith('data:image') || msg.content?.match(/\.(jpeg|jpg|gif|png|webp)(\?|$)/i))
-              ? '📷 Đã gửi một ảnh'
+              ? 'Đã gửi một ảnh'
               : (msg.content || '');
-            addToast(`💬 ${name}: ${text}`, 'message', 6000, '/chat', '💬');
+            addToast(`${name}: ${text}`, 'message', 6000, '/chat', '💬');
           } catch { /* ignore */ }
         }
       })
@@ -132,7 +132,7 @@ export default function GlobalMessageListener() {
           if (!post || String(post.user_id) !== String(uid)) return;
           const { data: commenter } = await supabase.from('users').select('full_name').eq('id', c.user_id).single();
           const name = commenter?.full_name || 'Người dùng';
-          addToast(`💬 ${name} đã bình luận bài viết của bạn: "${c.content}"`, 'notification', 6000, '/', '💬');
+          addToast(`${name} bình luận: "${c.content}"`, 'notification', 6000, '/', '💬');
         } catch { /* ignore */ }
       })
 
@@ -147,7 +147,7 @@ export default function GlobalMessageListener() {
           const { data: reactor } = await supabase.from('users').select('full_name').eq('id', r.user_id).single();
           const emoji = r.emoji || '❤️';
           const name = reactor?.full_name || 'Người dùng';
-          addToast(`${emoji} ${name} đã thả cảm xúc vào bài viết của bạn`, 'notification', 6000, '/', emoji);
+          addToast(`${name} đã bày tỏ cảm xúc với bài viết của bạn`, 'notification', 6000, '/', emoji);
         } catch { /* ignore */ }
       })
 
@@ -159,7 +159,7 @@ export default function GlobalMessageListener() {
           if (f.status !== 'pending') return;
           try {
             const { data: sender } = await supabase.from('users').select('full_name').eq('id', f.from_user_id).single();
-            addToast(`🤝 ${sender?.full_name || 'Ai đó'} muốn kết bạn với bạn`, 'notification', 7000, '/friends', '🤝');
+            addToast(`${sender?.full_name || 'Ai đó'} muốn kết bạn với bạn`, 'notification', 7000, '/friends', '🤝');
           } catch { /* ignore */ }
 
         } else if (payload.eventType === 'UPDATE') {
@@ -170,7 +170,7 @@ export default function GlobalMessageListener() {
             if (String(newF.from_user_id) === String(uid)) {
               try {
                 const { data: accepter } = await supabase.from('users').select('full_name').eq('id', newF.to_user_id).single();
-                addToast(`🎉 ${accepter?.full_name || 'Bạn mới'} đã chấp nhận lời mời kết bạn của bạn!`, 'notification', 7000, '/friends', '🎉');
+                addToast(`${accepter?.full_name || 'Bạn mới'} đã đồng ý kết bạn`, 'notification', 7000, '/friends', '🎉');
               } catch { /* ignore */ }
             }
           }
@@ -188,7 +188,7 @@ export default function GlobalMessageListener() {
             supabase.from('study_groups').select('name').eq('id', inv.group_id).single(),
           ]);
           addToast(
-            `👥 ${inviter?.full_name || 'Ai đó'} mời bạn tham gia nhóm "${group?.name || 'học'}"`,
+            `${inviter?.full_name || 'Ai đó'} mời bạn vào nhóm "${group?.name || 'học'}"`,
             'notification', 7000, '/groups', '👥'
           );
         } catch { /* ignore */ }
@@ -202,7 +202,7 @@ export default function GlobalMessageListener() {
         try {
           const { data: group } = await supabase.from('study_groups').select('name').eq('id', s.group_id).single();
           addToast(
-            `📅 Lịch học mới: "${s.topic}" — Nhóm "${group?.name || 'học'}"`,
+            `Lịch học mới: "${s.topic}" — Nhóm "${group?.name || 'học'}"`,
             'notification', 7000, `/groups/${s.group_id}?tab=schedule`, '📅'
           );
         } catch { /* ignore */ }
@@ -217,7 +217,7 @@ export default function GlobalMessageListener() {
           const { data: group } = await supabase.from('study_groups').select('name').eq('id', d.group_id).single();
           const personal = d.assignee_id ? ' (Giao cho bạn)' : '';
           addToast(
-            `⏰ Deadline mới: "${d.title}" — ${group?.name || 'Nhóm'}${personal}`,
+            `Deadline mới: "${d.title}" — ${group?.name || 'Nhóm'}${personal}`,
             'notification', 7000, `/groups/${d.group_id}?tab=deadlines`, '⏰'
           );
         } catch { /* ignore */ }
@@ -233,7 +233,7 @@ export default function GlobalMessageListener() {
             await fetchUserGroups();
             try {
               const { data: group } = await supabase.from('study_groups').select('name').eq('id', m.group_id).single();
-              addToast(`🔔 Bạn đã gia nhập nhóm "${group?.name || 'học'}"!`, 'success', 6000, `/groups/${m.group_id}`, '🔔');
+              addToast(`Bạn đã gia nhập nhóm "${group?.name || 'học'}"`, 'success', 6000, `/groups/${m.group_id}`, '🔔');
             } catch { /* ignore */ }
           } else if (userGroupIds.has(Number(m.group_id))) {
             // Another user joined a group you're in
@@ -242,7 +242,7 @@ export default function GlobalMessageListener() {
                 supabase.from('users').select('full_name').eq('id', m.user_id).single(),
                 supabase.from('study_groups').select('name').eq('id', m.group_id).single(),
               ]);
-              addToast(`👥 ${newUser?.full_name || 'Thành viên mới'} đã gia nhập nhóm "${group?.name || 'học'}"!`, 'info', 5000, `/groups/${m.group_id}`, '👥');
+              addToast(`${newUser?.full_name || 'Thành viên mới'} đã tham gia nhóm "${group?.name || 'học'}"`, 'info', 5000, `/groups/${m.group_id}`, '👥');
             } catch { /* ignore */ }
           }
 
@@ -254,7 +254,7 @@ export default function GlobalMessageListener() {
             try {
               const { data: group } = await supabase.from('study_groups').select('name').eq('id', m.group_id).single();
               await fetchUserGroups();
-              addToast(`👑 Bạn đã được bổ nhiệm làm Phó nhóm của "${group?.name || 'nhóm'}"!`, 'success', 7000, `/groups/${m.group_id}`, '👑');
+              addToast(`Bạn được bổ nhiệm làm Phó nhóm "${group?.name || 'nhóm'}"`, 'success', 7000, `/groups/${m.group_id}`, '👑');
             } catch { /* ignore */ }
           }
 
@@ -269,7 +269,7 @@ export default function GlobalMessageListener() {
             try {
               const { data: group } = await supabase.from('study_groups').select('name').eq('id', m.group_id).single();
               const groupName = group?.name || 'Nhóm';
-              addToast(`⚠️ Bạn đã bị xóa khỏi nhóm "${groupName}"!`, 'error', 8000, '/groups', '⚠️');
+              addToast(`Bạn đã bị rời khỏi nhóm "${groupName}"`, 'error', 8000, '/groups', '⚠️');
               // Persist to localStorage for bell notification on next login
               try {
                 const kicks = JSON.parse(localStorage.getItem('studyconect_kicked_notifications') || '[]');
@@ -293,7 +293,7 @@ export default function GlobalMessageListener() {
             supabase.from('study_groups').select('name').eq('id', f.group_id).single(),
           ]);
           addToast(
-            `📎 ${uploader?.full_name || 'Thành viên'} đã tải lên "${f.file_name}" — ${group?.name || 'Nhóm'}`,
+            `${uploader?.full_name || 'Thành viên'} đã tải lên "${f.file_name}" — ${group?.name || 'Nhóm'}`,
             'notification', 6000, `/groups/${f.group_id}?tab=documents`, '📎'
           );
         } catch { /* ignore */ }
@@ -310,7 +310,7 @@ export default function GlobalMessageListener() {
             supabase.from('study_groups').select('name').eq('id', req.group_id).single(),
           ]);
           addToast(
-            `👥 ${requester?.full_name || 'Ai đó'} xin tham gia nhóm "${group?.name || 'học'}"`,
+            `${requester?.full_name || 'Ai đó'} xin tham gia nhóm "${group?.name || 'học'}"`,
             'notification', 8000, `/groups/${req.group_id}`, '🔔'
           );
         } catch { /* ignore */ }
@@ -329,13 +329,13 @@ export default function GlobalMessageListener() {
 
           if (t.target_type === 'user' && String(t.target_id) === String(uid)) {
             addToast(
-              `🏷️ ${taggerName} đã tag bạn trong một bài viết`,
+              `${taggerName} đã tag bạn trong bài viết`,
               'notification', 6000, '/', '🏷️'
             );
           } else if (t.target_type === 'group' && userGroupIds.has(Number(t.target_id))) {
             const { data: group } = await supabase.from('study_groups').select('name').eq('id', t.target_id).single();
             addToast(
-              `🏷️ ${taggerName} đã tag nhóm "${group?.name || 'nhóm'}" trong một bài viết`,
+              `${taggerName} đã tag nhóm "${group?.name || 'nhóm'}" trong bài viết`,
               'notification', 6000, '/', '🏷️'
             );
           }
