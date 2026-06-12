@@ -8,6 +8,15 @@ export default function GlobalMessageListener() {
   const { addToast: originalAddToast } = useToast();
 
   const addToast = (...args) => {
+    // Không xuất hiện thông báo bên phải (toast popup) khi đang họp hoặc đang gọi điện
+    const isInsideCallOrMeet = 
+      window.location.pathname.startsWith('/room/') || 
+      window.location.pathname.startsWith('/call/');
+
+    if (isInsideCallOrMeet) {
+      return; // Chặn hiển thị Toast bên phải
+    }
+
     if (localStorage.getItem('studyconect_toast_enabled') !== 'false') {
       originalAddToast(...args);
     }
