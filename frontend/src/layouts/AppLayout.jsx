@@ -402,7 +402,7 @@ export default function AppLayout({ children, hideNavbar = false, hideSidebar = 
         </div>
       </div>
 
-      <main style={{ position: 'relative', zIndex: 1, height: 'calc(100% - 64px)', overflow: 'hidden' }}>
+      <main style={{ position: 'relative', zIndex: 1, height: 'calc(100% - 64px)', overflow: shouldHideSidebar ? 'auto' : 'hidden' }}>
         {shouldHideSidebar ? (
           children
         ) : (

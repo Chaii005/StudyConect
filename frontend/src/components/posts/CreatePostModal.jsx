@@ -192,7 +192,7 @@ export default function CreatePostModal({ user, friends = [], myLeaderGroups = [
                   👤 Bạn bè
                 </div>
               )}
-              {sugs.filter(s => s.type === 'friend').map((sug, i) => {
+              {sugs.filter(s => s.type === 'friend').map((sug) => {
                 const realIdx = sugs.indexOf(sug);
                 return (
                   <div
