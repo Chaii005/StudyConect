@@ -437,15 +437,15 @@ export default function PrivateCall() {
   // Đọc callStatus từ CallContext (hiển thị khi timeout / bị hủy)
   const { callStatus } = useCall();
 
-  // Lắng nghe kênh global để bắt 'cancel' khi người gọi timeout
+  // Lắng nghe kênh global để bắt 'no_answer'/'cancel' khi người gọi timeout
   useEffect(() => {
     if (!user?.id || !callId) return;
-    const ch = supabase.channel(`pc_global_watch_${callId}`, {
+    // Dùng đúng channel mà CallContext gửi signal — KHÔNG được đặt tên khác
+    const ch = supabase.channel('private_calls_global_receiver', {
       config: { broadcast: { self: false } }
     });
     ch.on('broadcast', { event: 'call_signal' }, ({ payload }) => {
       if (!payload) return;
-      // Người nhận: caller đã timeout → tự cancel → navigate về chat
       if (
         (payload.type === 'cancel' || payload.type === 'no_answer') &&
         payload.callId === callId

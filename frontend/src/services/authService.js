@@ -227,39 +227,13 @@ export const adminLogin = async ({ email, password }) => {
 };
 
 // ─── QUÊN MẬT KHẨU ──────────────────────────────────
-export const forgotPassword = async ({ email }) => {
-  const { data: user, error: fetchError } = await supabase
-    .from('users')
-    .select('id')
-    .eq('email', email.toLowerCase())
-    .maybeSingle();
-
-  if (fetchError) {
-    throw new Error('Lỗi truy vấn email.');
-  }
-
-  if (user) {
-    const token = Math.random().toString(36).slice(2) + Date.now().toString(36);
-    const expires = Date.now() + 15 * 60 * 1000;
-
-    const { error: updateError } = await supabase
-      .from('users')
-      .update({
-        reset_token: token,
-        reset_expires: expires,
-      })
-      .eq('id', user.id);
-
-    if (updateError) {
-      throw new Error('Không thể tạo token khôi phục.');
-    }
-
-    if (import.meta.env.DEV) {
-      console.log(`%c[Studyconect] Reset Token: ${token}`, 'color:#6c63ff;font-weight:bold;font-size:13px');
-    }
-  }
-
-  return { message: 'Nếu email tồn tại, chúng tôi đã gửi hướng dẫn đặt lại mật khẩu.' };
+export const forgotPassword = async (email) => {
+  const emailVal = typeof email === 'string' ? email : email.email;
+  const { error } = await supabase.auth
+    .resetPasswordForEmail(emailVal, {
+      redirectTo: `${window.location.origin}/reset-password`
+    });
+  if (error) throw new Error(error.message);
 };
 
 // ─── ĐẶT LẠI MẬT KHẨU ──────────────────────────────

@@ -638,9 +638,37 @@ function useWebRTC({ roomId, user, micOn, camOn, onForceMute }) {
 
 // ── SIDEBAR TABS ─────────────────────────────────────────────
 const TABS = [
-  { key: 'chat',  icon: '💬', label: 'Chat'     },
-  { key: 'timer', icon: '⏱️', label: 'Đồng hồ'  },
-  { key: 'members', icon: '👥', label: 'Thành viên' },
+  {
+    key: 'chat',
+    icon: (
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ verticalAlign: 'middle' }}>
+        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+      </svg>
+    ),
+    label: 'Chat'
+  },
+  {
+    key: 'timer',
+    icon: (
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ verticalAlign: 'middle' }}>
+        <circle cx="12" cy="12" r="10" />
+        <polyline points="12 6 12 12 16 14" />
+      </svg>
+    ),
+    label: 'Đồng hồ'
+  },
+  {
+    key: 'members',
+    icon: (
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ verticalAlign: 'middle' }}>
+        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+        <circle cx="9" cy="7" r="4" />
+        <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+        <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+      </svg>
+    ),
+    label: 'Thành viên'
+  },
 ];
 
 // ── MAIN COMPONENT ───────────────────────────────────────────
@@ -757,13 +785,26 @@ export default function MeetRoom() {
   }, [user?.id]);
 
   useEffect(() => {
-    if (!groupId) return;
     const fetchGroupCreator = async () => {
       try {
+        let activeGroupId = groupId;
+        if (!activeGroupId && roomId) {
+          const { data: scheduleData, error: scheduleError } = await supabase
+            .from('schedules')
+            .select('group_id')
+            .eq('location', `/room/${roomId}`)
+            .limit(1);
+          if (!scheduleError && scheduleData && scheduleData.length > 0) {
+            activeGroupId = scheduleData[0].group_id;
+          }
+        }
+
+        if (!activeGroupId) return;
+
         const { data, error } = await supabase
           .from('study_groups')
           .select('creator_id')
-          .eq('id', parseInt(groupId, 10))
+          .eq('id', parseInt(activeGroupId, 10))
           .single();
         if (!error && data) {
           setGroupCreatorId(data.creator_id);
@@ -773,7 +814,7 @@ export default function MeetRoom() {
       }
     };
     fetchGroupCreator();
-  }, [groupId]);
+  }, [groupId, roomId]);
 
   const getParticipantRole = useCallback((feed) => {
     if (groupCreatorId) {
@@ -1103,7 +1144,12 @@ export default function MeetRoom() {
             {/* Error banner */}
             {error && (
               <div style={{ position: 'absolute', top: '20px', left: '50%', transform: 'translateX(-50%)', zIndex: 120, background: 'rgba(239,68,68,0.92)', backdropFilter: 'blur(12px)', border: '1px solid rgba(239,68,68,0.2)', borderRadius: '12px', padding: '10px 20px', fontSize: '13px', color: 'white', display: 'flex', alignItems: 'center', gap: '8px', boxShadow: '0 10px 30px rgba(0,0,0,0.3)' }}>
-                ⚠️ {error} — Bạn chỉ ở chế độ nghe.
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+                  <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z" />
+                  <line x1="12" y1="9" x2="12" y2="13" />
+                  <line x1="12" y1="17" x2="12.01" y2="17" />
+                </svg>
+                <span>{error} — Bạn chỉ ở chế độ nghe.</span>
               </div>
             )}
 
@@ -1451,7 +1497,13 @@ export default function MeetRoom() {
                               </div>
                               <span style={{ fontSize: '12px', fontWeight: 600, color: 'white', maxWidth: '140px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', display: 'flex', alignItems: 'center', gap: '4px' }}>
                                 <span>{f.name}{f.isLocal ? ' (Bạn)' : ''}</span>
-                                {role === 'Trưởng phòng' && <span title="Trưởng phòng" style={{ fontSize: '10px' }}>👑</span>}
+                                {role === 'Trưởng phòng' && (
+                                  <span title="Trưởng phòng" style={{ display: 'inline-flex', alignItems: 'center', color: '#f59e0b' }}>
+                                    <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor">
+                                      <path d="M2 4l3 12h14l3-12-6 7-4-7-4 7-6-7zm3 16h14a1 1 0 0 0 1-1v-1H4v1a1 1 0 0 0 1 1z" />
+                                    </svg>
+                                  </span>
+                                )}
                               </span>
                             </div>
                             <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
@@ -1464,8 +1516,8 @@ export default function MeetRoom() {
 
                                 const iconBtn = (active, type, Icon, titleOn, titleOff) => {
                                   const color = active ? '#22c55e' : '#ef4444';
-                                  const bg = active ? 'rgba(34,197,94,0.12)' : 'rgba(239,68,68,0.12)';
-                                  const border = active ? 'rgba(34,197,94,0.3)' : 'rgba(239,68,68,0.3)';
+                                  const bg = active ? 'rgba(34,197,94,0.1)' : 'rgba(239,68,68,0.1)';
+                                  const border = active ? 'rgba(34,197,94,0.25)' : 'rgba(239,68,68,0.25)';
                                   const payload = type === 'cam'
                                     ? { type: 'force-mute', to: f.id, room: roomId, muteCam: true, muteMic: false }
                                     : { type: 'force-mute', to: f.id, room: roomId, muteMic: true, muteCam: false };
@@ -1479,27 +1531,32 @@ export default function MeetRoom() {
                                       } : undefined}
                                       style={{
                                         display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                        width: '28px', height: '28px', borderRadius: '8px',
+                                        width: '30px', height: '30px', borderRadius: '50%',
                                         background: bg,
                                         border: `1px solid ${border}`,
                                         color: color,
                                         cursor: canForce && active ? 'pointer' : 'default',
-                                        transition: 'all 0.2s ease',
+                                        transition: 'all 0.25s cubic-bezier(0.4, 0, 0.2, 1)',
                                         flexShrink: 0,
                                         padding: 0,
+                                        boxShadow: active ? '0 2px 8px rgba(34,197,94,0.12)' : '0 2px 8px rgba(239,68,68,0.12)',
                                       }}
                                       onMouseEnter={canForce && active ? e => {
-                                        e.currentTarget.style.background = type === 'cam' ? 'rgba(239,68,68,0.25)' : 'rgba(239,68,68,0.25)';
+                                        e.currentTarget.style.background = 'rgba(239,68,68,0.25)';
                                         e.currentTarget.style.borderColor = '#ef4444';
                                         e.currentTarget.style.color = '#ef4444';
+                                        e.currentTarget.style.transform = 'scale(1.15)';
+                                        e.currentTarget.style.boxShadow = '0 4px 12px rgba(239,68,68,0.35)';
                                       } : undefined}
                                       onMouseLeave={canForce && active ? e => {
                                         e.currentTarget.style.background = bg;
                                         e.currentTarget.style.borderColor = border;
                                         e.currentTarget.style.color = color;
+                                        e.currentTarget.style.transform = 'scale(1)';
+                                        e.currentTarget.style.boxShadow = active ? '0 2px 8px rgba(34,197,94,0.12)' : '0 2px 8px rgba(239,68,68,0.12)';
                                       } : undefined}
                                     >
-                                      <Icon active={active} size={13} />
+                                      <Icon active={active} size={14} />
                                     </button>
                                   );
                                 };
@@ -1798,7 +1855,15 @@ export default function MeetRoom() {
                                       border: '1px solid rgba(245,158,11,0.3)',
                                       lineHeight: '16px',
                                       whiteSpace: 'nowrap',
-                                    }}>👑 Trưởng phòng</span>
+                                      display: 'inline-flex',
+                                      alignItems: 'center',
+                                      gap: '4px',
+                                    }}>
+                                      <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" style={{ verticalAlign: 'middle' }}>
+                                        <path d="M2 4l3 12h14l3-12-6 7-4-7-4 7-6-7zm3 16h14a1 1 0 0 0 1-1v-1H4v1a1 1 0 0 0 1 1z" />
+                                      </svg>
+                                      Trưởng phòng
+                                    </span>
                                   ) : (
                                     <span style={{ fontSize: '11px', color: 'rgba(255,255,255,0.4)' }}>Thành viên</span>
                                   )}
@@ -1815,8 +1880,8 @@ export default function MeetRoom() {
 
                                 const iconBtn = (active, type, Icon, titleOn, titleOff) => {
                                   const color = active ? '#22c55e' : '#ef4444';
-                                  const bg = active ? 'rgba(34,197,94,0.12)' : 'rgba(239,68,68,0.12)';
-                                  const border = active ? 'rgba(34,197,94,0.3)' : 'rgba(239,68,68,0.3)';
+                                  const bg = active ? 'rgba(34,197,94,0.1)' : 'rgba(239,68,68,0.1)';
+                                  const border = active ? 'rgba(34,197,94,0.25)' : 'rgba(239,68,68,0.25)';
                                   const payload = type === 'cam'
                                     ? { type: 'force-mute', to: f.id, room: roomId, muteCam: true, muteMic: false }
                                     : { type: 'force-mute', to: f.id, room: roomId, muteMic: true, muteCam: false };
@@ -1830,24 +1895,29 @@ export default function MeetRoom() {
                                       } : undefined}
                                       style={{
                                         display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                        width: '30px', height: '30px', borderRadius: '8px',
+                                        width: '30px', height: '30px', borderRadius: '50%',
                                         background: bg,
                                         border: `1px solid ${border}`,
                                         color: color,
                                         cursor: canForce && active ? 'pointer' : 'default',
-                                        transition: 'all 0.2s ease',
+                                        transition: 'all 0.25s cubic-bezier(0.4, 0, 0.2, 1)',
                                         flexShrink: 0,
                                         padding: 0,
+                                        boxShadow: active ? '0 2px 8px rgba(34,197,94,0.12)' : '0 2px 8px rgba(239,68,68,0.12)',
                                       }}
                                       onMouseEnter={canForce && active ? e => {
-                                        e.currentTarget.style.background = type === 'cam' ? 'rgba(239,68,68,0.25)' : 'rgba(239,68,68,0.25)';
+                                        e.currentTarget.style.background = 'rgba(239,68,68,0.25)';
                                         e.currentTarget.style.borderColor = '#ef4444';
                                         e.currentTarget.style.color = '#ef4444';
+                                        e.currentTarget.style.transform = 'scale(1.15)';
+                                        e.currentTarget.style.boxShadow = '0 4px 12px rgba(239,68,68,0.35)';
                                       } : undefined}
                                       onMouseLeave={canForce && active ? e => {
                                         e.currentTarget.style.background = bg;
                                         e.currentTarget.style.borderColor = border;
                                         e.currentTarget.style.color = color;
+                                        e.currentTarget.style.transform = 'scale(1)';
+                                        e.currentTarget.style.boxShadow = active ? '0 2px 8px rgba(34,197,94,0.12)' : '0 2px 8px rgba(239,68,68,0.12)';
                                       } : undefined}
                                     >
                                       <Icon active={active} size={14} />

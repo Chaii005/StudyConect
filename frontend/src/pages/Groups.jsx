@@ -99,8 +99,27 @@ function CreateGroupModal({ formData, setFormData, meetingMode, setMeetingMode, 
               >←</button>
             )}
             <div>
-              <h3 style={{ margin: 0, fontSize: 15, fontWeight: 800, color: 'var(--text-primary)' }}>
-                {step === 1 ? 'Tạo Nhóm Học Mới' : meetingMode === 'online' ? '🌐 Nhóm Học Online' : '📍 Nhóm Học Offline'}
+              <h3 style={{ margin: 0, fontSize: 15, fontWeight: 800, color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                {step === 1 ? (
+                  'Tạo Nhóm Học Mới'
+                ) : meetingMode === 'online' ? (
+                  <>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ color: 'var(--primary-light)' }}>
+                      <circle cx="12" cy="12" r="10" />
+                      <line x1="2" y1="12" x2="22" y2="12" />
+                      <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+                    </svg>
+                    Nhóm Học Online
+                  </>
+                ) : (
+                  <>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ color: '#10b981' }}>
+                      <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+                      <circle cx="12" cy="10" r="3" />
+                    </svg>
+                    Nhóm Học Offline
+                  </>
+                )}
               </h3>
               <p style={{ margin: '1px 0 0 0', fontSize: 11, color: 'var(--text-muted)' }}>
                 {step === 1 ? 'Chọn hình thức học của nhóm bạn' : 'Điền thông tin chi tiết cho nhóm học'}
@@ -123,9 +142,14 @@ function CreateGroupModal({ formData, setFormData, meetingMode, setMeetingMode, 
               onMouseEnter={e => { e.currentTarget.style.background = 'linear-gradient(135deg, rgba(99,102,241,0.18), rgba(139,92,246,0.12))'; e.currentTarget.style.borderColor = 'var(--primary)'; e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 6px 20px rgba(99,102,241,0.25)'; }}
               onMouseLeave={e => { e.currentTarget.style.background = 'linear-gradient(135deg, rgba(99,102,241,0.08), rgba(139,92,246,0.05))'; e.currentTarget.style.borderColor = 'rgba(99,102,241,0.3)'; e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = 'none'; }}
             >
-              <div style={{ width: 44, height: 44, borderRadius: 12, background: 'linear-gradient(135deg, var(--primary), #8b5cf6)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20, flexShrink: 0, boxShadow: '0 4px 14px rgba(99,102,241,0.4)' }}>🌐</div>
+              <div style={{ width: 44, height: 44, borderRadius: 12, background: 'linear-gradient(135deg, var(--primary), #8b5cf6)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, boxShadow: '0 4px 14px rgba(99,102,241,0.4)' }}>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="12" cy="12" r="10" />
+                  <line x1="2" y1="12" x2="22" y2="12" />
+                  <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+                </svg>
+              </div>
               <div style={{ flex: 1 }}>
-                
                 <div style={{ fontSize: 14, fontWeight: 800, color: 'var(--text-primary)', marginBottom: 2 }}>Học Online</div>
                 <div style={{ fontSize: 11, color: 'var(--text-muted)', lineHeight: 1.5 }}>Không cần ra ngoài — học mọi lúc mọi nơi, kết nối và cộng tác cùng nhóm dù ở bất kỳ đâu.</div>
               </div>
@@ -136,7 +160,12 @@ function CreateGroupModal({ formData, setFormData, meetingMode, setMeetingMode, 
               onMouseEnter={e => { e.currentTarget.style.background = 'linear-gradient(135deg, rgba(16,185,129,0.18), rgba(5,150,105,0.12))'; e.currentTarget.style.borderColor = '#10b981'; e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 6px 20px rgba(16,185,129,0.25)'; }}
               onMouseLeave={e => { e.currentTarget.style.background = 'linear-gradient(135deg, rgba(16,185,129,0.08), rgba(5,150,105,0.05))'; e.currentTarget.style.borderColor = 'rgba(16,185,129,0.3)'; e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = 'none'; }}
             >
-              <div style={{ width: 44, height: 44, borderRadius: 12, background: 'linear-gradient(135deg, #10b981, #059669)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20, flexShrink: 0, boxShadow: '0 4px 14px rgba(16,185,129,0.4)' }}>📍</div>
+              <div style={{ width: 44, height: 44, borderRadius: 12, background: 'linear-gradient(135deg, #10b981, #059669)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, boxShadow: '0 4px 14px rgba(16,185,129,0.4)' }}>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+                  <circle cx="12" cy="10" r="3" />
+                </svg>
+              </div>
               <div style={{ flex: 1 }}>
                 <div style={{ fontSize: 14, fontWeight: 800, color: 'var(--text-primary)', marginBottom: 2 }}>Học Offline</div>
                 <div style={{ fontSize: 11, color: 'var(--text-muted)', lineHeight: 1.5 }}>Gặp gỡ trực tiếp, trao đổi dễ hơn — chọn địa điểm phù hợp để cả nhóm cùng học chung.</div>
@@ -151,7 +180,24 @@ function CreateGroupModal({ formData, setFormData, meetingMode, setMeetingMode, 
             {/* Mode badge */}
             <div style={{ padding: '8px 18px 0' }}>
               <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5, fontSize: 10, fontWeight: 700, padding: '3px 10px', borderRadius: 20, background: meetingMode === 'online' ? 'rgba(99,102,241,0.12)' : 'rgba(16,185,129,0.12)', color: meetingMode === 'online' ? 'var(--primary-light)' : '#10b981', border: `1px solid ${meetingMode === 'online' ? 'rgba(99,102,241,0.3)' : 'rgba(16,185,129,0.3)'}` }}>
-                {meetingMode === 'online' ? '🌐 Học Online' : '📍 Học Offline'}
+                {meetingMode === 'online' ? (
+                  <>
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <circle cx="12" cy="12" r="10" />
+                      <line x1="2" y1="12" x2="22" y2="12" />
+                      <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+                    </svg>
+                    Học Online
+                  </>
+                ) : (
+                  <>
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+                      <circle cx="12" cy="10" r="3" />
+                    </svg>
+                    Học Offline
+                  </>
+                )}
               </span>
             </div>
 
@@ -191,7 +237,7 @@ function CreateGroupModal({ formData, setFormData, meetingMode, setMeetingMode, 
                     {!userMajor && (
                       <option value="Chung">Chung</option>
                     )}
-                    <option value="custom">✍️ Môn học khác...</option>
+                    <option value="custom">Môn học khác...</option>
                   </select>
                   {subjectMode === 'custom' && (
                     <input
@@ -886,8 +932,10 @@ export default function Groups() {
       <aside style={{ position: 'fixed', top: 0, left: 0, height: '100%', width: '260px', background: 'var(--bg-card)', borderRight: '1px solid var(--border)', transform: sidebarOpen ? 'translateX(0)' : 'translateX(-100%)', transition: 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)', zIndex: 300, display: 'flex', flexDirection: 'column', boxShadow: sidebarOpen ? 'var(--shadow-glow)' : 'none' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '20px 20px 16px', borderBottom: '1px solid var(--border)' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <div style={{ width: 38, height: 38, background: 'linear-gradient(135deg, var(--primary), var(--secondary))', borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18 }}>📚</div>
-            <span style={{ fontSize: 16, fontWeight: 700, background: 'linear-gradient(135deg, var(--primary-light), var(--secondary))', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>Studyconect</span>
+            <div style={{ width: 38, height: 38, background: 'linear-gradient(135deg, var(--primary), var(--secondary))', borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: '20px' }}>
+              📚
+            </div>
+            <span style={{ fontSize: 18, fontWeight: 900, fontFamily: "'Playfair Display', serif", fontStyle: 'italic', background: 'linear-gradient(135deg, var(--text-primary) 30%, var(--primary-light) 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text', letterSpacing: '-0.3px' }}>Studyconect</span>
           </div>
           <button onClick={() => setSidebarOpen(false)} style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', fontSize: 20, lineHeight: 1, padding: '2px 6px', borderRadius: 6, transition: 'var(--transition)' }}>✕</button>
         </div>
@@ -940,11 +988,85 @@ export default function Groups() {
             <p className="page-subtitle">Khám phá và tham gia các nhóm học phù hợp với bạn</p>
           </div>
           <div style={{ display: 'flex', gap: '12px' }}>
-            <button className="btn btn-primary" style={{ padding: '10px 22px', whiteSpace: 'nowrap', flexShrink: 0, width: 'auto', minWidth: 0, display: 'inline-flex' }} onClick={() => setShowModal(true)}>
-              + Tạo nhóm mới
+            <button
+              className="btn"
+              onClick={() => setShowModal(true)}
+              style={{
+                padding: '10px 22px',
+                whiteSpace: 'nowrap',
+                flexShrink: 0,
+                width: 'auto',
+                minWidth: 0,
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px',
+                background: 'linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%)',
+                border: 'none',
+                color: '#ffffff',
+                fontWeight: 700,
+                borderRadius: '12px',
+                boxShadow: '0 4px 16px rgba(108, 99, 255, 0.35)',
+                cursor: 'pointer',
+                transition: 'all 0.25s cubic-bezier(0.4, 0, 0.2, 1)',
+                fontFamily: 'inherit',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = 'translateY(-1px)';
+                e.currentTarget.style.boxShadow = '0 6px 20px rgba(108, 99, 255, 0.5)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow = '0 4px 16px rgba(108, 99, 255, 0.35)';
+              }}
+            >
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                <circle cx="9" cy="7" r="4" />
+                <line x1="19" y1="8" x2="19" y2="14" />
+                <line x1="16" y1="11" x2="22" y2="11" />
+              </svg>
+              Tạo nhóm mới
             </button>
-            <button className="btn" style={{ padding: '10px 22px', whiteSpace: 'nowrap', flexShrink: 0, width: 'auto', minWidth: 0, display: 'inline-flex', background: 'linear-gradient(135deg, rgba(16,185,129,0.12), rgba(5,150,105,0.08))', border: '1px solid rgba(16,185,129,0.35)', color: '#10b981', fontWeight: 700 }} onClick={() => setShowNearbyModal(true)}>
-              📍 Nhóm học lân cận
+            <button
+              className="btn"
+              onClick={() => setShowNearbyModal(true)}
+              style={{
+                padding: '10px 22px',
+                whiteSpace: 'nowrap',
+                flexShrink: 0,
+                width: 'auto',
+                minWidth: 0,
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px',
+                background: 'linear-gradient(135deg, rgba(16,185,129,0.08), rgba(5,150,105,0.05))',
+                border: '1px solid rgba(16,185,129,0.35)',
+                color: '#10b981',
+                fontWeight: 700,
+                borderRadius: '12px',
+                boxShadow: '0 4px 12px rgba(16, 185, 129, 0.1)',
+                cursor: 'pointer',
+                transition: 'all 0.25s ease',
+                fontFamily: 'inherit',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = 'translateY(-1px)';
+                e.currentTarget.style.background = 'linear-gradient(135deg, rgba(16,185,129,0.18), rgba(5,150,105,0.12))';
+                e.currentTarget.style.boxShadow = '0 6px 16px rgba(16, 185, 129, 0.2)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.background = 'linear-gradient(135deg, rgba(16,185,129,0.08), rgba(5,150,105,0.05))';
+                e.currentTarget.style.boxShadow = '0 4px 12px rgba(16, 185, 129, 0.1)';
+              }}
+            >
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+                <circle cx="12" cy="10" r="3" />
+              </svg>
+              Nhóm học lân cận
             </button>
           </div>
         </div>
@@ -964,7 +1086,6 @@ export default function Groups() {
                 alignItems: 'center',
                 justifyContent: 'center',
                 cursor: 'pointer',
-                fontSize: '20px',
                 transition: 'all 0.3s ease',
                 boxShadow: 'var(--shadow)',
               }}
@@ -975,7 +1096,10 @@ export default function Groups() {
               }}
               onMouseLeave={e => { e.currentTarget.style.color = 'var(--text-muted)'; e.currentTarget.style.borderColor = 'var(--border)'; }}
             >
-              🔍
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="11" cy="11" r="8"/>
+                <path d="m21 21-4.3-4.3"/>
+              </svg>
             </button>
           ) : (
             <div 
@@ -983,7 +1107,12 @@ export default function Groups() {
               style={{ flex: 1, margin: 0, animation: 'slideIn 0.3s ease', display: 'flex', alignItems: 'center', gap: '10px' }}
               onMouseLeave={() => { if (!searchQuery.trim()) setIsSearchExpanded(false); }}
             >
-              <span style={{ fontSize: '18px' }}>🔍</span>
+              <span style={{ fontSize: '18px', display: 'flex', alignItems: 'center' }}>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ color: 'var(--text-muted)' }}>
+                  <circle cx="11" cy="11" r="8"/>
+                  <path d="m21 21-4.3-4.3"/>
+                </svg>
+              </span>
               <input 
                 type="text" 
                 className="search-input" 
@@ -1006,7 +1135,12 @@ export default function Groups() {
 
         {filteredGroups.length === 0 ? (
           <div className="premium-panel" style={{ textAlign: 'center', padding: '40px 16px' }}>
-            <div style={{ fontSize: '36px', marginBottom: '12px' }}>🏫</div>
+            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '16px', color: 'var(--text-muted)' }}>
+              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                <polyline points="9 22 9 12 15 12 15 22"/>
+              </svg>
+            </div>
             <p style={{ color: '#fff', fontSize: '15px', fontWeight: 700, marginBottom: '6px' }}>
               {searchQuery.trim().length > 0 && searchQuery.trim().length < 6
                 ? 'Vui lòng nhập chính xác 6 chữ số ID phòng học...'
@@ -1028,43 +1162,100 @@ export default function Groups() {
               return (
                 <div key={group.id} className="group-card">
                   <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12, marginBottom: '12px' }}>
-                    <h3 style={{ fontSize: 18, fontWeight: 800, color: '#fff', margin: 0, lineHeight: 1.3 }}>{group.name}</h3>
+                    <h3 style={{ fontSize: 18, fontWeight: 800, background: 'linear-gradient(135deg, #ffffff 0%, #cbd5e1 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', margin: 0, lineHeight: 1.3, letterSpacing: '-0.01em' }}>{group.name}</h3>
                     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 6, flexShrink: 0 }}>
-                      <span className="badge-outline" style={{ borderColor: 'rgba(108,99,255,0.3)', color: '#a5b4fc', background: 'rgba(108,99,255,0.1)' }}>
-                        👥 {group?.members?.length || 0}/{group.maxMembers || 10}
+                      <span className="badge-outline" style={{ borderColor: 'rgba(108,99,255,0.25)', color: '#a5b4fc', background: 'rgba(108,99,255,0.08)', display: 'inline-flex', alignItems: 'center', gap: '5px', borderRadius: '10px', padding: '4px 10px', fontSize: '11px', fontWeight: 700 }}>
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                          <circle cx="9" cy="7" r="4" />
+                          <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+                          <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                        </svg>
+                        {group?.members?.length || 0}/{group.maxMembers || 10}
                       </span>
-                      <span style={{ fontSize: 11, fontWeight: 700, padding: '3px 9px', borderRadius: 20, whiteSpace: 'nowrap', background: group.meetingMode === 'offline' ? 'rgba(16,185,129,0.12)' : 'rgba(99,179,237,0.12)', color: group.meetingMode === 'offline' ? '#10b981' : '#63b3ed', border: group.meetingMode === 'offline' ? '1px solid rgba(16,185,129,0.3)' : '1px solid rgba(99,179,237,0.3)' }}>
-                        {group.meetingMode === 'offline' ? 'Offline' : 'Online'}
+                      <span style={{ fontSize: 11, fontWeight: 700, padding: '4px 10px', borderRadius: 10, whiteSpace: 'nowrap', background: group.meetingMode === 'offline' ? 'rgba(16,185,129,0.08)' : 'rgba(99,179,237,0.08)', color: group.meetingMode === 'offline' ? '#10b981' : '#63b3ed', border: group.meetingMode === 'offline' ? '1px solid rgba(16,185,129,0.25)' : '1px solid rgba(99,179,237,0.25)', display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
+                        {group.meetingMode === 'offline' ? (
+                          <>
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                              <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+                              <circle cx="12" cy="10" r="3" />
+                            </svg>
+                            Offline
+                          </>
+                        ) : (
+                          <>
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                              <polygon points="23 7 16 12 23 17 23 7" />
+                              <rect x="1" y="5" width="15" height="14" rx="2" ry="2" />
+                            </svg>
+                            Online
+                          </>
+                        )}
                       </span>
-                      <span style={{ fontSize: 11, fontWeight: 700, padding: '3px 9px', borderRadius: 20, whiteSpace: 'nowrap', background: group.isPrivate ? 'rgba(239,68,68,0.1)' : 'rgba(16,185,129,0.1)', color: group.isPrivate ? '#ef4444' : '#10b981', border: group.isPrivate ? '1px solid rgba(239,68,68,0.3)' : '1px solid rgba(16,185,129,0.3)' }}>
-                        {group.isPrivate ? '🔒 Riêng tư' : '🌐 Công khai'}
+                      <span style={{ fontSize: 11, fontWeight: 700, padding: '4px 10px', borderRadius: 10, whiteSpace: 'nowrap', background: group.isPrivate ? 'rgba(239,68,68,0.08)' : 'rgba(16,185,129,0.08)', color: group.isPrivate ? '#ef4444' : '#10b981', border: group.isPrivate ? '1px solid rgba(239,68,68,0.25)' : '1px solid rgba(16,185,129,0.25)', display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
+                        {group.isPrivate ? (
+                          <>
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                              <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                              <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                            </svg>
+                            Riêng tư
+                          </>
+                        ) : (
+                          <>
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                              <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                              <path d="M7 11V7a5 5 0 0 1 9.9-1" />
+                            </svg>
+                            Công khai
+                          </>
+                        )}
                       </span>
                     </div>
                   </div>
 
                   <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '6px', marginBottom: '10px' }}>
-                    <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>ID: <strong style={{ color: 'var(--primary-light)' }}>{group.id}</strong></span>
+                    <span style={{ fontSize: 11, color: 'var(--text-muted)', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <line x1="4" y1="9" x2="20" y2="9" />
+                        <line x1="4" y1="15" x2="20" y2="15" />
+                        <line x1="10" y1="3" x2="8" y2="21" />
+                        <line x1="16" y1="3" x2="14" y2="21" />
+                      </svg>
+                      ID: <strong style={{ color: 'var(--primary-light)' }}>{group.id}</strong>
+                    </span>
                     {isCreator && <span style={{ fontSize: 11, fontWeight: 700, background: 'rgba(255,193,7,0.15)', color: '#f59e0b', padding: '2px 8px', borderRadius: 10, border: '1px solid rgba(245,158,11,0.3)' }}>Trưởng nhóm</span>}
                     {isDeputy && <span style={{ fontSize: 11, fontWeight: 700, background: 'rgba(108,99,255,0.12)', color: 'var(--primary-light)', padding: '2px 8px', borderRadius: 10, border: '1px solid rgba(108,99,255,0.25)' }}>Phó nhóm</span>}
                   </div>
 
-                  <p style={{ color: 'var(--text-secondary)', fontSize: 13, marginBottom: '6px' }}>
-                    <strong style={{ color: 'var(--text-primary)' }}>Môn:</strong> {group.subject}
-                  </p>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', background: 'rgba(255, 255, 255, 0.02)', padding: '6px 12px', borderRadius: '10px', border: '1px solid rgba(255, 255, 255, 0.04)', marginBottom: '8px', marginTop: '4px' }}>
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ color: 'var(--primary-light)', flexShrink: 0 }}>
+                      <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+                      <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+                    </svg>
+                    <span style={{ color: 'var(--text-secondary)', fontSize: '12px' }}>
+                      <strong style={{ color: 'var(--text-primary)', fontWeight: 600 }}>Môn học:</strong> {group.subject}
+                    </span>
+                  </div>
 
                   {group.meetingMode === 'offline' && group.location && (
-                    <div style={{ display: 'flex', alignItems: 'flex-start', gap: 5, marginBottom: '6px' }}>
-                      <span style={{ fontSize: 13, flexShrink: 0 }}></span>
-                      <div>
-                        <span style={{ fontSize: 13, fontWeight: 600, color: '#10b981' }}>{group.location.name}</span>
-                        {group.location.address ? <span style={{ fontSize: 12, color: 'var(--text-muted)', marginLeft: 4 }}>— {group.location.address}</span> : null}
+                    <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px', background: 'rgba(16, 185, 129, 0.04)', padding: '6px 12px', borderRadius: '10px', border: '1px solid rgba(16, 185, 129, 0.15)', marginBottom: '8px' }}>
+                      <span style={{ fontSize: 13, flexShrink: 0, display: 'inline-flex', alignItems: 'center', color: '#10b981', marginTop: '1px' }}>
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+                          <circle cx="12" cy="10" r="3" />
+                        </svg>
+                      </span>
+                      <div style={{ minWidth: 0 }}>
+                        <span style={{ fontSize: 12, fontWeight: 700, color: '#10b981', display: 'block', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{group.location.name}</span>
+                        {group.location.address && <span style={{ fontSize: 11, color: '#92e2c2', display: 'block', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{group.location.address}</span>}
                       </div>
                     </div>
                   )}
 
                   {group.description && (
-                    <p style={{ color: 'var(--text-muted)', fontSize: 13, flex: 1, marginBottom: 0, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
-                      {group.description}
+                    <p style={{ color: 'var(--text-muted)', fontSize: '13px', flex: 1, marginBottom: 0, marginTop: '4px', lineHeight: 1.4, fontStyle: 'italic', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                      "{group.description}"
                     </p>
                   )}
 
@@ -1072,14 +1263,93 @@ export default function Groups() {
                     {isMember ? (
                       <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                         <div style={{ display: 'flex', gap: '10px' }}>
-                          <Link to={`/groups/${group.id}`} className="btn btn-secondary" style={{ flex: 1, padding: '9px', textAlign: 'center', textDecoration: 'none', fontSize: 14 }}>Vào nhóm</Link>
-                          <button className="btn" style={{ padding: '9px 18px', fontSize: 14, background: 'rgba(255,59,48,0.1)', color: '#ff453a', border: '1px solid rgba(255,59,48,0.2)' }} onClick={() => handleLeave(group)}>Rời</button>
+                          <Link 
+                            to={`/groups/${group.id}`} 
+                            style={{ 
+                              flex: 1, 
+                              padding: '9px', 
+                              textAlign: 'center', 
+                              textDecoration: 'none', 
+                              fontSize: '13px', 
+                              fontWeight: 700, 
+                              borderRadius: '8px', 
+                              color: '#fff', 
+                              background: 'linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%)', 
+                              boxShadow: '0 4px 12px rgba(108, 99, 255, 0.2)', 
+                              transition: 'all 0.2s ease',
+                              display: 'inline-block'
+                            }}
+                            onMouseEnter={e => {
+                              e.currentTarget.style.transform = 'translateY(-1px)';
+                              e.currentTarget.style.boxShadow = '0 6px 16px rgba(108, 99, 255, 0.35)';
+                            }}
+                            onMouseLeave={e => {
+                              e.currentTarget.style.transform = 'translateY(0)';
+                              e.currentTarget.style.boxShadow = '0 4px 12px rgba(108, 99, 255, 0.2)';
+                            }}
+                          >
+                            Vào nhóm
+                          </Link>
+                          <button 
+                            style={{ 
+                              padding: '9px 18px', 
+                              fontSize: '13px', 
+                              fontWeight: 600, 
+                              borderRadius: '8px', 
+                              background: 'rgba(255,59,48,0.08)', 
+                              color: '#ff453a', 
+                              border: '1px solid rgba(255,59,48,0.2)', 
+                              cursor: 'pointer', 
+                              transition: 'all 0.2s ease' 
+                            }} 
+                            onClick={() => handleLeave(group)}
+                            onMouseEnter={e => {
+                              e.currentTarget.style.background = 'rgba(255,59,48,0.15)';
+                              e.currentTarget.style.transform = 'translateY(-1px)';
+                            }}
+                            onMouseLeave={e => {
+                              e.currentTarget.style.background = 'rgba(255,59,48,0.08)';
+                              e.currentTarget.style.transform = 'translateY(0)';
+                            }}
+                          >
+                            Rời
+                          </button>
                         </div>
                         <button onClick={() => setInviteGroup(group)}
-                          style={{ width: '100%', padding: '8px', fontSize: 13, fontWeight: 600, borderRadius: 8, border: '1px solid rgba(108,99,255,0.35)', background: 'rgba(108,99,255,0.08)', color: 'var(--primary-light)', cursor: 'pointer', fontFamily: 'inherit', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, transition: 'all 0.15s' }}
-                          onMouseEnter={e => { e.currentTarget.style.background = 'rgba(108,99,255,0.18)'; e.currentTarget.style.borderColor = 'rgba(108,99,255,0.6)'; }}
-                          onMouseLeave={e => { e.currentTarget.style.background = 'rgba(108,99,255,0.08)'; e.currentTarget.style.borderColor = 'rgba(108,99,255,0.35)'; }}
+                          style={{ 
+                            width: '100%', 
+                            padding: '8px', 
+                            fontSize: '12px', 
+                            fontWeight: 600, 
+                            borderRadius: '8px', 
+                            border: '1px solid rgba(108,99,255,0.3)', 
+                            background: 'rgba(108,99,255,0.06)', 
+                            color: 'var(--primary-light)', 
+                            cursor: 'pointer', 
+                            fontFamily: 'inherit', 
+                            display: 'flex', 
+                            alignItems: 'center', 
+                            justifyContent: 'center', 
+                            gap: '6px', 
+                            transition: 'all 0.2s ease' 
+                          }}
+                          onMouseEnter={e => { 
+                            e.currentTarget.style.background = 'rgba(108,99,255,0.15)'; 
+                            e.currentTarget.style.borderColor = 'rgba(108,99,255,0.5)'; 
+                            e.currentTarget.style.transform = 'translateY(-1px)';
+                          }}
+                          onMouseLeave={e => { 
+                            e.currentTarget.style.background = 'rgba(108,99,255,0.06)'; 
+                            e.currentTarget.style.borderColor = 'rgba(108,99,255,0.3)'; 
+                            e.currentTarget.style.transform = 'translateY(0)';
+                          }}
                         >
+                          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: '4px' }}>
+                            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                            <circle cx="9" cy="7" r="4" />
+                            <line x1="19" y1="8" x2="19" y2="14" />
+                            <line x1="16" y1="11" x2="22" y2="11" />
+                          </svg>
                           Mời bạn bè vào nhóm
                         </button>
                       </div>
@@ -1087,13 +1357,36 @@ export default function Groups() {
                       const reqStatus = joinRequestStatus[group.id];
                       if (group.isPrivate && reqStatus === 'pending') {
                         return (
-                          <div style={{ width: '100%', padding: '9px', borderRadius: 8, background: 'rgba(245,158,11,0.1)', border: '1px solid rgba(245,158,11,0.3)', color: '#f59e0b', fontSize: 13, fontWeight: 700, textAlign: 'center' }}>
+                          <div style={{ width: '100%', padding: '9px', borderRadius: '8px', background: 'rgba(245,158,11,0.1)', border: '1px solid rgba(245,158,11,0.3)', color: '#f59e0b', fontSize: '13px', fontWeight: 700, textAlign: 'center' }}>
                             ⏳ Đang chờ trưởng nhóm duyệt...
                           </div>
                         );
                       }
                       return (
-                        <button className="btn btn-primary" style={{ width: '100%', padding: '9px', fontSize: 14 }} onClick={() => handleJoin(group)}>
+                        <button 
+                          style={{ 
+                            width: '100%', 
+                            padding: '9px', 
+                            fontSize: '13px', 
+                            fontWeight: 700, 
+                            borderRadius: '8px', 
+                            border: 'none', 
+                            background: 'linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%)', 
+                            color: '#fff', 
+                            boxShadow: '0 4px 12px rgba(108, 99, 255, 0.2)', 
+                            cursor: 'pointer', 
+                            transition: 'all 0.2s ease' 
+                          }} 
+                          onClick={() => handleJoin(group)}
+                          onMouseEnter={e => {
+                            e.currentTarget.style.transform = 'translateY(-1px)';
+                            e.currentTarget.style.boxShadow = '0 6px 16px rgba(108, 99, 255, 0.35)';
+                          }}
+                          onMouseLeave={e => {
+                            e.currentTarget.style.transform = 'translateY(0)';
+                            e.currentTarget.style.boxShadow = '0 4px 12px rgba(108, 99, 255, 0.2)';
+                          }}
+                        >
                           {group.isPrivate ? '🔒 Gửi yêu cầu tham gia' : 'Tham gia nhóm'}
                         </button>
                       );
@@ -1151,20 +1444,40 @@ export default function Groups() {
           color: #fff; font-size: 14px; font-family: inherit;
         }
         .group-card {
-          background: rgba(255,255,255,0.03);
-          border: 1px solid rgba(255,255,255,0.08);
-          border-radius: 16px;
-          padding: 16px;
+          background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.01) 100%);
+          border: 1px solid rgba(255, 255, 255, 0.08);
+          border-radius: 20px;
+          padding: 20px;
           display: flex;
           flex-direction: column;
           gap: 0;
-          transition: all 0.3s;
+          transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+          position: relative;
+          overflow: hidden;
+          box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+          backdrop-filter: blur(12px);
+          -webkit-backdrop-filter: blur(12px);
+        }
+        .group-card::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: -100%;
+          width: 50%;
+          height: 100%;
+          background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.06), transparent);
+          transform: skewX(-25deg);
+          transition: 0.75s;
+          pointer-events: none;
         }
         .group-card:hover {
-          background: rgba(255,255,255,0.05);
-          border-color: rgba(99,102,241,0.3);
-          transform: translateY(-2px);
-          box-shadow: 0 12px 30px rgba(0,0,0,0.2);
+          background: linear-gradient(135deg, rgba(108, 99, 255, 0.08) 0%, rgba(255, 255, 255, 0.02) 100%);
+          border-color: rgba(108, 99, 255, 0.35);
+          transform: translateY(-5px);
+          box-shadow: 0 20px 40px rgba(108, 99, 255, 0.12), 0 0 0 1px rgba(108, 99, 255, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+        .group-card:hover::before {
+          left: 125%;
         }
         .badge-outline {
           font-size: 11px;

@@ -25,6 +25,7 @@ import Chat from './pages/Chat';
 import MeetRoom from './pages/Meetroom';
 import PrivateCall from './pages/PrivateCall';
 import FriendDetail from './pages/FriendDetail';
+import ResetPassword from './pages/ResetPassword';
 
 // Global error listener to auto-reload on any remaining chunk load failures
 if (typeof window !== 'undefined') {
@@ -149,6 +150,7 @@ function AppRoutes() {
         <Route path="/login"           element={<PublicRoute><Login /></PublicRoute>} />
         <Route path="/register"        element={<PublicRoute><Register /></PublicRoute>} />
         <Route path="/forgot-password" element={<PublicRoute><ForgotPassword /></PublicRoute>} />
+        <Route path="/reset-password"  element={<PublicRoute><ResetPassword /></PublicRoute>} />
 
         {/* Private Student Routes (enclosed in CallProvider/CallNotification/GlobalMessageListener) */}
         <Route element={<StudentCallWrapper />}>

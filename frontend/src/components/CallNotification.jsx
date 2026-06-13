@@ -184,7 +184,7 @@ export default function CallNotification() {
             </div>
 
             {/* Nút hành động */}
-            <div style={{ display: 'flex', gap: '24px', alignItems: 'center' }}>
+            <div style={{ display: 'flex', gap: '32px', alignItems: 'center' }}>
               {/* Từ chối */}
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
                 <button
@@ -196,14 +196,24 @@ export default function CallNotification() {
                     border: 'none', cursor: 'pointer',
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                     animation: 'cn-reject-pulse 1.5s ease-in-out infinite',
-                    transition: 'transform 0.15s',
-                    fontSize: '26px',
+                    transition: 'all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
+                    color: '#fff',
+                    boxShadow: '0 4px 14px rgba(239,68,68,0.4)',
                   }}
-                  onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.1)'}
-                  onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}
+                  onMouseEnter={e => {
+                    e.currentTarget.style.transform = 'scale(1.15) rotate(-10deg)';
+                    e.currentTarget.style.boxShadow = '0 6px 20px rgba(239,68,68,0.6)';
+                  }}
+                  onMouseLeave={e => {
+                    e.currentTarget.style.transform = 'scale(1) rotate(0deg)';
+                    e.currentTarget.style.boxShadow = '0 4px 14px rgba(239,68,68,0.4)';
+                  }}
                   title="Từ chối"
                 >
-                  📵
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M10.68 13.31a16 16 0 0 0 3.41 2.6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7 2 2 0 0 1 1.72 2v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.42 19.42 0 0 1-3.33-2.67m-2.67-3.34a19.79 19.79 0 0 1-3.07-8.63A2 2 0 0 1 4.18 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91" />
+                    <line x1="23" y1="1" x2="1" y2="23" />
+                  </svg>
                 </button>
                 <span style={{ fontSize: '12px', color: 'rgba(255,255,255,0.45)', fontWeight: 600 }}>Từ chối</span>
               </div>
@@ -219,14 +229,24 @@ export default function CallNotification() {
                     border: 'none', cursor: 'pointer',
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                     animation: 'cn-ring-pulse 1.5s ease-in-out infinite',
-                    transition: 'transform 0.15s',
-                    fontSize: '26px',
+                    transition: 'all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
+                    color: '#fff',
+                    boxShadow: '0 4px 14px rgba(34,197,94,0.4)',
                   }}
-                  onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.1)'}
-                  onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}
+                  onMouseEnter={e => {
+                    e.currentTarget.style.transform = 'scale(1.15) rotate(10deg)';
+                    e.currentTarget.style.boxShadow = '0 6px 20px rgba(34,197,94,0.6)';
+                  }}
+                  onMouseLeave={e => {
+                    e.currentTarget.style.transform = 'scale(1) rotate(0deg)';
+                    e.currentTarget.style.boxShadow = '0 4px 14px rgba(34,197,94,0.4)';
+                  }}
                   title="Chấp nhận"
                 >
-                  📹
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="m22 8-6 4 6 4V8Z" />
+                    <rect width="14" height="12" x="2" y="6" rx="2" ry="2" />
+                  </svg>
                 </button>
                 <span style={{ fontSize: '12px', color: 'rgba(255,255,255,0.45)', fontWeight: 600 }}>Chấp nhận</span>
               </div>

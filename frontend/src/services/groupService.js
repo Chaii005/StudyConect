@@ -5,7 +5,9 @@ import { SUBJECTS_BY_MAJOR } from '@/constants/educationData';
 // Map database group schema to frontend model
 const mapGroup = (g) => {
   const members = g.group_members || [];
-  const deputy = members.find(m => m.role === 'admin');
+  const deputies = members.filter(m => m.role === 'admin');
+  const deputyIds = deputies.map(m => m.user_id);
+  const deputy = deputies[0];
 
   return {
     id: g.id.toString(),
@@ -19,10 +21,12 @@ const mapGroup = (g) => {
     location: g.location || null,
     creatorId: g.creator_id,
     deputyId: deputy ? deputy.user_id : null,
+    deputyIds: deputyIds,
     members: members.map(m => m.user_id),
     createdAt: g.created_at
   };
 };
+
 
 export const getAllGroups = async () => {
   const { data, error } = await supabase
@@ -342,6 +346,18 @@ export const assignDeputy = async (groupId, requesterId, targetUserId) => {
   if (Number(group.creator_id) !== Number(requesterId)) throw new Error('Chỉ trưởng nhóm mới có thể phân quyền phó nhóm!');
   if (Number(targetUserId) === Number(group.creator_id)) throw new Error('Trưởng nhóm không thể tự phân quyền phó nhóm cho bản thân!');
 
+  // Check if group already has 2 deputies
+  const { data: currentDeputies, error: countError } = await supabase
+    .from('group_members')
+    .select('user_id')
+    .eq('group_id', gId)
+    .eq('role', 'admin');
+
+  if (countError) throw new Error(`Lỗi đếm số lượng phó nhóm: ${countError.message}`);
+  if ((currentDeputies || []).length >= 2) {
+    throw new Error('Nhóm đã đạt số lượng tối đa 2 phó nhóm!');
+  }
+
   // Update target member's role to 'admin'
   const { error: updateError } = await supabase
     .from('group_members')
@@ -357,7 +373,7 @@ export const assignDeputy = async (groupId, requesterId, targetUserId) => {
 };
 
 // Trưởng nhóm thu hồi quyền phó nhóm
-export const removeDeputy = async (groupId, requesterId) => {
+export const removeDeputy = async (groupId, requesterId, targetUserId) => {
   const gId = parseInt(groupId, 10);
   
   // Verify requester is creator
@@ -370,12 +386,18 @@ export const removeDeputy = async (groupId, requesterId) => {
   if (getError || !group) throw new Error('Nhóm không tồn tại!');
   if (Number(group.creator_id) !== Number(requesterId)) throw new Error('Chỉ trưởng nhóm mới có thể thu hồi quyền phó nhóm!');
 
-  // Update all 'admin' (deputy) roles back to 'member' for this group
-  const { error: updateError } = await supabase
+  const query = supabase
     .from('group_members')
     .update({ role: 'member' })
-    .eq('group_id', gId)
-    .eq('role', 'admin');
+    .eq('group_id', gId);
+
+  if (targetUserId) {
+    query.eq('user_id', parseInt(targetUserId, 10));
+  } else {
+    query.eq('role', 'admin');
+  }
+
+  const { error: updateError } = await query;
 
   if (updateError) {
     throw new Error(`Thu hồi quyền phó nhóm thất bại: ${updateError.message}`);

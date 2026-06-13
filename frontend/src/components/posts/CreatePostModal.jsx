@@ -217,8 +217,14 @@ export default function CreatePostModal({ user, friends = [], myLeaderGroups = [
 
               {/* Section header groups */}
               {sugs.some(s => s.type === 'group') && (
-                <div style={{ padding: '6px 14px 4px', fontSize: '10px', fontWeight: 700, color: 'var(--secondary)', textTransform: 'uppercase', letterSpacing: '0.05em', background: 'rgba(255,122,0,0.05)', borderTop: sugs.some(s => s.type === 'friend') ? '1px solid var(--border)' : 'none' }}>
-                  👥 Nhóm học (trưởng nhóm)
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '6px 14px 4px', fontSize: '10px', fontWeight: 700, color: 'var(--secondary)', textTransform: 'uppercase', letterSpacing: '0.05em', background: 'rgba(255,122,0,0.05)', borderTop: sugs.some(s => s.type === 'friend') ? '1px solid var(--border)' : 'none' }}>
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ color: 'var(--secondary)' }}>
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                    <circle cx="9" cy="7" r="4" />
+                    <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                  </svg>
+                  <span>Nhóm học (trưởng nhóm)</span>
                 </div>
               )}
               {sugs.filter(s => s.type === 'group').map((sug) => {
@@ -235,7 +241,14 @@ export default function CreatePostModal({ user, friends = [], myLeaderGroups = [
                     }}
                     onMouseEnter={() => setSuggestIdx(realIdx)}
                   >
-                    <div style={{ width: 28, height: 28, borderRadius: '8px', background: 'rgba(255,122,0,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '14px', flexShrink: 0 }}>👥</div>
+                    <div style={{ width: 28, height: 28, borderRadius: '8px', background: 'rgba(255,122,0,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--secondary)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                        <circle cx="9" cy="7" r="4" />
+                        <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                      </svg>
+                    </div>
                     <div>
                       <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)' }}>{sug.name}</div>
                       <div style={{ fontSize: '10px', color: 'var(--text-muted)' }}>Nhóm học • {sug.members?.length || 0} thành viên</div>
@@ -260,7 +273,18 @@ export default function CreatePostModal({ user, friends = [], myLeaderGroups = [
                 color: t.type === 'friend' ? 'var(--primary-light)' : 'var(--secondary)',
                 fontSize: '12px', fontWeight: 700,
               }}>
-                {t.type === 'friend' ? <SuggestAvatar src={t.avatar} initial={t.name} /> : <span style={{ fontSize: '13px' }}>👥</span>}
+                {t.type === 'friend' ? (
+                  <SuggestAvatar src={t.avatar} initial={t.name} />
+                ) : (
+                  <span style={{ display: 'inline-flex', alignItems: 'center' }}>
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                      <circle cx="9" cy="7" r="4" />
+                      <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+                      <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                    </svg>
+                  </span>
+                )}
                 @{t.name}
                 <button
                   onClick={() => removeTag(t.type, t.id)}
@@ -275,7 +299,11 @@ export default function CreatePostModal({ user, friends = [], myLeaderGroups = [
 
         {/* Hint */}
         <div style={{ padding: '0 20px 8px', fontSize: '11px', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '6px' }}>
-          <span>💡</span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ color: '#fbbf24', flexShrink: 0 }}>
+            <path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A5 5 0 0 0 8 8c0 1 .3 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5" />
+            <line x1="9" y1="18" x2="15" y2="18" />
+            <line x1="10" y1="22" x2="14" y2="22" />
+          </svg>
           <span>Gõ <strong style={{ color: 'var(--primary-light)' }}>@</strong> để tag bạn bè hoặc nhóm học bạn đang làm trưởng nhóm</span>
         </div>
 
@@ -295,10 +323,26 @@ export default function CreatePostModal({ user, friends = [], myLeaderGroups = [
               fontFamily: 'inherit', fontSize: '14px', fontWeight: 700,
               color: text.trim() && !loading ? 'white' : 'var(--text-muted)',
               transition: 'var(--transition)',
-              display: 'flex', alignItems: 'center', gap: '6px',
+              display: 'flex', alignItems: 'center', gap: '8px',
             }}
           >
-            {loading ? '⏳ Đang đăng...' : '📤 Đăng bài'}
+            {loading ? (
+              <>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" style={{ animation: 'spin 1s linear infinite' }}>
+                  <circle cx="12" cy="12" r="10" stroke="currentColor" strokeOpacity="0.25" />
+                  <path d="M12 2a10 10 0 0 1 10 10" fill="none" />
+                </svg>
+                <span>Đang đăng...</span>
+              </>
+            ) : (
+              <>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ transform: 'rotate(-45deg)' }}>
+                  <line x1="22" y1="2" x2="11" y2="13" />
+                  <polygon points="22 2 15 22 11 13 2 9 22 2" />
+                </svg>
+                <span>Đăng bài</span>
+              </>
+            )}
           </button>
         </div>
       </div>

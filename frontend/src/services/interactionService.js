@@ -293,7 +293,6 @@ export const toggleLikePost = async (postId, userId, emoji) => {
 
   if (updateError) throw new Error(`Lỗi lưu tương tác: ${updateError.message}`);
 
-  // Also write to post_reactions table for reliable Realtime notifications
   try {
     if (emoji) {
       // Upsert: update emoji if exists, insert if not
@@ -303,7 +302,11 @@ export const toggleLikePost = async (postId, userId, emoji) => {
           { post_id: parseInt(postId, 10), user_id: parseInt(userId, 10), emoji },
           { onConflict: 'post_id,user_id' }
         );
-      if (prError) console.error("[Realtime] Lỗi upsert post_reactions:", prError);
+      if (prError) {
+        if (import.meta.env.DEV) {
+          console.error("[Realtime] Lỗi upsert post_reactions:", prError);
+        }
+      }
     } else {
       // Remove the reaction
       const { error: delError } = await supabase
@@ -311,10 +314,16 @@ export const toggleLikePost = async (postId, userId, emoji) => {
         .delete()
         .eq('post_id', parseInt(postId, 10))
         .eq('user_id', parseInt(userId, 10));
-      if (delError) console.error("[Realtime] Lỗi delete post_reactions:", delError);
+      if (delError) {
+        if (import.meta.env.DEV) {
+          console.error("[Realtime] Lỗi delete post_reactions:", delError);
+        }
+      }
     }
   } catch (e) {
-    console.error("[Realtime] Lỗi không xác định khi lưu post_reactions:", e);
+    if (import.meta.env.DEV) {
+      console.error("[Realtime] Lỗi không xác định khi lưu post_reactions:", e);
+    }
   }
 
   return likes;
@@ -437,7 +446,9 @@ const getSearchSuggestionsBackground = async () => {
     cachedSuggestions = result;
     return result;
   } catch (err) {
-    console.error('Error fetching search suggestions:', err);
+    if (import.meta.env.DEV) {
+      console.error('Error fetching search suggestions:', err);
+    }
     return cachedSuggestions || { users: [], groups: [] };
   }
 };

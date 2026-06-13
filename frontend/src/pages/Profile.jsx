@@ -287,7 +287,12 @@ export default function Profile() {
             {avatarPreview
               ? <img src={avatarPreview} className="avatar-img" alt="avatar" />
               : <div className="avatar-placeholder">{initials}</div>}
-            <button className="avatar-edit-btn" onClick={() => fileRef.current?.click()} title="Đổi ảnh">📷</button>
+            <button className="avatar-edit-btn" onClick={() => fileRef.current?.click()} title="Đổi ảnh" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
+                <circle cx="12" cy="13" r="4" />
+              </svg>
+            </button>
             <input ref={fileRef} type="file" accept="image/*" style={{ display: 'none' }} onChange={handleAvatarChange} />
           </div>
           <button 
@@ -312,28 +317,48 @@ export default function Profile() {
             onMouseEnter={e => { e.currentTarget.style.background = 'rgba(108,99,255,0.15)'; e.currentTarget.style.color = 'var(--secondary)'; }}
             onMouseLeave={e => { e.currentTarget.style.background = 'rgba(108,99,255,0.08)'; e.currentTarget.style.color = 'var(--primary-light)'; }}
           >
-            📷 Thay đổi ảnh đại diện
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+              <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
+              <circle cx="12" cy="13" r="4" />
+            </svg>
+            Thay đổi ảnh đại diện
           </button>
           <div className="profile-name">{user?.fullName}</div>
           <div className="profile-email">{user?.email}</div>
           <div className="profile-badge"> Sinh viên</div>
-
+ 
           <div className="profile-meta">
             {user?.university && (
               <div className="profile-meta-item">
-                <span className="icon">🏫</span>
+                <span className="icon" style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', color: 'var(--primary-light)' }}>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
+                    <path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5" />
+                  </svg>
+                </span>
                 <span>{user.university}</span>
               </div>
             )}
             {user?.major && (
               <div className="profile-meta-item">
-                <span className="icon">📚</span>
+                <span className="icon" style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', color: 'var(--primary-light)' }}>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z" />
+                    <path d="M6 6h10" />
+                    <path d="M6 10h10" />
+                  </svg>
+                </span>
                 <span>{user.major}</span>
               </div>
             )}
             {parsed.province && parsed.district && (
               <div className="profile-meta-item">
-                <span className="icon">📍</span>
+                <span className="icon" style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', color: 'var(--primary-light)' }}>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/>
+                    <circle cx="12" cy="10" r="3"/>
+                  </svg>
+                </span>
                 <span>
                   {parsed.province}, {parsed.district}
                   {parsed.hideLocation && <span style={{ color: 'var(--text-muted)', fontSize: '11.5px', marginLeft: '6px' }}>(Đã ẩn)</span>}
@@ -347,7 +372,14 @@ export default function Profile() {
               </div>
             )}
             <div className="profile-meta-item">
-              <span className="icon">📅</span>
+              <span className="icon" style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', color: 'var(--primary-light)' }}>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <rect width="18" height="18" x="3" y="4" rx="2" ry="2" />
+                  <line x1="16" y1="2" x2="16" y2="6" />
+                  <line x1="8" y1="2" x2="8" y2="6" />
+                  <line x1="3" y1="10" x2="21" y2="10" />
+                </svg>
+              </span>
               <span>
                 Tham gia: {new Date(user?.createdAt).toLocaleDateString('vi-VN')}
                 {parsed.hideJoinDate && <span style={{ color: 'var(--text-muted)', fontSize: '11.5px', marginLeft: '6px' }}>(Đã ẩn)</span>}
@@ -474,7 +506,12 @@ export default function Profile() {
 
                   {/* Thiết lập quyền riêng tư */}
                   <div className="form-group" style={{ marginTop: '20px', marginBottom: '20px' }}>
-                    <label className="form-label" style={{ fontWeight: 700, display: 'block', marginBottom: '10px' }}>🛡️ Thiết lập quyền riêng tư</label>
+                    <label className="form-label" style={{ fontWeight: 700, display: 'inline-flex', alignItems: 'center', gap: '6px', marginBottom: '10px' }}>
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ color: 'var(--accent)' }}>
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                      </svg>
+                      Thiết lập quyền riêng tư
+                    </label>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', background: 'var(--bg-input)', border: '1px solid var(--border)', borderRadius: 'var(--radius-md)', padding: '16px' }}>
                       <label style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer', fontSize: '13.5px', color: 'var(--text-primary)', margin: 0 }}>
                         <input
@@ -529,11 +566,27 @@ export default function Profile() {
                     <div className="form-input-wrap">
                       <input id="p-curpwd" name="current" type={showPwd ? 'text' : 'password'}
                         className="form-input" placeholder="Nhập mật khẩu hiện tại"
-                        value={pwd.current} onChange={handlePwdChange} />
-                      <span className="input-icon"></span>
+                        value={pwd.current} onChange={handlePwdChange} style={{ paddingLeft: '42px' }} />
+                      <span className="input-icon" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <rect width="18" height="11" x="3" y="11" rx="2" ry="2"/>
+                          <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                        </svg>
+                      </span>
                       <button type="button" className="password-toggle"
-                        onClick={() => setShowPwd(v => !v)} tabIndex={-1}>
-                        {showPwd ? '' : '️'}
+                        onClick={() => setShowPwd(v => !v)} tabIndex={-1}
+                        style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        {showPwd ? (
+                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                            <circle cx="12" cy="12" r="3"/>
+                          </svg>
+                        ) : (
+                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/>
+                            <line x1="1" y1="1" x2="23" y2="23"/>
+                          </svg>
+                        )}
                       </button>
                     </div>
                   </div>
@@ -542,8 +595,13 @@ export default function Profile() {
                     <div className="form-input-wrap">
                       <input id="p-newpwd" name="newPass" type={showPwd ? 'text' : 'password'}
                         className="form-input" placeholder="Tối thiểu 6 ký tự"
-                        value={pwd.newPass} onChange={handlePwdChange} />
-                      <span className="input-icon"></span>
+                        value={pwd.newPass} onChange={handlePwdChange} style={{ paddingLeft: '42px' }} />
+                      <span className="input-icon" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <rect width="18" height="11" x="3" y="11" rx="2" ry="2"/>
+                          <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                        </svg>
+                      </span>
                     </div>
                   </div>
                   <div className="form-group">
@@ -551,8 +609,13 @@ export default function Profile() {
                     <div className="form-input-wrap">
                       <input id="p-confpwd" name="confirm" type={showPwd ? 'text' : 'password'}
                         className="form-input" placeholder="Nhập lại mật khẩu mới"
-                        value={pwd.confirm} onChange={handlePwdChange} />
-                      <span className="input-icon">️</span>
+                        value={pwd.confirm} onChange={handlePwdChange} style={{ paddingLeft: '42px' }} />
+                      <span className="input-icon" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <rect width="18" height="11" x="3" y="11" rx="2" ry="2"/>
+                          <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                        </svg>
+                      </span>
                     </div>
                   </div>
                   <button type="submit" className="btn btn-primary" disabled={savingPwd}>

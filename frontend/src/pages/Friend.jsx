@@ -96,7 +96,11 @@ function PersonCard({ person, actions, isOnline }) {
               fontSize: '11px', fontWeight: 700, padding: '2px 8px', borderRadius: '12px',
               display: 'inline-flex', alignItems: 'center', gap: '4px'
             }}>
-              📍 {person.proximityBadge}
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+                <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/>
+                <circle cx="12" cy="10" r="3"/>
+              </svg>
+              {person.proximityBadge}
             </span>
           )}
         </div>
@@ -130,22 +134,51 @@ function PersonCard({ person, actions, isOnline }) {
 
 //  Nút nhỏ 
 function Btn({ children, onClick, variant = 'primary', disabled = false }) {
+  const [hovered, setHovered] = useState(false);
   const styles = {
-    primary: { background: 'var(--primary)', color: 'white', border: 'none' },
-    secondary: { background: 'transparent', color: 'var(--text-secondary)', border: '1px solid var(--border)' },
-    danger: { background: 'transparent', color: 'var(--error)', border: '1px solid rgba(239,68,68,0.3)' },
-    success: { background: 'rgba(34,197,94,0.15)', color: 'var(--success)', border: '1px solid rgba(34,197,94,0.3)' },
+    primary: {
+      background: 'linear-gradient(135deg, var(--primary), var(--primary-light))',
+      color: 'white',
+      border: 'none',
+      boxShadow: hovered ? '0 4px 12px rgba(108,99,255,0.45)' : 'none',
+    },
+    secondary: {
+      background: hovered ? 'rgba(255,255,255,0.06)' : 'transparent',
+      color: hovered ? 'var(--text-primary)' : 'var(--text-secondary)',
+      border: hovered ? '1px solid rgba(255,255,255,0.25)' : '1px solid var(--border)',
+    },
+    danger: {
+      background: hovered ? 'rgba(239,68,68,0.12)' : 'transparent',
+      color: 'var(--error)',
+      border: hovered ? '1px solid rgba(239,68,68,0.5)' : '1px solid rgba(239,68,68,0.3)',
+      boxShadow: hovered ? '0 4px 12px rgba(239,68,68,0.15)' : 'none',
+    },
+    success: {
+      background: hovered ? 'rgba(34,197,94,0.25)' : 'rgba(34,197,94,0.15)',
+      color: 'var(--success)',
+      border: hovered ? '1px solid rgba(34,197,94,0.5)' : '1px solid rgba(34,197,94,0.3)',
+      boxShadow: hovered ? '0 4px 12px rgba(34,197,94,0.15)' : 'none',
+    },
   };
   return (
-    <button onClick={onClick} disabled={disabled} style={{
-      ...styles[variant],
-      padding: '8px 16px', borderRadius: '20px', cursor: disabled ? 'default' : 'pointer',
-      fontSize: '13px', fontWeight: 600, fontFamily: 'inherit',
-      transition: 'var(--transition)', opacity: disabled ? 0.5 : 1,
-      whiteSpace: 'nowrap',
-    }}
-      onMouseEnter={e => { if (!disabled) e.currentTarget.style.opacity = '0.8'; }}
-      onMouseLeave={e => { if (!disabled) e.currentTarget.style.opacity = '1'; }}
+    <button
+      onClick={onClick}
+      disabled={disabled}
+      onMouseEnter={() => !disabled && setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      style={{
+        ...styles[variant],
+        padding: '8px 16px',
+        borderRadius: '20px',
+        cursor: disabled ? 'default' : 'pointer',
+        fontSize: '13px',
+        fontWeight: 600,
+        fontFamily: 'inherit',
+        transition: 'all 0.25s cubic-bezier(0.4, 0, 0.2, 1)',
+        opacity: disabled ? 0.5 : 1,
+        transform: hovered && !disabled ? 'translateY(-1px)' : 'none',
+        whiteSpace: 'nowrap',
+      }}
     >
       {children}
     </button>
@@ -412,8 +445,11 @@ export default function Friends() {
             </p>
 
             {/* Search */}
-            <div className="search-container">
-              <span style={{ fontSize: '14px' }}>🔍</span>
+             <div className="search-container">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ color: 'var(--text-muted)', flexShrink: 0 }}>
+                <circle cx="11" cy="11" r="8"/>
+                <path d="m21 21-4.3-4.3"/>
+              </svg>
               <input
                 className="search-input"
                 placeholder="Tìm kiếm theo tên, trường..."
@@ -499,7 +535,12 @@ export default function Friends() {
                 {tab === 'nearby' && (
                   !myLocation.province ? (
                     <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 'var(--radius)', padding: '32px 24px', textAlign: 'center' }}>
-                      <div style={{ fontSize: '40px', marginBottom: '12px' }}>📍</div>
+                      <div style={{ color: 'var(--primary-light)', display: 'flex', justifyContent: 'center', marginBottom: '12px' }}>
+                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" style={{ filter: 'drop-shadow(0 0 8px rgba(108,99,255,0.4))' }}>
+                          <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/>
+                          <circle cx="12" cy="10" r="3"/>
+                        </svg>
+                      </div>
                       <h3 style={{ margin: '0 0 8px', fontSize: '16px', fontWeight: 700, color: 'var(--text-primary)' }}>Chưa thiết lập vị trí</h3>
                       <p style={{ fontSize: '13.5px', color: 'var(--text-muted)', maxWidth: '340px', margin: '0 auto 16px', lineHeight: 1.5 }}>
                         Cập nhật địa phương sinh sống (Tỉnh/Thành phố & Quận/Huyện) trong trang cá nhân của bạn để tìm các bạn học quanh đây nhé!
@@ -510,7 +551,7 @@ export default function Friends() {
                     </div>
                   ) : (
                     filter(nearbySuggestions).length === 0
-                      ? <EmptyState icon="📍" text={search ? 'Không tìm thấy bạn học lân cận nào phù hợp.' : 'Không tìm thấy bạn học lân cận nào xung quanh.'} />
+                      ? <EmptyState icon={<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: 'var(--text-muted)' }}><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>} text={search ? 'Không tìm thấy bạn học lân cận nào phù hợp.' : 'Không tìm thấy bạn học lân cận nào xung quanh.'} />
                       : filter(nearbySuggestions).map(p => (
                         <PersonCard key={p.userId} person={p} actions={
                           <Btn variant="primary" disabled={actionLoading[p.userId]} onClick={() => handleSend(p)}>
@@ -564,7 +605,13 @@ export default function Friends() {
             }}
           >
             <div style={{ textAlign: 'center', marginBottom: '20px' }}>
-              <div style={{ fontSize: '48px', marginBottom: '12px' }}>👥</div>
+              <div style={{ color: 'var(--error)', display: 'flex', justifyContent: 'center', marginBottom: '12px' }}>
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{ filter: 'drop-shadow(0 0 8px rgba(239,68,68,0.25))' }}>
+                  <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                  <circle cx="9" cy="7" r="4" />
+                  <line x1="17" y1="11" x2="23" y2="11" />
+                </svg>
+              </div>
               <h2 style={{ fontSize: '18px', fontWeight: 800, color: 'var(--text-primary)', margin: '0 0 8px' }}>
                 Hủy kết bạn?
               </h2>

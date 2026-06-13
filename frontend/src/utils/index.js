@@ -18,10 +18,6 @@ export function timeAgo(iso) {
   return `${Math.floor(diff / 86400)} ngày trước`;
 }
 
-/**
- * Giả lập độ trễ mạng (dùng trong localStorage-based services)
- * @param {number} ms - milliseconds
- */
 export const delay = (ms) => new Promise((r) => setTimeout(r, ms));
 
 // ─── FILE ──────────────────────────────────────────────────────────

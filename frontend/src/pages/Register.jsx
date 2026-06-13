@@ -84,7 +84,10 @@ function LocationModal({ isOpen, onClose, title, options, value, onSelect }) {
           background: 'rgba(255,255,255,0.03)', border: '1.5px solid rgba(255,255,255,0.1)',
           borderRadius: '12px', padding: '10px 14px', marginBottom: '16px',
         }}>
-          <span style={{ fontSize: '14px', color: 'var(--text-muted)' }}>🔍</span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ color: 'var(--text-muted)', flexShrink: 0 }}>
+            <circle cx="11" cy="11" r="8"/>
+            <path d="m21 21-4.3-4.3"/>
+          </svg>
           <input
             placeholder="Tìm kiếm nhanh..."
             value={search}
@@ -265,8 +268,13 @@ export default function Register() {
         </div>
 
         {error && (
-          <div className="alert alert-error">
-            <span>⚠️</span><span>{error}</span>
+          <div className="alert alert-error" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+              <circle cx="12" cy="12" r="10" />
+              <line x1="12" y1="8" x2="12" y2="12" />
+              <line x1="12" y1="16" x2="12.01" y2="16" />
+            </svg>
+            <span>{error}</span>
           </div>
         )}
 
@@ -278,7 +286,12 @@ export default function Register() {
               <div className="form-input-wrap">
                 <input id="reg-name" name="fullName" type="text" className="form-input"
                   placeholder="Họ và tên đầy đủ của bạn" value={form.fullName} onChange={handleChange} />
-                <span className="input-icon">👤</span>
+                <span className="input-icon" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
+                    <circle cx="12" cy="7" r="4" />
+                  </svg>
+                </span>
               </div>
             </div>
 
@@ -287,7 +300,12 @@ export default function Register() {
               <div className="form-input-wrap">
                 <input id="reg-email" name="email" type="email" className="form-input"
                   placeholder="Email dùng để đăng nhập" value={form.email} onChange={handleChange} />
-                <span className="input-icon">✉️</span>
+                <span className="input-icon" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <rect width="20" height="16" x="2" y="4" rx="2" />
+                    <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+                  </svg>
+                </span>
               </div>
             </div>
 
@@ -298,7 +316,12 @@ export default function Register() {
                 <input id="reg-pass" name="password" type={showPass ? 'text' : 'password'}
                   className="form-input" placeholder="Tối thiểu 6 ký tự"
                   value={form.password} onChange={handleChange} />
-                <span className="input-icon">🔒</span>
+                <span className="input-icon" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <rect width="18" height="11" x="3" y="11" rx="2" ry="2" />
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                  </svg>
+                </span>
                 <button type="button" className="password-toggle"
                   onClick={() => setShowPass(v => !v)} tabIndex={-1}
                   style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -323,7 +346,12 @@ export default function Register() {
                 <input id="reg-confirm" name="confirmPassword" type={showConfirm ? 'text' : 'password'}
                   className="form-input" placeholder="Nhập lại mật khẩu"
                   value={form.confirmPassword} onChange={handleChange} />
-                <span className="input-icon">🔒</span>
+                <span className="input-icon" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <rect width="18" height="11" x="3" y="11" rx="2" ry="2" />
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                  </svg>
+                </span>
                 <button type="button" className="password-toggle"
                   onClick={() => setShowConfirm(v => !v)} tabIndex={-1}
                   style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -380,7 +408,12 @@ export default function Register() {
                 <div className="form-input-wrap">
                   <input id="reg-uni-custom" name="customUniversity" type="text" className="form-input"
                     placeholder="Nhập tên trường đại học của bạn" value={form.customUniversity} onChange={handleChange} />
-                  <span className="input-icon">🏫</span>
+                  <span className="input-icon" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
+                      <path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5" />
+                    </svg>
+                  </span>
                 </div>
               </div>
             )}
@@ -414,7 +447,12 @@ export default function Register() {
                 <div className="form-input-wrap">
                   <input id="reg-major-custom" name="customMajor" type="text" className="form-input"
                     placeholder="Nhập ngành học của bạn" value={form.customMajor} onChange={handleChange} />
-                  <span className="input-icon">🎓</span>
+                  <span className="input-icon" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
+                      <path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5" />
+                    </svg>
+                  </span>
                 </div>
               </div>
             )}
@@ -422,7 +460,11 @@ export default function Register() {
             {/* ─── Khu vực sinh sống thiết kế xếp dọc chuẩn chỉnh ─── */}
             <div style={{ marginTop: '24px', marginBottom: '8px' }}>
               <label className="form-label" style={{ display: 'flex', alignItems: 'center', gap: '6px', fontWeight: 800 }}>
-                📍 Khu vực sinh sống
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ color: 'var(--primary-light)', flexShrink: 0 }}>
+                  <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/>
+                  <circle cx="12" cy="10" r="3"/>
+                </svg>
+                Khu vực sinh sống
               </label>
             </div>
             

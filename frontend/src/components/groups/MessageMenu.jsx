@@ -75,7 +75,10 @@ export default function MessageMenu({ x, y, isMine, isPinned, canPin, onDelete, 
           transition: 'background 0.12s',
         }}
       >
-        <span style={{ fontSize: '16px' }}>↩️</span>
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+          <polyline points="9 17 4 12 9 7" />
+          <path d="M20 18v-2a4 4 0 0 0-4-4H4" />
+        </svg>
         Trả lời
       </button>
 
@@ -105,7 +108,11 @@ export default function MessageMenu({ x, y, isMine, isPinned, canPin, onDelete, 
             transition: 'background 0.12s',
           }}
         >
-          <span style={{ fontSize: '16px' }}>📌</span>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+            <line x1="18" y1="8" x2="22" y2="12" />
+            <line x1="12" y1="2" x2="22" y2="12" />
+            <path d="M12 2 2 12h5l9 9v-5l5-5Z" />
+          </svg>
           {isPinned ? 'Bỏ ghim tin nhắn' : 'Ghim tin nhắn'}
         </button>
       )}
@@ -136,7 +143,11 @@ export default function MessageMenu({ x, y, isMine, isPinned, canPin, onDelete, 
             transition: 'background 0.12s',
           }}
         >
-          <span style={{ fontSize: '16px' }}>🗑️</span>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+            <path d="M3 6h18" />
+            <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" />
+            <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" />
+          </svg>
           Xóa tin nhắn
         </button>
       )}

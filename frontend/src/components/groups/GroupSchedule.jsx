@@ -2,6 +2,19 @@ import { useState, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { geocodeAddress, staticMapUrl, googleMapsSearchUrl } from '../../utils/geocoding';
 
+const format24h = (dateStr) => {
+  if (!dateStr) return '';
+  const d = new Date(dateStr);
+  if (isNaN(d.getTime())) return '';
+  const pad = (n) => String(n).padStart(2, '0');
+  const hours = pad(d.getHours());
+  const minutes = pad(d.getMinutes());
+  const day = pad(d.getDate());
+  const month = pad(d.getMonth() + 1);
+  const year = d.getFullYear();
+  return `${hours}:${minutes} - ${day}/${month}/${year}`;
+};
+
 export default function GroupSchedule({
   group,
   user,
@@ -81,7 +94,7 @@ export default function GroupSchedule({
     setEditGeoLoading(false);
   }, [group?.meetingMode]);
 
-  const isLeaderOrDeputy = user?.id === group?.creatorId || user?.id === group?.deputyId;
+  const isLeaderOrDeputy = user?.id === group?.creatorId || (group?.deputyIds ? group.deputyIds.some(id => String(id) === String(user?.id)) : user?.id === group?.deputyId);
 
   const getLocationStr = (loc) => typeof loc === 'string' ? loc : (loc?.name || loc?.address || '');
 
@@ -108,21 +121,28 @@ export default function GroupSchedule({
             background: 'var(--bg-card)',
             border: '1px solid var(--border)',
             borderRadius: 'var(--radius-lg)',
-            padding: '24px',
+            padding: '16px 20px',
             boxShadow: 'var(--shadow)',
           }}
         >
-          <h3 style={{ marginBottom: '16px', fontSize: '18px', color: 'var(--text-primary)' }}>
+          <h3 style={{ marginBottom: '12px', fontSize: '14px', fontWeight: 700, color: 'var(--text-primary)', textTransform: 'uppercase', letterSpacing: '0.05em', display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ color: 'var(--primary-light)' }}>
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+              <line x1="16" y1="2" x2="16" y2="6" />
+              <line x1="8" y1="2" x2="8" y2="6" />
+              <line x1="3" y1="10" x2="21" y2="10" />
+            </svg>
             Lên lịch học nhóm mới
           </h3>
-          <form onSubmit={handleScheduleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-            <div className="grid-2col-responsive" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+          <form onSubmit={handleScheduleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+            <div className="grid-2col-responsive" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
               <div className="form-group" style={{ marginBottom: 0 }}>
-                <label className="form-label">Chủ đề học *</label>
+                <label className="form-label" style={{ fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '4px' }}>Chủ đề học *</label>
                 <div className="form-input-wrap">
                   <input
                     type="text"
                     className="form-input no-icon"
+                    style={{ padding: '7px 12px', fontSize: '13px' }}
                     placeholder="Chủ đề hoặc nội dung buổi học hôm nay"
                     value={newScheduleTopic}
                     onChange={(e) => setNewScheduleTopic(e.target.value)}
@@ -131,11 +151,12 @@ export default function GroupSchedule({
                 </div>
               </div>
               <div className="form-group" style={{ marginBottom: 0 }}>
-                <label className="form-label">Thời gian học *</label>
+                <label className="form-label" style={{ fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '4px' }}>Thời gian học *</label>
                 <div className="form-input-wrap">
                   <input
                     type="datetime-local"
                     className="form-input no-icon"
+                    style={{ padding: '7px 12px', fontSize: '13px' }}
                     value={newScheduleDateTime}
                     min={new Date(new Date() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 16)}
                     max={(() => { const d = new Date(); d.setDate(d.getDate() + 7); return new Date(d - d.getTimezoneOffset() * 60000).toISOString().slice(0, 16); })()}
@@ -143,12 +164,12 @@ export default function GroupSchedule({
                     required
                   />
                 </div>
-                <p style={{ margin: '4px 0 0', fontSize: 11, color: 'var(--text-muted)' }}>Chỉ đặt lịch tối đa 7 ngày tới</p>
+                <p style={{ margin: '3px 0 0', fontSize: 10, color: 'var(--text-muted)' }}>Chỉ đặt lịch tối đa 7 ngày tới</p>
               </div>
             </div>
 
             <div className="form-group" style={{ marginBottom: 0 }}>
-              <label className="form-label">
+              <label className="form-label" style={{ fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '4px' }}>
                 {group.meetingMode === 'offline' ? 'Địa điểm gặp mặt' : 'Link phòng học *'}
               </label>
               {group.meetingMode === 'offline' ? (
@@ -231,7 +252,13 @@ export default function GroupSchedule({
                       )}
                       <div style={{ padding: '10px 14px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8 }}>
                         <div>
-                          <div style={{ fontSize: 12, fontWeight: 700, color: '#10b981' }}>📍 {activeLocationName}</div>
+                          <div style={{ fontSize: 12, fontWeight: 700, color: '#10b981', display: 'inline-flex', alignItems: 'center', gap: '3px' }}>
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                              <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+                              <circle cx="12" cy="10" r="3" />
+                            </svg>
+                            {activeLocationName}
+                          </div>
                           {activeGeoPreview.formattedAddress && activeGeoPreview.formattedAddress !== activeLocationName && (
                             <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 2 }}>{activeGeoPreview.formattedAddress}</div>
                           )}
@@ -300,7 +327,11 @@ export default function GroupSchedule({
                   }}
                 >
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <span style={{ fontSize: '16px' }}>✅</span>
+                    <div style={{ display: 'flex', alignItems: 'center', color: '#10b981' }}>
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <polyline points="20 6 9 17 4 12" />
+                      </svg>
+                    </div>
                     <span style={{ fontSize: '13px', color: 'var(--secondary)', fontWeight: 600 }}>
                       Phòng học đã sẵn sàng
                     </span>
@@ -328,7 +359,11 @@ export default function GroupSchedule({
                         whiteSpace: 'nowrap',
                       }}
                     >
-                      🔗 Sao chép link
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: '4px' }}>
+                        <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
+                        <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
+                      </svg>
+                      Sao chép link
                     </button>
                     <Link
                       to={`${newScheduleLocation}?group=${encodeURIComponent(group?.name || '')}&groupId=${group?.id || ''}`}
@@ -357,28 +392,80 @@ export default function GroupSchedule({
             </div>
 
             <div className="form-group" style={{ marginBottom: 0 }}>
-              <label className="form-label">Mô tả chi tiết</label>
+              <label className="form-label" style={{ fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '4px' }}>Mô tả chi tiết</label>
               <textarea
                 className="form-textarea"
-                placeholder="Mô tả nội dung buổi học, tài liệu cần chuẩn bị, yêu cầu trước khi học..."
+                style={{ height: '52px', resize: 'none', fontSize: '13px', padding: '7px 12px' }}
+                placeholder="Mô tả nội dung buổi học, tài liệu cần chuẩn bị..."
                 value={newScheduleDesc}
                 onChange={(e) => setNewScheduleDesc(e.target.value)}
               />
             </div>
             <button
               type="submit"
-              className="btn btn-primary"
-              style={{ width: 'max-content', alignSelf: 'flex-end', padding: '10px 24px' }}
+              className="btn"
               disabled={isSubmittingSchedule}
+              style={{
+                width: 'max-content',
+                alignSelf: 'flex-end',
+                padding: '8px 20px',
+                fontSize: '13px',
+                fontWeight: 700,
+                borderRadius: '8px',
+                background: 'linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%)',
+                color: '#fff',
+                border: 'none',
+                boxShadow: '0 4px 12px rgba(108, 99, 255, 0.25)',
+                cursor: 'pointer',
+                transition: 'all 0.2s ease',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px'
+              }}
+              onMouseEnter={(e) => {
+                if (!isSubmittingSchedule) {
+                  e.currentTarget.style.transform = 'translateY(-1px)';
+                  e.currentTarget.style.boxShadow = '0 6px 16px rgba(108, 99, 255, 0.4)';
+                }
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow = '0 4px 12px rgba(108, 99, 255, 0.25)';
+              }}
             >
-              {isSubmittingSchedule ? 'Đang lên lịch...' : 'Lên lịch học'}
+              {isSubmittingSchedule ? (
+                <>
+                  <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true" style={{ width: '12px', height: '12px', border: '2px solid transparent', borderTopColor: '#fff', borderRadius: '50%', display: 'inline-block', animation: 'spin 1s linear infinite', marginRight: '4px' }}></span>
+                  Đang lên lịch...
+                </>
+              ) : (
+                <>
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ color: '#fff' }}>
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                    <line x1="16" y1="2" x2="16" y2="6" />
+                    <line x1="8" y1="2" x2="8" y2="6" />
+                    <line x1="3" y1="10" x2="21" y2="10" />
+                  </svg>
+                  Lên lịch học
+                </>
+              )}
             </button>
           </form>
         </div>
       )}
 
-      <div id="group-schedule-list" style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-        <h3 style={{ fontSize: '18px', marginBottom: '8px' }}>Lịch học sắp tới ({schedules.length})</h3>
+      <div id="group-schedule-list" style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+        <h3 style={{ fontSize: '13px', fontWeight: 700, marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '6px' }}>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <line x1="8" y1="6" x2="21" y2="6" />
+            <line x1="8" y1="12" x2="21" y2="12" />
+            <line x1="8" y1="18" x2="21" y2="18" />
+            <line x1="3" y1="6" x2="3.01" y2="6" />
+            <line x1="3" y1="12" x2="3.01" y2="12" />
+            <line x1="3" y1="18" x2="3.01" y2="18" />
+          </svg>
+          Lịch học sắp tới ({schedules.length})
+        </h3>
         {schedules.length === 0 ? (
           <div
             style={{
@@ -403,35 +490,39 @@ export default function GroupSchedule({
                     background: 'var(--bg-card)',
                     border: '1px solid var(--border)',
                     borderRadius: 'var(--radius-sm)',
-                    padding: '20px',
+                    padding: '12px 16px',
                     display: 'flex',
                     flexDirection: 'column',
-                    gap: '12px',
+                    gap: '8px',
                     position: 'relative',
                   }}
                 >
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '16px' }}>
-                    <div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '12px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px', minWidth: 0 }}>
                       <span
                         style={{
-                          fontSize: '11px',
-                          background: 'var(--primary-light)',
-                          color: 'var(--bg)',
-                          padding: '2px 8px',
-                          borderRadius: '4px',
+                          flexShrink: 0,
+                          fontSize: '10px',
+                          background: 'rgba(108,99,255,0.12)',
+                          color: 'var(--primary-light)',
+                          padding: '3px 8px',
+                          borderRadius: '6px',
                           fontWeight: 700,
-                          textTransform: 'uppercase',
+                          whiteSpace: 'nowrap',
+                          border: '1px solid rgba(108,99,255,0.2)',
                         }}
                       >
-                        {new Date(sched.dateTime).toLocaleString('vi-VN')}
+                        {format24h(sched.dateTime)}
                       </span>
                       <h4
                         style={{
-                          fontSize: '17px',
+                          fontSize: '14px',
                           fontWeight: 700,
                           color: 'var(--text-primary)',
-                          marginTop: '8px',
-                          marginBottom: '4px',
+                          margin: 0,
+                          overflow: 'hidden',
+                          textOverflow: 'ellipsis',
+                          whiteSpace: 'nowrap',
                         }}
                       >
                         {sched.topic}
@@ -446,9 +537,9 @@ export default function GroupSchedule({
                             border: '1.5px solid rgba(108, 99, 255, 0.2)',
                             color: 'var(--primary-light)',
                             cursor: 'pointer',
-                            borderRadius: '8px',
-                            padding: '6px 12px',
-                            fontSize: '12px',
+                            borderRadius: '6px',
+                            padding: '4px 10px',
+                            fontSize: '11px',
                             fontWeight: 600,
                           }}
                         >
@@ -461,9 +552,9 @@ export default function GroupSchedule({
                             border: '1.5px solid rgba(239, 68, 68, 0.2)',
                             color: 'var(--error)',
                             cursor: 'pointer',
-                            borderRadius: '8px',
-                            padding: '6px 12px',
-                            fontSize: '12px',
+                            borderRadius: '6px',
+                            padding: '4px 10px',
+                            fontSize: '11px',
                             fontWeight: 600,
                           }}
                         >
@@ -475,13 +566,13 @@ export default function GroupSchedule({
                   <div
                     style={{
                       background: 'rgba(255, 255, 255, 0.02)',
-                      padding: '12px 14px',
-                      borderRadius: '10px',
+                      padding: '8px 12px',
+                      borderRadius: '8px',
                       border: '1px solid var(--border)',
-                      fontSize: '13px',
+                      fontSize: '12px',
                       display: 'flex',
                       flexDirection: 'column',
-                      gap: '8px',
+                      gap: '6px',
                     }}
                   >
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
@@ -558,7 +649,10 @@ export default function GroupSchedule({
                         // Plain text location (offline / custom)
                         <div style={{ marginTop: '2px' }}>
                           <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                            <span style={{ fontSize: 14, flexShrink: 0 }}>📍</span>
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, color: '#10b981' }}>
+                              <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+                              <circle cx="12" cy="10" r="3" />
+                            </svg>
                             <div style={{ fontSize: 13, fontWeight: 600, color: '#10b981' }}>{sched.location}</div>
                           </div>
                           <a
@@ -580,7 +674,7 @@ export default function GroupSchedule({
                     )}
                   </div>
                   <div style={{ fontSize: '11px', color: 'var(--text-muted)', textAlign: 'right' }}>
-                    Lên lịch {sched.creatorName ? `bởi ${sched.creatorName}` : ''} vào {new Date(sched.createdAt).toLocaleDateString('vi-VN')}
+                    Lên lịch {sched.creatorName ? `bởi ${sched.creatorName}` : ''} vào {format24h(sched.createdAt)}
                   </div>
                 </div>
               );
@@ -696,7 +790,13 @@ export default function GroupSchedule({
                       <img src={editGeoPreview.imgUrl} alt="map" style={{ width: '100%', height: 130, objectFit: 'cover', display: 'block' }} onError={(e) => { e.currentTarget.style.display = 'none'; }} />
                     )}
                     <div style={{ padding: '8px 12px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8, background: 'rgba(16,185,129,0.05)' }}>
-                      <span style={{ fontSize: 12, fontWeight: 600, color: '#10b981' }}>📍 {editScheduleLocation}</span>
+                      <span style={{ fontSize: 12, fontWeight: 600, color: '#10b981', display: 'inline-flex', alignItems: 'center', gap: '3px' }}>
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+                          <circle cx="12" cy="10" r="3" />
+                        </svg>
+                        {editScheduleLocation}
+                      </span>
                       <a href={editGeoPreview.mapsUrl} target="_blank" rel="noopener noreferrer"
                         style={{ fontSize: 11, fontWeight: 700, color: '#fff', background: 'linear-gradient(135deg,#10b981,#059669)', padding: '4px 10px', borderRadius: 7, textDecoration: 'none', whiteSpace: 'nowrap' }}>
                         Mở Maps

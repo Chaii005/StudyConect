@@ -43,7 +43,9 @@ export default function GroupTable({ filteredGroups, groupSearch, setGroupSearch
             ) : filteredGroups.map((g) => {
               const isOnline = !g.meetingMode || g.meetingMode === 'online';
               const creator = users.find((u) => u.id === g.creatorId);
-              const deputy  = g.deputyId ? users.find((u) => u.id === g.deputyId) : null;
+              const groupDeputies = g.deputyIds 
+                ? g.deputyIds.map(id => users.find(u => u.id === id)).filter(Boolean)
+                : (g.deputyId ? [users.find((u) => u.id === g.deputyId)].filter(Boolean) : []);
               return (
                 <tr key={g.id} style={{ borderBottom: '1px solid var(--border)', fontSize: '13.5px', verticalAlign: 'middle' }} className="table-row-hover">
                   <td style={{ padding: '16px 10px' }}>
@@ -71,10 +73,14 @@ export default function GroupTable({ filteredGroups, groupSearch, setGroupSearch
                     ) : <span style={{ color: 'var(--text-muted)', fontSize: '12px' }}>ID: {g.creatorId || '—'}</span>}
                   </td>
                   <td style={{ padding: '16px 10px' }}>
-                    {deputy ? (
-                      <div>
-                        <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)' }}>{deputy.fullName || deputy.email}</div>
-                        <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '2px' }}>{deputy.email}</div>
+                    {groupDeputies.length > 0 ? (
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                        {groupDeputies.map((dep, idx) => (
+                          <div key={dep.id || idx}>
+                            <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)' }}>{dep.fullName || dep.email}</div>
+                            <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '2px' }}>{dep.email}</div>
+                          </div>
+                        ))}
                       </div>
                     ) : <span style={{ color: 'var(--text-muted)', fontSize: '12px' }}>—</span>}
                   </td>

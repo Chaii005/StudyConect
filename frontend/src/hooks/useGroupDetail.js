@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/set-state-in-effect */
-import { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { STORAGE_KEYS } from '@/constants/storageKeys';
 import { formatBytes } from '@/utils';
@@ -37,6 +37,16 @@ const getProcessedDeadlines = (deadList) => {
     };
   });
 };
+
+const sanitizeForStorage = (str) => {
+  if (!str) return 'file';
+  return str
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[đĐ]/g, 'd')
+    .replace(/[^a-zA-Z0-9.-]/g, '_');
+};
+
 
 export default function useGroupDetail(groupId, user, addToast) {
   const navigate = useNavigate();
@@ -155,12 +165,21 @@ export default function useGroupDetail(groupId, user, addToast) {
   }, [groupId, addToast]);
 
   const loadSubmissions = useCallback(() => {
-    return {};
-  }, []);
+    if (!groupId) return {};
+    try {
+      const stored = localStorage.getItem(STORAGE_KEYS.submissions(groupId));
+      return stored ? JSON.parse(stored) : {};
+    } catch {
+      return {};
+    }
+  }, [groupId]);
 
   const saveSubmissions = useCallback((data) => {
-    // do nothing in memory
-  }, []);
+    if (!groupId) return;
+    try {
+      localStorage.setItem(STORAGE_KEYS.submissions(groupId), JSON.stringify(data));
+    } catch { /* empty */ }
+  }, [groupId]);
 
   const fetchChatMessages = useCallback(async () => {
     if (!groupId) return;
@@ -361,7 +380,7 @@ export default function useGroupDetail(groupId, user, addToast) {
   useEffect(() => {
     let count = 0;
     if (group && deadlines.length > 0) {
-      const isLeader = String(user?.id) === String(group.creatorId) || String(user?.id) === String(group.deputyId);
+      const isLeader = String(user?.id) === String(group.creatorId) || (group.deputyIds ? group.deputyIds.some(id => String(id) === String(user?.id)) : String(user?.id) === String(group.deputyId));
       count = deadlines.filter(d => {
         if (!d.dueSoon) return false;
         if (isLeader) return true;
@@ -373,6 +392,117 @@ export default function useGroupDetail(groupId, user, addToast) {
   }, [deadlines, group, user?.id]);
 
   const handleAssignDeputy = async (targetUserId) => {
+    const currentDeputyIds = group.deputyIds || [];
+    if (currentDeputyIds.length >= 2) {
+      const deputy1Info = membersDetails.find(u => Number(u.id) === Number(currentDeputyIds[0]));
+      const deputy2Info = membersDetails.find(u => Number(u.id) === Number(currentDeputyIds[1]));
+      const targetUser = membersDetails.find(u => Number(u.id) === Number(targetUserId));
+      const targetName = targetUser?.fullName || 'Thành viên mới';
+
+      let selectedDeputyId = currentDeputyIds[0];
+
+      const ReplacementSelector = () => {
+        const [selected, setSelected] = useState(currentDeputyIds[0]);
+        
+        const handleChange = (id) => {
+          setSelected(id);
+          selectedDeputyId = id;
+        };
+
+        return React.createElement(
+          'div',
+          { style: { display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '14px' } },
+          React.createElement(
+            'p',
+            { style: { margin: '0 0 8px 0', fontSize: '14px', color: 'var(--text-secondary)' } },
+            'Nhóm đã có đủ tối đa 2 phó nhóm. Chọn một phó nhóm để tước quyền và thay thế bằng ',
+            React.createElement('strong', null, targetName),
+            ':'
+          ),
+          deputy1Info && React.createElement(
+            'label',
+            {
+              style: {
+                display: 'flex',
+                alignItems: 'center',
+                gap: '10px',
+                padding: '10px 14px',
+                borderRadius: '8px',
+                background: selected === currentDeputyIds[0] ? 'rgba(108,99,255,0.1)' : 'var(--bg-input)',
+                border: selected === currentDeputyIds[0] ? '1.5px solid var(--primary-light)' : '1px solid var(--border)',
+                cursor: 'pointer',
+              },
+            },
+            React.createElement('input', {
+              type: 'radio',
+              name: 'deputy-to-replace',
+              checked: selected === currentDeputyIds[0],
+              onChange: () => handleChange(currentDeputyIds[0]),
+              style: { accentColor: 'var(--primary)' },
+            }),
+            React.createElement(
+              'span',
+              { style: { fontSize: '14px', fontWeight: 600, color: 'var(--text-primary)' } },
+              deputy1Info.fullName
+            )
+          ),
+          deputy2Info && React.createElement(
+            'label',
+            {
+              style: {
+                display: 'flex',
+                alignItems: 'center',
+                gap: '10px',
+                padding: '10px 14px',
+                borderRadius: '8px',
+                background: selected === currentDeputyIds[1] ? 'rgba(108,99,255,0.1)' : 'var(--bg-input)',
+                border: selected === currentDeputyIds[1] ? '1.5px solid var(--primary-light)' : '1px solid var(--border)',
+                cursor: 'pointer',
+              },
+            },
+            React.createElement('input', {
+              type: 'radio',
+              name: 'deputy-to-replace',
+              checked: selected === currentDeputyIds[1],
+              onChange: () => handleChange(currentDeputyIds[1]),
+              style: { accentColor: 'var(--primary)' },
+            }),
+            React.createElement(
+              'span',
+              { style: { fontSize: '14px', fontWeight: 600, color: 'var(--text-primary)' } },
+              deputy2Info.fullName
+            )
+          )
+        );
+      };
+
+      setConfirmConfig({
+        title: 'Thay thế Phó nhóm',
+        message: React.createElement(ReplacementSelector),
+        confirmText: 'Xác nhận thay thế',
+        cancelText: 'Huỷ',
+        variant: 'warning',
+        onConfirm: async () => {
+          const replaceId = selectedDeputyId;
+          setConfirmConfig(null);
+          try {
+            setIsAssigningDeputy(true);
+            await removeDeputy(groupId, user.id, replaceId);
+            const updatedGroup = await assignDeputy(groupId, user.id, targetUserId);
+            setGroup(updatedGroup);
+            await fetchGroupMembersDetails(updatedGroup.members);
+            addToast('Đã thay đổi phó nhóm thành công!', 'success');
+          } catch (err) {
+            addToast(err.message || 'Lỗi thay đổi phó nhóm', 'error');
+          } finally {
+            setIsAssigningDeputy(false);
+          }
+        },
+        onCancel: () => setConfirmConfig(null),
+      });
+      return;
+    }
+
     try {
       setIsAssigningDeputy(true);
       const updatedGroup = await assignDeputy(groupId, user.id, targetUserId);
@@ -386,7 +516,7 @@ export default function useGroupDetail(groupId, user, addToast) {
     }
   };
 
-  const handleRemoveDeputy = () => {
+  const handleRemoveDeputy = (targetUserId) => {
     setConfirmConfig({
       title: 'Thu hồi quyền Phó nhóm',
       message: 'Bạn có chắc chắn muốn thu hồi quyền phó nhóm không?',
@@ -397,7 +527,7 @@ export default function useGroupDetail(groupId, user, addToast) {
         setConfirmConfig(null);
         try {
           setIsAssigningDeputy(true);
-          const updatedGroup = await removeDeputy(groupId, user.id);
+          const updatedGroup = await removeDeputy(groupId, user.id, targetUserId);
           setGroup(updatedGroup);
           await fetchGroupMembersDetails(updatedGroup.members);
           addToast('Đã thu hồi quyền phó nhóm!', 'success');
@@ -673,7 +803,8 @@ export default function useGroupDetail(groupId, user, addToast) {
       }
       let fileUrlValue = '';
       try {
-        const fileName = `${groupId}/${Date.now()}_${selectedFile.name}`;
+        const safeName = sanitizeForStorage(selectedFile.name);
+        const fileName = `${groupId}/${Date.now()}_${safeName}`;
         const { error: uploadError } = await supabase.storage
           .from('attachments')
           .upload(fileName, selectedFile, { cacheControl: '3600', upsert: true });
@@ -905,7 +1036,8 @@ export default function useGroupDetail(groupId, user, addToast) {
         fileName = submitFile.name;
         let fileUrlValue = '';
         try {
-          const storageFileName = `submissions/${groupId}/${user.id}_${Date.now()}_${submitFile.name}`;
+          const safeName = sanitizeForStorage(submitFile.name);
+          const storageFileName = `submissions/${groupId}/${user.id}_${Date.now()}_${safeName}`;
           const { error: uploadError } = await supabase.storage
             .from('attachments')
             .upload(storageFileName, submitFile, { cacheControl: '3600', upsert: true });
@@ -1023,7 +1155,8 @@ export default function useGroupDetail(groupId, user, addToast) {
 
         let fileUrlValue = '';
         try {
-          const fileName = `chat/${groupId}/${Date.now()}_${chatAttachedFile.name}`;
+          const safeName = sanitizeForStorage(chatAttachedFile.name);
+          const fileName = `chat/${groupId}/${Date.now()}_${safeName}`;
           const { error: uploadError } = await supabase.storage
             .from('attachments')
             .upload(fileName, chatAttachedFile, { cacheControl: '3600', upsert: true });

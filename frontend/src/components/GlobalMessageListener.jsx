@@ -337,17 +337,35 @@ export default function GlobalMessageListener() {
         } else if (payload.eventType === 'UPDATE') {
           const m = payload.new;
           const old = payload.old;
-          if (String(m.user_id) === String(uid) && m.role === 'admin' && old?.role !== 'admin') {
-            try {
-              const groupName = await (async () => {
-                if (groupCache.current[m.group_id]) return groupCache.current[m.group_id];
-                const { data } = await supabase.from('study_groups').select('name').eq('id', m.group_id).single();
-                if (data?.name) groupCache.current[m.group_id] = data.name;
-                return data?.name || 'nhóm';
-              })();
-              await fetchUserGroups();
-              addToast(`Bạn được bổ nhiệm làm Phó nhóm "${groupName}"`, 'success', 7000, `/groups/${m.group_id}`, '👑');
-            } catch { /* ignore */ }
+          if (String(m.user_id) === String(uid)) {
+            if (m.role === 'admin' && old?.role !== 'admin') {
+              try {
+                const groupName = await (async () => {
+                  if (groupCache.current[m.group_id]) return groupCache.current[m.group_id];
+                  const { data } = await supabase.from('study_groups').select('name').eq('id', m.group_id).single();
+                  if (data?.name) groupCache.current[m.group_id] = data.name;
+                  return data?.name || 'nhóm';
+                })();
+                await fetchUserGroups();
+                addToast(`Bạn được bổ nhiệm làm Phó nhóm "${groupName}"`, 'success', 7000, `/groups/${m.group_id}`, '👑');
+              } catch { /* ignore */ }
+            } else if (m.role === 'member' && (old?.role === 'admin' || !old || old.role === undefined)) {
+              try {
+                const groupName = await (async () => {
+                  if (groupCache.current[m.group_id]) return groupCache.current[m.group_id];
+                  const { data } = await supabase.from('study_groups').select('name').eq('id', m.group_id).single();
+                  if (data?.name) groupCache.current[m.group_id] = data.name;
+                  return data?.name || 'nhóm';
+                })();
+                await fetchUserGroups();
+                addToast(`Bạn đã bị tước quyền phó nhóm của "${groupName}"`, 'error', 7000, `/groups/${m.group_id}`, '⚠️');
+                try {
+                  const demotions = JSON.parse(localStorage.getItem('studyconect_demoted_notifications') || '[]');
+                  demotions.push({ id: Date.now().toString(), groupName, createdAt: new Date().toISOString() });
+                  localStorage.setItem('studyconect_demoted_notifications', JSON.stringify(demotions));
+                } catch { /* ignore */ }
+              } catch { /* ignore */ }
+            }
           }
 
         } else if (payload.eventType === 'DELETE') {

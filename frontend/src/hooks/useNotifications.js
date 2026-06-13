@@ -619,6 +619,24 @@ export default function useNotifications(userId) {
         console.warn('Error reading local kicks:', err);
       }
 
+      // 2d. Fetch local group demotions
+      try {
+        const localDemotions = JSON.parse(localStorage.getItem('studyconect_demoted_notifications') || '[]');
+        localDemotions
+          .filter(d => (now - new Date(d.createdAt)) < ONE_DAY_MS)
+          .forEach(d => {
+            notifsList.push({
+              key: `demote:${d.id}`,
+              type: 'groupdemote',
+              title: '⚠️ Bị tước quyền phó nhóm',
+              body: `Bạn đã bị tước quyền phó nhóm của "${d.groupName}"`,
+              createdAt: d.createdAt,
+            });
+          });
+      } catch (err) {
+        console.warn('Error reading local demotions:', err);
+      }
+
       // 4b. Fetch messages, comments, reactions, and files from localStorage (as fallback/offline/fast sync)
       // Local Private Messages
       try {
@@ -802,6 +820,12 @@ export default function useNotifications(userId) {
   const markAllRead = useCallback(() => {
     const newSeen = new Set([...seen, ...notifs.map(n => n.key)]);
     setSeen(newSeen);
+    // Lưu vào localStorage để tồn qua các lần refresh()
+    try {
+      localStorage.setItem(STORAGE_KEYS.NOTIF_SEEN, JSON.stringify([...newSeen]));
+    } catch (err) {
+      console.warn('Error saving seen notifications:', err);
+    }
   }, [seen, notifs]);
 
   const acceptInvite = useCallback(async (inviteId) => {

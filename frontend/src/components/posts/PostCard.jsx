@@ -5,25 +5,46 @@ import { timeAgo } from '@/utils';
 import LikeCommentBar from './LikeCommentBar';
 import CommentRow from './CommentRow';
 
-export default function PostCard({ post, currentUser, onLike, onDelete, onComment, onPin }) {
+const ReplyIcon = () => (
+  <svg
+    width="12"
+    height="12"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2.5"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    style={{
+      color: 'var(--primary-light)',
+      display: 'inline-block',
+      verticalAlign: 'middle'
+    }}
+  >
+    <polyline points="9 17 4 12 9 7" />
+    <path d="M20 18v-2a4 4 0 0 0-4-4H4" />
+  </svg>
+);
+
+export default function PostCard({ post, currentUser, onLike, onDelete, onComment }) {
   const [showComments, setShowComments] = useState(false);
   const [commentText, setCommentText] = useState('');
-  const [expanded, setExpanded] = useState(false);
   const [replyTo, setReplyTo] = useState(null); // { id, name }
-  const [commentReactions, setCommentReactions] = useState({}); // commentId -> emoji string or null
+  const [expanded, setExpanded] = useState(false);
+  const [isInputFocused, setIsInputFocused] = useState(false);
 
   // ── Clean up tagged names from text content for rendering ──
   let renderContent = post?.content || '';
   if (Array.isArray(post?.taggedUserNames)) {
     post.taggedUserNames.forEach((name) => {
-      const escapedName = name.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+      const escapedName = name.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
       const regex = new RegExp(`@${escapedName}\\s?`, 'gi');
       renderContent = renderContent.replace(regex, '');
     });
   }
   if (Array.isArray(post?.taggedGroupNames)) {
     post.taggedGroupNames.forEach((name) => {
-      const escapedName = name.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+      const escapedName = name.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
       const regex = new RegExp(`@${escapedName}\\s?`, 'gi');
       renderContent = renderContent.replace(regex, '');
     });
@@ -47,14 +68,7 @@ export default function PostCard({ post, currentUser, onLike, onDelete, onCommen
     setReplyTo(null);
   };
 
-  const tagColorMap = {
-    'Toán - Lý': '#f59e0b',
-    'Lập trình': '#3ecfcf',
-    'Kinh tế': '#22c55e',
-    'Ngoại ngữ': '#6c63ff',
-    'Thông báo': '#ef4444',
-  };
-  const tagColor = tagColorMap[post.tag] || '#8b92b8';
+
 
   return (
     <article
@@ -232,14 +246,6 @@ export default function PostCard({ post, currentUser, onLike, onDelete, onCommen
                 <div key={c.id}>
                   <CommentRow
                     comment={c}
-                    liked={!!commentReactions[c.id]}
-                    likedEmoji={commentReactions[c.id] || null}
-                    onLike={(em) =>
-                      setCommentReactions((prev) => ({
-                        ...prev,
-                        [c.id]: prev[c.id] && !em ? null : em || '👍',
-                      }))
-                    }
                     onReply={() => {
                       setReplyTo({ id: c.id, name: c.userFullName });
                       setShowComments(true);
@@ -278,9 +284,23 @@ export default function PostCard({ post, currentUser, onLike, onDelete, onCommen
           {currentUser && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
               {replyTo && (
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '4px 0 0 40px' }}>
-                  <span style={{ fontSize: '12px', color: 'var(--primary-light)', fontWeight: 600 }}>
-                    ↩️ Đang trả lời <strong>{replyTo.name}</strong>
+                <div style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  background: 'rgba(108, 99, 255, 0.08)',
+                  borderLeft: '3px solid var(--primary-light)',
+                  padding: '8px 16px',
+                  borderRadius: '8px',
+                  marginBottom: '8px',
+                  marginLeft: '40px',
+                  transition: 'all 0.2s ease',
+                }}>
+                  <span style={{ fontSize: '12.5px', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <span style={{ color: 'var(--primary-light)', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '4px' }}>
+                      <ReplyIcon /> Trả lời
+                    </span>
+                    <strong style={{ color: 'var(--primary-light)' }}>{replyTo.name}</strong>
                   </span>
                   <button
                     onClick={() => setReplyTo(null)}
@@ -289,9 +309,22 @@ export default function PostCard({ post, currentUser, onLike, onDelete, onCommen
                       border: 'none',
                       cursor: 'pointer',
                       color: 'var(--text-muted)',
-                      fontSize: '13px',
-                      padding: 0,
+                      fontSize: '14px',
+                      padding: '4px',
                       lineHeight: 1,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      borderRadius: '50%',
+                      transition: 'background 0.2s, color 0.2s',
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)';
+                      e.currentTarget.style.color = '#ef4444';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.background = 'none';
+                      e.currentTarget.style.color = 'var(--text-muted)';
                     }}
                   >
                     ✕
@@ -308,10 +341,12 @@ export default function PostCard({ post, currentUser, onLike, onDelete, onCommen
                   style={{
                     flex: 1,
                     display: 'flex',
-                    background: 'var(--bg-input)',
-                    border: '1px solid var(--border)',
-                    borderRadius: '20px',
+                    background: isInputFocused ? 'rgba(108, 99, 255, 0.05)' : 'var(--bg-input)',
+                    border: isInputFocused ? '1px solid var(--primary-light)' : '1px solid var(--border)',
+                    borderRadius: '24px',
                     overflow: 'hidden',
+                    boxShadow: isInputFocused ? '0 0 12px rgba(108, 99, 255, 0.15)' : 'none',
+                    transition: 'all 0.25s cubic-bezier(0.4, 0, 0.2, 1)',
                   }}
                 >
                   <input
@@ -319,31 +354,54 @@ export default function PostCard({ post, currentUser, onLike, onDelete, onCommen
                     value={commentText}
                     onChange={(e) => setCommentText(e.target.value)}
                     onKeyDown={(e) => e.key === 'Enter' && handleComment()}
+                    onFocus={() => setIsInputFocused(true)}
+                    onBlur={() => setIsInputFocused(false)}
                     placeholder={replyTo ? `Trả lời ${replyTo.name}...` : 'Viết bình luận...'}
                     style={{
                       flex: 1,
                       background: 'none',
                       border: 'none',
                       outline: 'none',
-                      padding: '8px 14px',
+                      padding: '10px 18px',
                       color: 'var(--text-primary)',
-                      fontSize: '13px',
+                      fontSize: '13.5px',
                       fontFamily: 'inherit',
+                      transition: 'all 0.2s',
                     }}
                   />
                   <button
                     onClick={handleComment}
                     disabled={!commentText.trim()}
                     style={{
-                      background: commentText.trim() ? 'var(--primary)' : 'transparent',
+                      background: commentText.trim()
+                        ? 'linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%)'
+                        : 'transparent',
                       border: 'none',
                       cursor: commentText.trim() ? 'pointer' : 'default',
-                      padding: '0 14px',
-                      color: commentText.trim() ? 'white' : 'var(--text-muted)',
+                      padding: '0 18px',
+                      color: commentText.trim() ? '#ffffff' : 'var(--text-muted)',
                       fontSize: '13px',
                       fontWeight: 700,
                       fontFamily: 'inherit',
-                      transition: 'var(--transition)',
+                      borderRadius: '20px',
+                      margin: '4px',
+                      boxShadow: commentText.trim() ? '0 2px 8px rgba(108, 99, 255, 0.25)' : 'none',
+                      transition: 'all 0.25s ease',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                    }}
+                    onMouseEnter={(e) => {
+                      if (commentText.trim()) {
+                        e.currentTarget.style.transform = 'translateY(-1px)';
+                        e.currentTarget.style.boxShadow = '0 4px 12px rgba(108, 99, 255, 0.4)';
+                      }
+                    }}
+                    onMouseLeave={(e) => {
+                      if (commentText.trim()) {
+                        e.currentTarget.style.transform = 'translateY(0)';
+                        e.currentTarget.style.boxShadow = '0 2px 8px rgba(108, 99, 255, 0.25)';
+                      }
                     }}
                   >
                     Gửi

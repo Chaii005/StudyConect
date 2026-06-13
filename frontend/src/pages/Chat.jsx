@@ -278,8 +278,13 @@ function CameraModal({ onCapture, onClose }) {
           }}
         >
           {error ? (
-            <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ff6b6b', fontSize: '14px', fontWeight: 600, padding: '20px', textAlign: 'center' }}>
-              ⚠️ {error}
+            <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', color: '#ff6b6b', fontSize: '14px', fontWeight: 600, padding: '20px', textAlign: 'center', gap: '8px' }}>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+                <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z" />
+                <line x1="12" y1="9" x2="12" y2="13" />
+                <line x1="12" y1="17" x2="12.01" y2="17" />
+              </svg>
+              <span>{error}</span>
             </div>
           ) : (
             <video
@@ -455,9 +460,28 @@ function MessageMenu({ clientX, clientY, msg, onSaveImage, onShare, onDelete, on
         zIndex: 9999, minWidth: '180px',
         animation: 'fadeIn 0.12s ease',
       }}>
-      <MenuBtn icon="↗️" label="Chia sẻ" onClick={() => { onShare(); onClose(); }} />
-      {isImage && <MenuBtn icon="⬇️" label="Lưu ảnh" onClick={() => { onSaveImage(); onClose(); }} />}
-      {isMine && <MenuBtn icon="🗑️" label="Xóa tin nhắn" danger onClick={() => { onDelete(); onClose(); }} />}
+      <MenuBtn icon={
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8" />
+          <polyline points="16 6 12 2 8 6" />
+          <line x1="12" y1="2" x2="12" y2="15" />
+        </svg>
+      } label="Chia sẻ" onClick={() => { onShare(); onClose(); }} />
+      {isImage && <MenuBtn icon={
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+          <polyline points="7 10 12 15 17 10" />
+          <line x1="12" y1="15" x2="12" y2="3" />
+        </svg>
+      } label="Lưu ảnh" onClick={() => { onSaveImage(); onClose(); }} />}
+      {isMine && <MenuBtn icon={
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+          <polyline points="3 6 5 6 21 6" />
+          <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+          <line x1="10" y1="11" x2="10" y2="17" />
+          <line x1="14" y1="11" x2="14" y2="17" />
+        </svg>
+      } label="Xóa tin nhắn" danger onClick={() => { onDelete(); onClose(); }} />}
     </div>
   );
 }
@@ -475,7 +499,7 @@ function MenuBtn({ icon, label, onClick, danger }) {
         fontSize: '13px', fontWeight: 600, fontFamily: 'inherit', textAlign: 'left',
         transition: 'background 0.12s',
       }}>
-      <span style={{ fontSize: '16px' }}>{icon}</span>
+      <span style={{ fontSize: '14px', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: '16px', height: '16px' }}>{icon}</span>
       {label}
     </button>
   );
@@ -1234,10 +1258,10 @@ function ConversationView({ user, friend, friends, onBack, onlineUserIds, onNick
       </div>
 
       {/* Popup thông báo từ chối / nhỡ máy */}
-      {(callStatus === 'rejected' || callStatus === 'missed') && (
+      {(callStatus === 'rejected' || callStatus === 'missed' || callStatus === 'no_answer') && (
         <div style={{
           position: 'fixed', top: '20px', left: '50%', transform: 'translateX(-50%)',
-          background: callStatus === 'rejected' ? 'rgba(239,68,68,0.95)' : 'rgba(100,100,120,0.95)',
+          background: callStatus === 'rejected' || callStatus === 'no_answer' ? 'rgba(239,68,68,0.95)' : 'rgba(100,100,120,0.95)',
           backdropFilter: 'blur(12px)',
           border: '1px solid rgba(255,255,255,0.15)',
           borderRadius: '14px', padding: '12px 20px',
@@ -1246,7 +1270,11 @@ function ConversationView({ user, friend, friends, onBack, onlineUserIds, onNick
           boxShadow: '0 8px 32px rgba(0,0,0,0.4)',
           animation: 'fadeIn 0.25s ease',
         }}>
-          {callStatus === 'rejected' ? '📵 Cuộc gọi bị từ chối' : '📵 Cuộc gọi nhỡ'}
+          {callStatus === 'rejected' 
+            ? '📵 Cuộc gọi bị từ chối' 
+            : callStatus === 'no_answer' 
+            ? '📵 Người nhận không bắt máy' 
+            : '📵 Bạn bỏ lỡ cuộc gọi'}
         </div>
       )}
 
@@ -1714,7 +1742,14 @@ function ConversationView({ user, friend, friends, onBack, onlineUserIds, onNick
             }}
             onClick={e => e.stopPropagation()}
           >
-            <div style={{ fontSize: '32px', textAlign: 'center', marginBottom: '10px' }}>🗑️</div>
+            <div style={{ color: 'var(--error)', display: 'flex', justifyContent: 'center', marginBottom: '12px' }}>
+              <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" style={{ filter: 'drop-shadow(0 0 6px rgba(239,68,68,0.4))' }}>
+                <polyline points="3 6 5 6 21 6" />
+                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                <line x1="10" y1="11" x2="10" y2="17" />
+                <line x1="14" y1="11" x2="14" y2="17" />
+              </svg>
+            </div>
             <h3 style={{ margin: '0 0 8px', fontSize: '16px', fontWeight: 700, textAlign: 'center', color: 'var(--text-primary)' }}>Xóa tin nhắn?</h3>
             <p style={{ margin: '0 0 20px', fontSize: '13px', color: 'var(--text-muted)', textAlign: 'center', lineHeight: 1.5 }}>Tin nhắn sẽ bị xóa vĩnh viễn và không thể khôi phục.</p>
             <div style={{ display: 'flex', gap: '10px' }}>
@@ -2220,7 +2255,10 @@ function FriendList({ user, friends, onSelect, lastMessages, onlineUserIds }) {
           background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)',
           borderRadius: '12px', padding: '8px 12px', transition: 'border-color 0.2s',
         }}>
-          <span style={{ fontSize: '14px', color: 'var(--text-muted)' }}>🔍</span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ color: 'var(--text-muted)', flexShrink: 0 }}>
+            <circle cx="11" cy="11" r="8"/>
+            <path d="m21 21-4.3-4.3"/>
+          </svg>
           <input
             placeholder="Tìm kiếm bạn bè..."
             value={search}

@@ -50,11 +50,15 @@ export const runStorageCleanup = () => {
     }
 
     if (keysToRemove.length > 0) {
-      console.log(`[Storage Cleanup] Cleaning up ${keysToRemove.length} obsolete localStorage keys to free up quota...`);
+      if (import.meta.env.DEV) {
+        console.log(`[Storage Cleanup] Cleaning up ${keysToRemove.length} obsolete localStorage keys to free up quota...`);
+      }
       keysToRemove.forEach(key => {
         window.localStorage.removeItem(key);
       });
-      console.log('[Storage Cleanup] Cleanup complete.');
+      if (import.meta.env.DEV) {
+        console.log('[Storage Cleanup] Cleanup complete.');
+      }
     }
   } catch (err) {
     console.warn('[Storage Cleanup] Error running localStorage cleanup:', err);

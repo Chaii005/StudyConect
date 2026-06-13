@@ -39,7 +39,11 @@ export default class ErrorBoundary extends Component {
             gap: '16px',
           }}
         >
-          <div style={{ fontSize: '48px' }}>⚠️</div>
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#ef4444" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ filter: 'drop-shadow(0 0 10px rgba(239,68,68,0.35))' }}>
+            <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z" />
+            <line x1="12" y1="9" x2="12" y2="13" />
+            <line x1="12" y1="17" x2="12.01" y2="17" />
+          </svg>
           <div style={{ fontSize: '18px', fontWeight: 700, color: 'var(--text-primary)' }}>
             Đã xảy ra lỗi hệ thống
           </div>

@@ -19,8 +19,18 @@ export default function UserFormModal({ show, onClose, currentEditUser, userForm
         {/* Header */}
         <div style={{ padding: '18px 22px 14px', borderBottom: '1px solid var(--border)', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <div style={{ width: 36, height: 36, borderRadius: '10px', background: 'linear-gradient(135deg, var(--primary), #5b53e0)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '17px' }}>
-              {currentEditUser ? '✏️' : '👤'}
+            <div style={{ width: 36, height: 36, borderRadius: '10px', background: 'linear-gradient(135deg, var(--primary), #5b53e0)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              {currentEditUser ? (
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M12 20h9" />
+                  <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+                </svg>
+              ) : (
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                  <circle cx="12" cy="7" r="4" />
+                </svg>
+              )}
             </div>
             <div>
               <div style={{ fontWeight: 800, fontSize: '15px', color: 'var(--text-primary)' }}>{currentEditUser ? 'Cập nhật tài khoản' : 'Tạo tài khoản mới'}</div>
@@ -41,8 +51,8 @@ export default function UserFormModal({ show, onClose, currentEditUser, userForm
             <div>
               <label style={{ display: 'block', fontSize: '11px', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '6px' }}>Vai trò</label>
               <select style={{ ...IS, appearance: 'auto', cursor: 'pointer' }} value={userForm.role} onChange={(e) => setUserForm({ ...userForm, role: e.target.value })}>
-                <option value="user">👤 Học sinh / Sinh viên</option>
-                <option value="admin">🛡️ Quản trị viên</option>
+                <option value="user">Học sinh / Sinh viên</option>
+                <option value="admin">Quản trị viên</option>
               </select>
             </div>
           </div>
@@ -100,8 +110,8 @@ export default function UserFormModal({ show, onClose, currentEditUser, userForm
         {/* Footer */}
         <div style={{ padding: '14px 22px 18px', borderTop: '1px solid var(--border)', flexShrink: 0, display: 'flex', gap: '10px' }}>
           <button type="button" onClick={onClose} style={{ flex: 1, padding: '11px', borderRadius: '12px', background: 'var(--bg-input)', border: '1px solid var(--border)', color: 'var(--text-secondary)', fontWeight: 600, fontSize: '14px', cursor: 'pointer', fontFamily: 'inherit' }}>Hủy</button>
-          <button type="button" onClick={onSubmit} disabled={submitting} style={{ flex: 1, padding: '11px', borderRadius: '12px', background: submitting ? 'var(--bg-input)' : 'linear-gradient(135deg, var(--primary), #5b53e0)', border: 'none', color: submitting ? 'var(--text-muted)' : 'white', fontWeight: 700, fontSize: '14px', cursor: submitting ? 'not-allowed' : 'pointer', fontFamily: 'inherit' }}>
-            {submitting ? '⏳ Đang xử lý...' : currentEditUser ? '💾 Lưu thay đổi' : '✅ Tạo tài khoản'}
+          <button type="button" onClick={onSubmit} disabled={submitting} style={{ flex: 1, padding: '11px', borderRadius: '12px', background: submitting ? 'var(--bg-input)' : 'linear-gradient(135deg, var(--primary), #5b53e0)', border: 'none', color: submitting ? 'var(--text-muted)' : 'white', fontWeight: 700, fontSize: '14px', cursor: submitting ? 'not-allowed' : 'pointer', fontFamily: 'inherit', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
+            {submitting ? 'Đang xử lý...' : currentEditUser ? 'Lưu thay đổi' : 'Tạo tài khoản'}
           </button>
         </div>
       </div>

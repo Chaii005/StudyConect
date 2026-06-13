@@ -108,10 +108,30 @@ function FileCard({ file, onDelete, onPreview }) {
         }}>
           {file.fileName}
         </div>
-        <div style={{ fontSize: '13px', color: '#94a3b8', display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
-          <span>📂 {file.groupName}</span>
-          <span>💾 {formatFileSize(file.fileSize)}</span>
-          <span>📅 {new Date(file.createdAt).toLocaleDateString('vi-VN')}</span>
+        <div style={{ fontSize: '13px', color: '#94a3b8', display: 'flex', gap: '12px', flexWrap: 'wrap', alignItems: 'center' }}>
+          <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ color: 'var(--primary-light)' }}>
+              <path d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.93a2 2 0 0 1-1.66-.9l-.82-1.2A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z" />
+            </svg>
+            {file.groupName}
+          </span>
+          <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ color: 'var(--secondary)' }}>
+              <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" />
+              <polyline points="17 21 17 13 7 13 7 21" />
+              <polyline points="7 3 7 8 15 8" />
+            </svg>
+            {formatFileSize(file.fileSize)}
+          </span>
+          <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ color: 'var(--text-muted)' }}>
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+              <line x1="16" y1="2" x2="16" y2="6" />
+              <line x1="8" y1="2" x2="8" y2="6" />
+              <line x1="3" y1="10" x2="21" y2="10" />
+            </svg>
+            {new Date(file.createdAt).toLocaleDateString('vi-VN')}
+          </span>
         </div>
       </div>
 
@@ -245,7 +265,10 @@ export default function MyDocuments() {
             </div>
             
             <div className="search-container" style={{ width: '100%', maxWidth: '320px', margin: 0 }}>
-              <span style={{ fontSize: '14px' }}>🔍</span>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ color: 'var(--text-muted)', flexShrink: 0 }}>
+                <circle cx="11" cy="11" r="8"/>
+                <path d="m21 21-4.3-4.3"/>
+              </svg>
               <input
                 className="search-input"
                 placeholder="Tìm tên tài liệu hoặc tên nhóm..."
@@ -278,7 +301,15 @@ export default function MyDocuments() {
             </div>
           ) : filtered.length === 0 ? (
             <div className="premium-panel" style={{ textAlign: 'center', padding: '32px 16px' }}>
-              <div style={{ fontSize: '32px', marginBottom: '12px' }}>📫</div>
+              <div style={{ color: 'var(--text-muted)', display: 'flex', justifyContent: 'center', marginBottom: '12px' }}>
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M22 13V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v7" />
+                  <path d="M22 13a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4" />
+                  <path d="M22 13h-4M4 13H2" />
+                  <path d="M12 8v5" />
+                  <path d="m9 11 3 3 3-3" />
+                </svg>
+              </div>
               <div style={{ fontSize: '15px', fontWeight: 700, color: '#fff', marginBottom: '6px' }}>
                 Không tìm thấy tài liệu
               </div>
@@ -512,7 +543,13 @@ export default function MyDocuments() {
             background: 'var(--bg-card)', borderRadius: 'var(--radius)', padding: '28px 32px',
             maxWidth: '420px', width: '100%', border: '1px solid var(--border)', textAlign: 'center',
           }}>
-            <div style={{ fontSize: '40px', marginBottom: '12px' }}>⚠️</div>
+            <div style={{ color: 'var(--error)', display: 'flex', justifyContent: 'center', marginBottom: '12px' }}>
+              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" style={{ filter: 'drop-shadow(0 0 6px rgba(239,68,68,0.4))' }}>
+                <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/>
+                <line x1="12" y1="9" x2="12" y2="13"/>
+                <line x1="12" y1="17" x2="12.01" y2="17"/>
+              </svg>
+            </div>
             <h3 style={{ fontSize: '18px', fontWeight: 700, marginBottom: '8px' }}>Xóa tài liệu?</h3>
             <p style={{ color: 'var(--text-secondary)', fontSize: '14px', marginBottom: '24px' }}>
               Bạn có chắc muốn xóa <strong style={{ color: 'var(--text-primary)' }}>{deleteConfirm.fileName}</strong>?

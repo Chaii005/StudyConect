@@ -20,7 +20,9 @@ const mapUser = (u) => ({
 
 const mapGroup = (g) => {
   const members = g.group_members || [];
-  const deputy = members.find(m => m.role === 'admin');
+  const deputies = members.filter(m => m.role === 'admin');
+  const deputyIds = deputies.map(m => m.user_id);
+  const deputy = deputies[0];
 
   return {
     id: g.id.toString(),
@@ -31,6 +33,7 @@ const mapGroup = (g) => {
     location: null,
     creatorId: g.creator_id,
     deputyId: deputy ? deputy.user_id : null,
+    deputyIds: deputyIds,
     members: members.map(m => m.user_id),
     createdAt: g.created_at
   };

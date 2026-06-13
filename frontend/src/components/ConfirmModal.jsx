@@ -34,9 +34,47 @@ export default function ConfirmModal({
   if (!isOpen) return null;
 
   const variantMap = {
-    danger:  { icon: '🗑️', color: '#ef4444', bg: 'rgba(239,68,68,0.12)',  border: 'rgba(239,68,68,0.3)',  btnBg: 'linear-gradient(135deg,#ef4444,#dc2626)', btnShadow: '0 4px 14px rgba(239,68,68,0.4)' },
-    warning: { icon: '⚠️', color: '#f59e0b', bg: 'rgba(245,158,11,0.12)', border: 'rgba(245,158,11,0.3)', btnBg: 'linear-gradient(135deg,#f59e0b,#d97706)', btnShadow: '0 4px 14px rgba(245,158,11,0.4)' },
-    info:    { icon: 'ℹ️', color: '#6366f1', bg: 'rgba(99,102,241,0.12)',  border: 'rgba(99,102,241,0.3)', btnBg: 'linear-gradient(135deg,#6366f1,#4f46e5)', btnShadow: '0 4px 14px rgba(99,102,241,0.4)' },
+    danger:  { 
+      icon: (
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ef4444" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+          <polyline points="3 6 5 6 21 6" />
+          <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+        </svg>
+      ), 
+      color: '#ef4444', 
+      bg: 'rgba(239,68,68,0.12)',  
+      border: 'rgba(239,68,68,0.3)',  
+      btnBg: 'linear-gradient(135deg,#ef4444,#dc2626)', 
+      btnShadow: '0 4px 14px rgba(239,68,68,0.4)' 
+    },
+    warning: { 
+      icon: (
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+          <line x1="12" y1="9" x2="12" y2="13" />
+          <line x1="12" y1="17" x2="12.01" y2="17" />
+        </svg>
+      ), 
+      color: '#f59e0b', 
+      bg: 'rgba(245,158,11,0.12)', 
+      border: 'rgba(245,158,11,0.3)', 
+      btnBg: 'linear-gradient(135deg,#f59e0b,#d97706)', 
+      btnShadow: '0 4px 14px rgba(245,158,11,0.4)' 
+    },
+    info:    { 
+      icon: (
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6366f1" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+          <circle cx="12" cy="12" r="10" />
+          <line x1="12" y1="16" x2="12" y2="12" />
+          <line x1="12" y1="8" x2="12.01" y2="8" />
+        </svg>
+      ), 
+      color: '#6366f1', 
+      bg: 'rgba(99,102,241,0.12)',  
+      border: 'rgba(99,102,241,0.3)', 
+      btnBg: 'linear-gradient(135deg,#6366f1,#4f46e5)', 
+      btnShadow: '0 4px 14px rgba(99,102,241,0.4)' 
+    },
   };
   const v = variantMap[variant] || variantMap.danger;
 
@@ -81,12 +119,12 @@ export default function ConfirmModal({
 
         {/* Message */}
         {message && (
-          <p style={{
+          <div style={{
             margin: 0, fontSize: 13.5, color: 'var(--text-secondary)',
             lineHeight: 1.65, paddingLeft: 2,
           }}>
             {message}
-          </p>
+          </div>
         )}
 
         {/* Buttons */}

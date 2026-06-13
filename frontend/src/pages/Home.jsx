@@ -393,7 +393,10 @@ export default function Home() {
                         <div style={{ flex: 1, minWidth: 0 }}>
                           <div style={{ fontWeight: 600, fontSize: '12.5px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', color: 'var(--text-primary)' }}>{s.topic}</div>
                           <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '2px', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                            <span>🕐</span>
+                            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, color: 'var(--text-muted)' }}>
+                              <circle cx="12" cy="12" r="10" />
+                              <polyline points="12 6 12 12 16 14" />
+                            </svg>
                             <span>{new Date(s.dateTime).toLocaleString('vi-VN', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' })}</span>
                           </div>
                         </div>
@@ -420,8 +423,12 @@ export default function Home() {
                   </div>
                 </Link>
                 {deadlines.length === 0 ? (
-                  <div style={{ padding: '10px 0', textAlign: 'center', color: 'var(--text-muted)', fontSize: '12px' }}>
-                    Không còn deadline nào 🎉
+                  <div style={{ padding: '10px 0', textAlign: 'center', color: 'var(--text-muted)', fontSize: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>
+                    Không còn deadline nào
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--success)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+                      <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                      <polyline points="22 4 12 14.01 9 11.01" />
+                    </svg>
                   </div>
                 ) : (
                   deadlines.map((d) => (
@@ -435,9 +442,23 @@ export default function Home() {
                         <div style={{ flex: 1, minWidth: 0 }}>
                           <div style={{ fontSize: '12.5px', fontWeight: 600, color: d.overdue ? 'var(--text-muted)' : 'var(--text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{d.title}</div>
                           <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '2px', alignItems: 'center' }}>
-                            <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>📂 {d.groupName}</span>
-                            <span style={{ fontSize: '11px', fontWeight: 700, color: d.dueSoon ? 'var(--error)' : d.overdue ? 'var(--text-muted)' : 'var(--success)' }}>
-                              {d.dueSoon ? '⚡ Dưới 24h' : new Date(d.dueDate).toLocaleDateString('vi-VN')}
+                            <span style={{ fontSize: '11px', color: 'var(--text-muted)', display: 'inline-flex', alignItems: 'center', gap: '3px' }}>
+                              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+                                <path d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.93a2 2 0 0 1-1.66-.9l-.82-1.2A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z" />
+                              </svg>
+                              {d.groupName}
+                            </span>
+                            <span style={{ fontSize: '11px', fontWeight: 700, color: d.dueSoon ? 'var(--error)' : d.overdue ? 'var(--text-muted)' : 'var(--success)', display: 'inline-flex', alignItems: 'center', gap: '2px' }}>
+                              {d.dueSoon ? (
+                                <>
+                                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+                                    <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+                                  </svg>
+                                  Dưới 24h
+                                </>
+                              ) : (
+                                new Date(d.dueDate).toLocaleDateString('vi-VN')
+                              )}
                             </span>
                           </div>
                         </div>

@@ -25,7 +25,11 @@ export default function GroupMembers({
       {isLeader && group?.isPrivate && joinRequests.length > 0 && (
         <div style={{ background: 'rgba(245,158,11,0.06)', border: '1.5px solid rgba(245,158,11,0.3)', borderRadius: 'var(--radius-lg)', padding: '20px 24px' }}>
           <h3 style={{ margin: '0 0 4px 0', fontSize: 16, color: '#f59e0b', display: 'flex', alignItems: 'center', gap: 8 }}>
-            ⏳ Yêu cầu tham gia nhóm
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+              <circle cx="12" cy="12" r="10" />
+              <polyline points="12 6 12 12 16 14" />
+            </svg>
+            Yêu cầu tham gia nhóm
             <span style={{ fontSize: 12, background: '#f59e0b', color: '#000', borderRadius: 20, padding: '2px 8px', fontWeight: 800 }}>{joinRequests.length}</span>
           </h3>
           <p style={{ margin: '0 0 14px 0', fontSize: 12, color: 'var(--text-muted)' }}>Duyệt hoặc từ chối các yêu cầu tham gia nhóm riêng tư.</p>
@@ -45,11 +49,11 @@ export default function GroupMembers({
                   <div style={{ display: 'flex', gap: 8, flexShrink: 0 }}>
                     <button onClick={() => handleApproveJoin(req)} disabled={approvingIds[req.id]}
                       style={{ padding: '6px 14px', borderRadius: 8, border: 'none', cursor: 'pointer', background: '#10b981', color: '#fff', fontWeight: 700, fontSize: 12, opacity: approvingIds[req.id] ? 0.6 : 1, fontFamily: 'inherit' }}>
-                      {approvingIds[req.id] ? '...' : '✓ Duyệt'}
+                      {approvingIds[req.id] ? '...' : 'Duyệt'}
                     </button>
                     <button onClick={() => handleRejectJoin(req)} disabled={rejectingIds[req.id]}
                       style={{ padding: '6px 14px', borderRadius: 8, border: '1px solid rgba(239,68,68,0.4)', cursor: 'pointer', background: 'rgba(239,68,68,0.08)', color: '#ef4444', fontWeight: 700, fontSize: 12, opacity: rejectingIds[req.id] ? 0.6 : 1, fontFamily: 'inherit' }}>
-                      {rejectingIds[req.id] ? '...' : '✕ Từ chối'}
+                      {rejectingIds[req.id] ? '...' : 'Từ chối'}
                     </button>
                   </div>
                 </div>
@@ -74,9 +78,10 @@ export default function GroupMembers({
       </div>
       {group.members.map((memberId) => {
         const isLeader = Number(memberId) === Number(group.creatorId);
-        const isDeputy = Number(memberId) === Number(group.deputyId);
+        const isDeputy = group.deputyIds ? group.deputyIds.some(id => Number(id) === Number(memberId)) : Number(memberId) === Number(group.deputyId);
         const isCurrentUser = Number(memberId) === Number(user?.id);
         const isCurrentUserLeader = Number(user?.id) === Number(group.creatorId);
+        const isCurrentUserDeputy = group.deputyIds ? group.deputyIds.some(id => Number(id) === Number(user?.id)) : Number(user?.id) === Number(group.deputyId);
         const memberInfo = membersDetails.find((u) => Number(u.id) === Number(memberId)) || null;
         const displayName = String(memberInfo?.fullName || memberId);
         const displayAvatar = memberInfo?.avatar || null;
@@ -270,7 +275,7 @@ export default function GroupMembers({
               {isCurrentUserLeader && !isLeader && (
                 isDeputy ? (
                   <button
-                    onClick={handleRemoveDeputy}
+                    onClick={() => handleRemoveDeputy(memberId)}
                     disabled={isAssigningDeputy}
                     style={{
                       padding: '7px 14px',
@@ -283,7 +288,7 @@ export default function GroupMembers({
                       fontSize: '13px',
                     }}
                   >
-                    {isAssigningDeputy ? '...' : '✕ Thu hồi phó nhóm'}
+                    {isAssigningDeputy ? '...' : 'Thu hồi phó nhóm'}
                   </button>
                 ) : (
                   <button
@@ -300,11 +305,11 @@ export default function GroupMembers({
                       fontSize: '13px',
                     }}
                   >
-                    {isAssigningDeputy ? '...' : 'Đặt làm phó nhóm'}
+                    {isAssigningDeputy ? '...' : (group.deputyIds?.length >= 2 ? 'Đổi phó nhóm' : 'Đặt làm phó nhóm')}
                   </button>
                 )
               )}
-              {(isCurrentUserLeader || Number(user?.id) === Number(group.deputyId)) && !isLeader && !isCurrentUser && (
+              {(isCurrentUserLeader || isCurrentUserDeputy) && !isLeader && !isCurrentUser && (
                 <button
                   onClick={() => handleKickMember(memberId)}
                   disabled={kickingIds[String(memberId)]}
@@ -319,7 +324,7 @@ export default function GroupMembers({
                     fontSize: '13px',
                   }}
                 >
-                  {kickingIds[String(memberId)] ? '...' : '🚫 Kick'}
+                  {kickingIds[String(memberId)] ? '...' : 'Kick'}
                 </button>
               )}
             </div>
