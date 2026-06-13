@@ -22,8 +22,32 @@ export default function NotificationBell({ style }) {
   } = useNotificationContext();
 
   const [open, setOpen] = useState(false);
+  const [hovered, setHovered] = useState(false);
   const [pos, setPos] = useState({ top: 0, left: 0, width: 280 });
+  const [ringing, setRinging] = useState(false);
   const btnRef = useRef(null);
+  const prevUnreadRef = useRef(null);
+  const ringTimerRef = useRef(null);
+
+  // Chỉ rung khi có thông báo MỚI (unreadCount tăng)
+  useEffect(() => {
+    if (prevUnreadRef.current === null) {
+      // Lần đầu mount — không rung, chỉ ghi nhớ giá trị ban đầu
+      prevUnreadRef.current = unreadCount;
+      return;
+    }
+    if (unreadCount > prevUnreadRef.current) {
+      // Có thông báo mới đến — bật rung
+      setRinging(true);
+      if (ringTimerRef.current) clearTimeout(ringTimerRef.current);
+      // Tắt sau 2.5 giây (đủ 1 vòng animation bell-shake)
+      ringTimerRef.current = setTimeout(() => setRinging(false), 2500);
+    }
+    prevUnreadRef.current = unreadCount;
+    return () => {
+      if (ringTimerRef.current) clearTimeout(ringTimerRef.current);
+    };
+  }, [unreadCount]);
 
   const calcPos = () => {
     if (!btnRef.current) return;
@@ -87,12 +111,30 @@ export default function NotificationBell({ style }) {
 
   return (
     <div style={{ position: 'relative', display: 'inline-flex' }}>
+      <style>{`
+        @keyframes bell-shake {
+          0%, 25%, 100% { transform: rotate(0); }
+          2.5% { transform: rotate(18deg); }
+          5% { transform: rotate(-18deg); }
+          7.5% { transform: rotate(15deg); }
+          10% { transform: rotate(-15deg); }
+          12.5% { transform: rotate(10deg); }
+          15% { transform: rotate(-10deg); }
+          17.5% { transform: rotate(6deg); }
+          20% { transform: rotate(-6deg); }
+          22.5% { transform: rotate(0); }
+        }
+        .bell-icon-unread {
+          animation: bell-shake 2.2s cubic-bezier(0.36, 0.07, 0.19, 0.97) infinite;
+          transform-origin: top center;
+        }
+      `}</style>
       <button
         ref={btnRef}
         onClick={handleOpen}
         title="Thông báo"
         style={{
-          background: open ? 'rgba(108,99,255,0.15)' : 'transparent',
+          background: open ? 'rgba(99, 102, 241, 0.15)' : hovered ? 'rgba(99, 102, 241, 0.08)' : 'transparent',
           border: 'none',
           borderRadius: '50%',
           width: '34px',
@@ -102,15 +144,31 @@ export default function NotificationBell({ style }) {
           justifyContent: 'center',
           cursor: 'pointer',
           position: 'relative',
-          transition: 'background 0.2s',
+          transition: 'all 0.25s ease',
           padding: 0,
           flexShrink: 0,
+          color: open || hovered ? 'var(--secondary)' : unreadCount > 0 ? 'var(--secondary)' : 'var(--text-primary)',
+          filter: unreadCount > 0 ? 'drop-shadow(0 0 6px var(--secondary))' : 'none',
           ...style,
         }}
-        onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(108,99,255,0.1)'; }}
-        onMouseLeave={(e) => { e.currentTarget.style.background = open ? 'rgba(108,99,255,0.15)' : 'transparent'; }}
+        onMouseEnter={() => setHovered(true)}
+        onMouseLeave={() => setHovered(false)}
       >
-        <span style={{ fontSize: 18, lineHeight: 1 }}>🔔</span>
+        <svg
+          width="18"
+          height="18"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          className={ringing ? 'bell-icon-unread' : ''}
+          style={{ transition: 'all 0.3s' }}
+        >
+          <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+          <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+        </svg>
         {unreadCount > 0 && (
           <span style={{
             position: 'absolute',
@@ -176,7 +234,18 @@ export default function NotificationBell({ style }) {
                     transition: 'all 0.2s',
                   }}
                 >
-                  {toastEnabled ? '💬' : '🔕'}
+                  {toastEnabled ? (
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--primary-light)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+                    </svg>
+                  ) : (
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+                      <path d="M18.63 13A17.89 17.89 0 0 1 18 8" />
+                      <path d="M6.26 6.26A5.86 5.86 0 0 0 6 8c0 7-3 9-3 9h14" />
+                      <line x1="1" y1="1" x2="23" y2="23" />
+                    </svg>
+                  )}
                 </button>
               </div>
               {notifs.length > 0 && (

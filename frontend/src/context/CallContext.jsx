@@ -60,19 +60,24 @@ export const CallProvider = ({ children }) => {
           callerName: payload.callerName,
           callerAvatar: payload.callerAvatar,
         });
-        // Tự động hủy sau 40s (missed call)
+        // Tự động hủy sau 10s (missed call)
         clearTimeout(ringTimerRef.current);
         ringTimerRef.current = setTimeout(() => {
           setIncomingCall(null);
           setCallStatus('missed');
           clearTimeout(statusTimerRef.current);
           statusTimerRef.current = setTimeout(() => setCallStatus(null), 3000);
-        }, 40000);
+          if (location.pathname.startsWith('/call/')) {
+            navigate('/chat');
+          }
+        }, 10000);
       }
 
       // Đối phương chấp nhận (người gọi nhận)
       if (payload.type === 'accept' && outgoingCallRef.current?.callId === payload.callId) {
         const outCall = outgoingCallRef.current;
+        clearTimeout(ringTimerRef.current);   // ← QUAN TRỌNG: dừng timer 10s
+        clearTimeout(statusTimerRef.current);
         setOutgoingCall(null);
         setCallStatus(null);
         navigate(`/call/${payload.callId}?mode=caller&friendName=${encodeURIComponent(outCall?.receiverName || '')}&friendAvatar=${encodeURIComponent(outCall?.receiverAvatar || '')}&friendId=${outCall?.receiverId}`);
@@ -84,15 +89,24 @@ export const CallProvider = ({ children }) => {
         setCallStatus('rejected');
         clearTimeout(statusTimerRef.current);
         statusTimerRef.current = setTimeout(() => setCallStatus(null), 4000);
+        if (location.pathname.startsWith('/call/')) {
+          navigate('/chat');
+        }
       }
 
-      // Cuộc gọi bị hủy bởi người gọi (người nhận đang thấy popup)
-      if (payload.type === 'cancel' && incomingCallRef.current?.callId === payload.callId) {
+      // Cuộc gọi bị hủy bởi người gọi hoặc hết thời gian (người nhận đang thấy popup/chuông)
+      if (
+        (payload.type === 'cancel' || payload.type === 'no_answer') &&
+        incomingCallRef.current?.callId === payload.callId
+      ) {
         clearTimeout(ringTimerRef.current);
         setIncomingCall(null);
         setCallStatus('missed');
         clearTimeout(statusTimerRef.current);
         statusTimerRef.current = setTimeout(() => setCallStatus(null), 3000);
+        if (location.pathname.startsWith('/call/')) {
+          navigate('/chat');
+        }
       }
     });
 
@@ -134,20 +148,22 @@ export const CallProvider = ({ children }) => {
       payload,
     });
 
-    // Timeout 40s không ai bắt máy → missed
+    // Timeout 10s không ai bắt máy → no_answer
     clearTimeout(ringTimerRef.current);
+    const receiverId = friend.userId;
     ringTimerRef.current = setTimeout(() => {
-      // Gửi cancel để xóa popup bên kia
+      // Gửi no_answer để xóa popup bên nhận VÀ báo cho trang /call bên nhận biết
       channelRef.current?.send({
         type: 'broadcast',
         event: 'call_signal',
-        payload: { type: 'cancel', callId },
+        payload: { type: 'no_answer', callId, receiverId },
       });
       setOutgoingCall(null);
-      setCallStatus('missed');
+      setCallStatus('no_answer');
       clearTimeout(statusTimerRef.current);
-      statusTimerRef.current = setTimeout(() => setCallStatus(null), 3000);
-    }, 40000);
+      statusTimerRef.current = setTimeout(() => setCallStatus(null), 4000);
+      // Trang /call/:callId sẽ tự navigate qua useEffect watch callStatus
+    }, 10000);
 
     // Navigate người gọi đến trang chờ
     navigate(`/call/${callId}?mode=caller&friendName=${encodeURIComponent(friend.fullName)}&friendAvatar=${encodeURIComponent(friend.avatar || '')}&friendId=${friend.userId}`);

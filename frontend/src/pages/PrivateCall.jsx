@@ -6,6 +6,7 @@ import { useParams, useSearchParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { supabase } from '../config/supabaseClient';
 import { sendMessage } from '../services/chatServiceTEMP.js';
+import { useCall } from '../context/CallContext';
 
 /* ─── Màu avatar ──────────────────────────────────────────── */
 const COLORS = ['#6c63ff','#ff6b9d','#3ecfcf','#f59e0b','#22c55e','#ef4444','#8b5cf6'];
@@ -431,6 +432,39 @@ export default function PrivateCall() {
   const [elapsed, setElapsed] = useState(0);
 
   const [partnerHungUp, setPartnerHungUp] = useState(false);
+  const [callEndedMsg, setCallEndedMsg] = useState(null); // 'no_answer' | 'cancelled'
+
+  // Đọc callStatus từ CallContext (hiển thị khi timeout / bị hủy)
+  const { callStatus } = useCall();
+
+  // Lắng nghe kênh global để bắt 'cancel' khi người gọi timeout
+  useEffect(() => {
+    if (!user?.id || !callId) return;
+    const ch = supabase.channel(`pc_global_watch_${callId}`, {
+      config: { broadcast: { self: false } }
+    });
+    ch.on('broadcast', { event: 'call_signal' }, ({ payload }) => {
+      if (!payload) return;
+      // Người nhận: caller đã timeout → tự cancel → navigate về chat
+      if (
+        (payload.type === 'cancel' || payload.type === 'no_answer') &&
+        payload.callId === callId
+      ) {
+        setCallEndedMsg('cancelled');
+        setTimeout(() => navigate('/chat'), 1500);
+      }
+    });
+    ch.subscribe();
+    return () => { ch.unsubscribe(); };
+  }, [user?.id, callId, navigate]);
+
+  // Khi callStatus thay đổi trong context (bên caller)
+  useEffect(() => {
+    if (callStatus === 'no_answer') {
+      setCallEndedMsg('no_answer');
+      setTimeout(() => navigate('/chat'), 2000);
+    }
+  }, [callStatus, navigate]);
 
   const { localStream, remoteStream, connected, error, hangup } = usePrivateWebRTC({
     callId, user, mode, micOn, camOn,
@@ -635,7 +669,11 @@ export default function PrivateCall() {
               flexDirection: 'column', gap: '16px', padding: '32px',
               textAlign: 'center',
             }}>
-              <div style={{ fontSize: '48px' }}>⚠️</div>
+              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#ef4444" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ filter: 'drop-shadow(0 0 10px rgba(239,68,68,0.35))' }}>
+                <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z" />
+                <line x1="12" y1="9" x2="12" y2="13" />
+                <line x1="12" y1="17" x2="12.01" y2="17" />
+              </svg>
               <div style={{ fontWeight: 700, fontSize: '18px', color: '#fca5a5' }}>Không thể kết nối</div>
               <div style={{ fontSize: '14px', color: 'rgba(255,255,255,0.55)', maxWidth: '300px', lineHeight: 1.6 }}>{error}</div>
               <button onClick={handleEndCall} style={{
@@ -655,9 +693,43 @@ export default function PrivateCall() {
               flexDirection: 'column', gap: '16px', padding: '32px',
               textAlign: 'center',
             }}>
-              <div style={{ fontSize: '48px' }}>📵</div>
+              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#ef4444" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" style={{ filter: 'drop-shadow(0 0 10px rgba(239,68,68,0.35))' }}>
+                <path d="M10.68 13.31a16 16 0 0 0 3.41 2.6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7 2 2 0 0 1 1.72 2v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.42 19.42 0 0 1-3.33-2.67m-2.67-3.34a19.79 19.79 0 0 1-3.07-8.63A2 2 0 0 1 4.18 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91" />
+                <line x1="23" y1="1" x2="1" y2="23" />
+              </svg>
               <div style={{ fontWeight: 700, fontSize: '18px', color: '#fca5a5' }}>Cuộc gọi đã kết thúc</div>
               <div style={{ fontSize: '14px', color: 'rgba(255,255,255,0.55)', maxWidth: '300px', lineHeight: 1.6 }}>Đối phương đã gác máy. Đang quay lại phòng chat...</div>
+            </div>
+          )}
+
+          {/* Timeout / bị hủy — hiển thị cho cả 2 bên */}
+          {callEndedMsg && (
+            <div style={{
+              position: 'absolute', inset: 0, display: 'flex',
+              alignItems: 'center', justifyContent: 'center',
+              background: 'rgba(0,0,0,0.85)', zIndex: 16,
+              flexDirection: 'column', gap: '16px', padding: '32px',
+              textAlign: 'center',
+              animation: 'pc-fade-in 0.3s ease',
+            }}>
+              <div style={{
+                width: 64, height: 64, borderRadius: '50%',
+                background: 'rgba(239,68,68,0.15)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                border: '1.5px solid rgba(239,68,68,0.35)',
+              }}>
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#ef4444" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+                  <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+                  <line x1="1" y1="1" x2="23" y2="23" />
+                </svg>
+              </div>
+              <div style={{ fontWeight: 700, fontSize: '18px', color: '#fca5a5' }}>
+                {callEndedMsg === 'no_answer' ? 'Người nhận không bắt máy' : 'Cuộc gọi đã bị hủy'}
+              </div>
+              <div style={{ fontSize: '14px', color: 'rgba(255,255,255,0.55)', maxWidth: '300px', lineHeight: 1.6 }}>
+                Đang quay lại phòng chat...
+              </div>
             </div>
           )}
         </div>
@@ -681,17 +753,46 @@ export default function PrivateCall() {
           <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
             {/* Mic */}
             <CtrlBtn onClick={() => setMicOn(m => !m)} title={micOn ? 'Tắt mic' : 'Bật mic'} active={micOn}>
-              {micOn ? '🎙️' : '🔇'}
+              {micOn ? (
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z" />
+                  <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
+                  <line x1="12" x2="12" y1="19" y2="22" />
+                </svg>
+              ) : (
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <line x1="2" x2="22" y1="2" y2="22" />
+                  <path d="M18.89 13.23A7.12 7.12 0 0 0 19 12v-2" />
+                  <path d="M5 10v2a7 7 0 0 0 12 5.79" />
+                  <path d="M15 9.34V5a3 3 0 0 0-5.68-1.33" />
+                  <path d="M9 9v3a3 3 0 0 0 4.3 2.72" />
+                  <line x1="12" x2="12" y1="19" y2="22" />
+                </svg>
+              )}
             </CtrlBtn>
 
             {/* Kết thúc cuộc gọi — nút lớn ở giữa */}
             <CtrlBtn onClick={handleEndCall} title="Kết thúc cuộc gọi" danger>
-              📵
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M10.68 13.31a16 16 0 0 0 3.41 2.6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7 2 2 0 0 1 1.72 2v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.42 19.42 0 0 1-3.33-2.67m-2.67-3.34a19.79 19.79 0 0 1-3.07-8.63A2 2 0 0 1 4.18 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91" />
+                <line x1="23" y1="1" x2="1" y2="23" />
+              </svg>
             </CtrlBtn>
 
             {/* Camera */}
             <CtrlBtn onClick={() => setCamOn(c => !c)} title={camOn ? 'Tắt camera' : 'Bật camera'} active={camOn}>
-              {camOn ? '📹' : '🚫'}
+              {camOn ? (
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="m22 8-6 4 6 4V8Z" />
+                  <rect width="14" height="12" x="2" y="6" rx="2" ry="2" />
+                </svg>
+              ) : (
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="m22 8-6 4 6 4V8Z" />
+                  <rect width="14" height="12" x="2" y="6" rx="2" ry="2" style={{ opacity: 0.5 }} />
+                  <line x1="2" x2="22" y1="2" y2="22" />
+                </svg>
+              )}
             </CtrlBtn>
           </div>
 
