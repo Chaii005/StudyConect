@@ -7,15 +7,6 @@ import { supabase } from '../config/supabaseClient';
 import { useAuth } from './AuthContext';
 import { sendMessage } from '../services/chatServiceTEMP.js';
 
-// Lưu thông báo cuộc gọi nhỡ vào localStorage để hiện trong chuông
-function saveMissedCallNotif(key, data) {
-  try {
-    localStorage.setItem(key, JSON.stringify({ ...data, savedAt: Date.now() }));
-  } catch (err) {
-    if (import.meta.env.DEV) console.warn('saveMissedCallNotif error:', err);
-  }
-}
-
 const CallContext = createContext(null);
 
 // Tạo callId ngẫu nhiên
@@ -117,11 +108,6 @@ export const CallProvider = ({ children }) => {
         // Gửi tin nhắn vào chat + lưu thông báo chuông (bên gọi)
         if (outCall?.receiverId && user?.id) {
           sendMessage(user.id, outCall.receiverId, '📵 Cuộc gọi bị từ chối').catch(() => {});
-          saveMissedCallNotif('sc_missed_call_out', {
-            type: 'rejected',
-            friendId: String(outCall.receiverId),
-            friendName: outCall.receiverName || 'Người dùng',
-          });
         }
       }
 
@@ -134,13 +120,13 @@ export const CallProvider = ({ children }) => {
         clearTimeout(ringTimerRef.current);
         setIncomingCall(null);
         setCallStatus('missed');
-        // Lưu thông báo chuông bên nhận
+        // Gửi message vào DB từ receiver → caller để hiện trong bell của caller
         if (incCall?.callerId && user?.id) {
-          saveMissedCallNotif('sc_missed_call_in', {
-            type: 'missed',
-            friendId: String(incCall.callerId),
-            friendName: incCall.callerName || 'Người dùng',
-          });
+          sendMessage(
+            user.id,
+            incCall.callerId,
+            `📵 Bạn đã bỏ lỡ cuộc gọi từ ${incCall.callerName || 'Người dùng'}`
+          ).catch(() => {});
         }
         clearTimeout(statusTimerRef.current);
         statusTimerRef.current = setTimeout(() => setCallStatus(null), 3000);
@@ -204,11 +190,6 @@ export const CallProvider = ({ children }) => {
       // Gửi tin nhắn vào chat + lưu thông báo chuông (bên gọi)
       if (user?.id && receiverId) {
         sendMessage(user.id, receiverId, '📵 Cuộc gọi nhỡ').catch(() => {});
-        saveMissedCallNotif('sc_missed_call_out', {
-          type: 'no_answer',
-          friendId: String(receiverId),
-          friendName: receiverName,
-        });
       }
     }, 10000);
 

@@ -796,38 +796,46 @@ export default function useNotifications(userId) {
         console.warn('Error fetching post tag notifications:', err);
       }
 
-      // Đọc thông báo cuộc gọi nhỡ từ localStorage (bên gọi + bên nhận)
+      // Fetch outgoing missed call messages (📵) để caller cũng thấy trong bell
       try {
-        const ONE_DAY_MS = 24 * 60 * 60 * 1000;
-        const missedKeys = ['sc_missed_call_out', 'sc_missed_call_in'];
-        missedKeys.forEach(lKey => {
-          const raw = localStorage.getItem(lKey);
-          if (!raw) return;
-          const mc = JSON.parse(raw);
-          if (!mc || !mc.savedAt || (Date.now() - mc.savedAt) > ONE_DAY_MS) return;
-          const key = `missedcall:${lKey}:${mc.savedAt}`;
-          if (notifsList.some(n => n.key === key)) return;
-          const isOut = lKey === 'sc_missed_call_out';
-          let title = '', body = '';
-          if (isOut) {
-            title = mc.type === 'rejected' ? '📵 Cuộc gọi bị từ chối' : '📵 Cuộc gọi nhỡ';
-            body = `${mc.friendName} không bắt máy`;
-          } else {
-            title = '📵 Cuộc gọi nhỡ';
-            body = `Bạn đã bỏ lỡ cuộc gọi từ ${mc.friendName}`;
-          }
-          notifsList.push({
-            key,
-            type: 'missedcall',
-            title,
-            body,
-            createdAt: new Date(mc.savedAt).toISOString(),
-            friendId: mc.friendId,
-          });
-        });
+        const { data: outgoingMissed, error: omError } = await supabase
+          .from('messages')
+          .select(`
+            id,
+            receiver_id,
+            content,
+            created_at,
+            users:users!receiver_id (
+              full_name
+            )
+          `)
+          .eq('sender_id', uid)
+          .is('group_id', null)
+          .like('content', '📵%')
+          .order('created_at', { ascending: false })
+          .limit(10);
+
+        if (!omError && outgoingMissed) {
+          outgoingMissed
+            .filter(m => (now - new Date(m.created_at)) < ONE_DAY_MS)
+            .forEach(m => {
+              const key = `missedcall:out:${m.id}`;
+              if (notifsList.some(n => n.key === key)) return;
+              const receiverName = m.users?.full_name || 'Người dùng';
+              notifsList.push({
+                key,
+                type: 'missedcall',
+                title: m.content?.startsWith('📵 Cuộc gọi bị từ chối') ? '📵 Cuộc gọi bị từ chối' : '📵 Cuộc gọi nhỡ',
+                body: `${receiverName} không bắt máy`,
+                createdAt: m.created_at,
+                senderId: String(uid),
+              });
+            });
+        }
       } catch (err) {
-        if (import.meta.env.DEV) console.warn('Error reading missed call notifs:', err);
+        if (import.meta.env.DEV) console.warn('Error fetching outgoing missed calls:', err);
       }
+
 
       notifsList.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
       setNotifs(notifsList);
