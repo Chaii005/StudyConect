@@ -290,38 +290,23 @@ export const updateProfile = async ({ id, fullName, university, major, bio, avat
     if (typeof avatarFile === 'string') {
       avatar = avatarFile;
     } else if (avatarFile instanceof File || avatarFile instanceof Blob) {
-      try {
-        const fileExt = (avatarFile.name || 'avatar.png').split('.').pop() || 'png';
-        const fileName = `${id}_${Date.now()}.${fileExt}`;
-        const { error: uploadError } = await supabase.storage
-          .from('avatars')
-          .upload(fileName, avatarFile, { cacheControl: '3600', upsert: true });
+      const fileExt = (avatarFile.name || 'avatar.png').split('.').pop() || 'png';
+      const fileName = `${id}_${Date.now()}.${fileExt}`;
+      const { error: uploadError } = await supabase.storage
+        .from('avatars')
+        .upload(fileName, avatarFile, { cacheControl: '3600', upsert: true });
 
-        if (uploadError) {
-          if (import.meta.env.DEV) {
-            console.warn('Upload avatar to Storage failed:', uploadError.message);
-          }
-          avatar = await fileToBase64(avatarFile);
-        } else {
-          const { data: { publicUrl } } = supabase.storage
-            .from('avatars')
-            .getPublicUrl(fileName);
-          avatar = publicUrl;
-        }
-      } catch (err) {
+      if (uploadError) {
         if (import.meta.env.DEV) {
-          console.warn('Storage upload exception, falling back to base64:', err);
+          console.error('[Avatar] Supabase Storage error:', uploadError.message);
         }
-        avatar = await fileToBase64(avatarFile);
+        throw new Error('Không thể tải ảnh đại diện lên máy chủ. Vui lòng thử lại sau.');
       }
-    } else {
-      try {
-        avatar = await fileToBase64(avatarFile);
-      } catch (err) {
-        if (import.meta.env.DEV) {
-          console.warn('fileToBase64 failed on unknown avatarFile type:', err);
-        }
-      }
+
+      const { data: { publicUrl } } = supabase.storage
+        .from('avatars')
+        .getPublicUrl(fileName);
+      avatar = publicUrl;
     }
   }
 

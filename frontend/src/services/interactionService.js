@@ -74,7 +74,8 @@ export const getPosts = async (currentUserId) => {
         )
       `)
       .in('post_id', postIds)
-      .order('created_at', { ascending: true }),
+      .order('created_at', { ascending: true })
+      .limit(50),
     supabase
       .from('post_tags')
       .select('post_id, target_type, target_id')

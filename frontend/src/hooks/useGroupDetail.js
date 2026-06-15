@@ -802,42 +802,23 @@ export default function useGroupDetail(groupId, user, addToast) {
         return;
       }
       let fileUrlValue = '';
-      try {
-        const safeName = sanitizeForStorage(selectedFile.name);
-        const fileName = `${groupId}/${Date.now()}_${safeName}`;
-        const { error: uploadError } = await supabase.storage
-          .from('attachments')
-          .upload(fileName, selectedFile, { cacheControl: '3600', upsert: true });
+      const safeName = sanitizeForStorage(selectedFile.name);
+      const fileName = `${groupId}/${Date.now()}_${safeName}`;
+      const { error: uploadError } = await supabase.storage
+        .from('attachments')
+        .upload(fileName, selectedFile, { cacheControl: '3600', upsert: true });
 
-        if (uploadError) {
-          if (import.meta.env.DEV) {
-            console.warn('Upload group file to Storage failed:', uploadError.message);
-          }
-          const base64Data = await new Promise((res, rej) => {
-            const r = new FileReader();
-            r.readAsDataURL(selectedFile);
-            r.onload = () => res(r.result);
-            r.onerror = rej;
-          });
-          fileUrlValue = base64Data;
-        } else {
-          const { data: { publicUrl } } = supabase.storage
-            .from('attachments')
-            .getPublicUrl(fileName);
-          fileUrlValue = publicUrl;
-        }
-      } catch (err) {
+      if (uploadError) {
         if (import.meta.env.DEV) {
-          console.warn('Group file Storage upload error, falling back to base64:', err);
+          console.error('[Upload] Supabase Storage error:', uploadError.message);
         }
-        const base64Data = await new Promise((res, rej) => {
-          const r = new FileReader();
-          r.readAsDataURL(selectedFile);
-          r.onload = () => res(r.result);
-          r.onerror = rej;
-        });
-        fileUrlValue = base64Data;
+        throw new Error('Không thể tải tài liệu lên máy chủ. Vui lòng thử lại sau.');
       }
+
+      const { data: { publicUrl } } = supabase.storage
+        .from('attachments')
+        .getPublicUrl(fileName);
+      fileUrlValue = publicUrl;
 
       const finalSubject = group?.subject || 'Chung';
       const cleanFileName = customFileName.trim() || selectedFile.name;
@@ -1034,44 +1015,23 @@ export default function useGroupDetail(groupId, user, addToast) {
       let fileData = null, fileName = null;
       if (submitFile) {
         fileName = submitFile.name;
-        let fileUrlValue = '';
-        try {
-          const safeName = sanitizeForStorage(submitFile.name);
-          const storageFileName = `submissions/${groupId}/${user.id}_${Date.now()}_${safeName}`;
-          const { error: uploadError } = await supabase.storage
-            .from('attachments')
-            .upload(storageFileName, submitFile, { cacheControl: '3600', upsert: true });
+        const safeName = sanitizeForStorage(submitFile.name);
+        const storageFileName = `submissions/${groupId}/${user.id}_${Date.now()}_${safeName}`;
+        const { error: uploadError } = await supabase.storage
+          .from('attachments')
+          .upload(storageFileName, submitFile, { cacheControl: '3600', upsert: true });
 
-          if (uploadError) {
-            if (import.meta.env.DEV) {
-              console.warn('Upload submission file to Storage failed:', uploadError.message);
-            }
-            const base64Data = await new Promise((res, rej) => {
-              const reader = new FileReader();
-              reader.onload = e => res(e.target.result);
-              reader.onerror = rej;
-              reader.readAsDataURL(submitFile);
-            });
-            fileUrlValue = base64Data;
-          } else {
-            const { data: { publicUrl } } = supabase.storage
-              .from('attachments')
-              .getPublicUrl(storageFileName);
-            fileUrlValue = publicUrl;
-          }
-        } catch (err) {
+        if (uploadError) {
           if (import.meta.env.DEV) {
-            console.warn('Submission file Storage upload error, falling back to base64:', err);
+            console.error('[Submit] Supabase Storage error:', uploadError.message);
           }
-          const base64Data = await new Promise((res, rej) => {
-            const reader = new FileReader();
-            reader.onload = e => res(e.target.result);
-            reader.onerror = rej;
-            reader.readAsDataURL(submitFile);
-          });
-          fileUrlValue = base64Data;
+          throw new Error('Không thể tải file bài nộp lên máy chủ. Vui lòng thử lại sau.');
         }
-        fileData = fileUrlValue;
+
+        const { data: { publicUrl } } = supabase.storage
+          .from('attachments')
+          .getPublicUrl(storageFileName);
+        fileData = publicUrl;
       }
       const all = loadSubmissions();
       const list = all[showSubmitModal] || [];
@@ -1153,52 +1113,31 @@ export default function useGroupDetail(groupId, user, addToast) {
           return;
         }
 
-        let fileUrlValue = '';
-        try {
-          const safeName = sanitizeForStorage(chatAttachedFile.name);
-          const fileName = `chat/${groupId}/${Date.now()}_${safeName}`;
-          const { error: uploadError } = await supabase.storage
-            .from('attachments')
-            .upload(fileName, chatAttachedFile, { cacheControl: '3600', upsert: true });
+        const safeName = sanitizeForStorage(chatAttachedFile.name);
+        const chatFileName = `chat/${groupId}/${Date.now()}_${safeName}`;
+        const { error: uploadError } = await supabase.storage
+          .from('attachments')
+          .upload(chatFileName, chatAttachedFile, { cacheControl: '3600', upsert: true });
 
-          if (uploadError) {
-            if (import.meta.env.DEV) {
-              console.warn('Upload chat file to Storage failed:', uploadError.message);
-            }
-            const base64Data = await new Promise((res, rej) => {
-              const reader = new FileReader();
-              reader.onload = () => res(reader.result);
-              reader.onerror = rej;
-              reader.readAsDataURL(chatAttachedFile);
-            });
-            fileUrlValue = base64Data;
-          } else {
-            const { data: { publicUrl } } = supabase.storage
-              .from('attachments')
-              .getPublicUrl(fileName);
-            fileUrlValue = publicUrl;
-          }
-        } catch (err) {
+        if (uploadError) {
           if (import.meta.env.DEV) {
-            console.warn('Chat file Storage upload error, falling back to base64:', err);
+            console.error('[Chat] Supabase Storage error:', uploadError.message);
           }
-          const base64Data = await new Promise((res, rej) => {
-            const reader = new FileReader();
-            reader.onload = () => res(reader.result);
-            reader.onerror = rej;
-            reader.readAsDataURL(chatAttachedFile);
-          });
-          fileUrlValue = base64Data;
+          throw new Error('Không thể tải file đính kèm lên máy chủ. Vui lòng thử lại sau.');
         }
+
+        const { data: { publicUrl: chatFileUrl } } = supabase.storage
+          .from('attachments')
+          .getPublicUrl(chatFileName);
 
         fileAttachment = {
           fileName: chatAttachedFile.name,
           fileType: chatAttachedFile.type,
-          fileData: fileUrlValue,
+          fileData: chatFileUrl,
           fileSize: formatBytes(chatAttachedFile.size),
-          name: chatAttachedFile.name, // legacy fallback
-          type: chatAttachedFile.type, // legacy fallback
-          data: fileUrlValue,            // legacy fallback
+          name: chatAttachedFile.name,
+          type: chatAttachedFile.type,
+          data: chatFileUrl,
         };
       }
       await sendChatMessage(groupId, {

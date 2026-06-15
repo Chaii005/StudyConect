@@ -790,29 +790,22 @@ function ConversationView({ user, friend, friends, onBack, onlineUserIds, onNick
       
       let fileUrlValue = '';
       if (attachedFile) {
-        try {
-          const fileName = `private/${user.id}/${Date.now()}_${attachedFile.name || 'clipboard.png'}`;
-          const { error: uploadError } = await supabase.storage
-            .from('attachments')
-            .upload(fileName, attachedFile, { cacheControl: '3600', upsert: true });
+        const fileName = `private/${user.id}/${Date.now()}_${attachedFile.name || 'clipboard.png'}`;
+        const { error: uploadError } = await supabase.storage
+          .from('attachments')
+          .upload(fileName, attachedFile, { cacheControl: '3600', upsert: true });
 
-          if (uploadError) {
-            if (import.meta.env.DEV) {
-              console.warn('Upload private file to Storage failed:', uploadError.message);
-            }
-            fileUrlValue = dataUrl;
-          } else {
-            const { data: { publicUrl } } = supabase.storage
-              .from('attachments')
-              .getPublicUrl(fileName);
-            fileUrlValue = publicUrl;
-          }
-        } catch (err) {
+        if (uploadError) {
           if (import.meta.env.DEV) {
-            console.warn('Private file Storage upload error, falling back to base64:', err);
+            console.error('[Chat] Private file Storage error:', uploadError.message);
           }
-          fileUrlValue = dataUrl;
+          throw new Error('Không thể tải file đính kèm lên máy chủ. Vui lòng thử lại sau.');
         }
+
+        const { data: { publicUrl } } = supabase.storage
+          .from('attachments')
+          .getPublicUrl(fileName);
+        fileUrlValue = publicUrl;
       } else {
         fileUrlValue = dataUrl;
       }
