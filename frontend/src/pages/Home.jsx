@@ -103,14 +103,8 @@ export default function Home() {
   // eslint-disable-next-line react-hooks/preserve-manual-memoization
   const fetchPosts = useCallback(async () => {
     if (!user?.id) return;
-    if (import.meta.env.DEV) {
-      console.log('user.id:', user?.id);
-    }
     try {
       const data = await getPosts(user.id);
-      if (import.meta.env.DEV) {
-        console.log('posts fetched:', data?.length);
-      }
       setPosts(data);
       // Cache removed to comply with quota limits
     } catch (err) {

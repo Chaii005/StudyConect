@@ -16,7 +16,8 @@ export const getPosts = async (currentUserId) => {
     .from('friendships')
     .select('from_user_id, to_user_id')
     .eq('status', 'accepted')
-    .or(`from_user_id.eq.${uid},to_user_id.eq.${uid}`);
+    .or(`from_user_id.eq.${uid},to_user_id.eq.${uid}`)
+    .limit(50);
 
   if (friendError) {
     console.error('Error fetching friendships for feed filtering:', friendError);
@@ -54,10 +55,6 @@ export const getPosts = async (currentUserId) => {
 
   if (postsError) throw new Error(`Lỗi tải bài viết: ${postsError.message}`);
 
-  if (import.meta.env.DEV) {
-    console.log('[Debug] postsData count:', postsData?.length);
-  }
-
   if (!postsData || postsData.length === 0) return [];
 
   // 3. Fetch all comments and post_tags in parallel
@@ -80,6 +77,7 @@ export const getPosts = async (currentUserId) => {
       .from('post_tags')
       .select('post_id, target_type, target_id')
       .in('post_id', postIds)
+      .limit(50)
   ]);
 
   const commentsData = commentsRes.data || [];
@@ -903,7 +901,8 @@ export const getUserSchedulesAndDeadlines = async (userId) => {
   const { data: joinedMemberships, error: memError } = await supabase
     .from('group_members')
     .select('group_id, role')
-    .eq('user_id', uid);
+    .eq('user_id', uid)
+    .limit(100);
 
   if (memError || !joinedMemberships || joinedMemberships.length === 0) {
     return { schedules: [], deadlines: [] };
@@ -921,7 +920,8 @@ export const getUserSchedulesAndDeadlines = async (userId) => {
       )
     `)
     .in('group_id', joinedGroupIds)
-    .order('date_time', { ascending: true });
+    .order('date_time', { ascending: true })
+    .limit(50);
 
   const schedules = (schedulesData || []).map(s => {
     return {
@@ -945,7 +945,8 @@ export const getUserSchedulesAndDeadlines = async (userId) => {
       )
     `)
     .in('group_id', joinedGroupIds)
-    .order('due_date', { ascending: true });
+    .order('due_date', { ascending: true })
+    .limit(50);
 
   const deadlines = (deadlinesData || [])
     .filter(d => {
