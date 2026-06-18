@@ -16,7 +16,7 @@ import {
   deleteMessage,
 } from '../services/chatServiceTEMP.js';
 import { supabase } from '../config/supabaseClient';
-import { compressImage } from '../utils/imageCompress';
+import { compressImage as compressImageFile } from '../utils/imageCompress';
 
 // ── Avatar ──────────────────────────────────────────────────────────
 function Avatar({ src, initial, color = '#6c63ff', size = 40 }) {
@@ -795,7 +795,7 @@ function ConversationView({ user, friend, friends, onBack, onlineUserIds, onNick
         // Compress ảnh trước khi upload vào private chat
         if (attachedFile.type?.startsWith('image/')) {
           try {
-            fileToUpload = await compressImage(attachedFile, { maxWidth: 1280, maxHeight: 1280, quality: 0.78 });
+            fileToUpload = await compressImageFile(attachedFile, { maxWidth: 1280, maxHeight: 1280, quality: 0.78 });
           } catch {
             fileToUpload = attachedFile; // fallback
           }
