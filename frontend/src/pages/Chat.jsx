@@ -16,6 +16,7 @@ import {
   deleteMessage,
 } from '../services/chatServiceTEMP.js';
 import { supabase } from '../config/supabaseClient';
+import { compressImage } from '../utils/imageCompress';
 
 // ── Avatar ──────────────────────────────────────────────────────────
 function Avatar({ src, initial, color = '#6c63ff', size = 40 }) {
@@ -790,10 +791,19 @@ function ConversationView({ user, friend, friends, onBack, onlineUserIds, onNick
       
       let fileUrlValue = '';
       if (attachedFile) {
-        const fileName = `private/${user.id}/${Date.now()}_${attachedFile.name || 'clipboard.png'}`;
+        let fileToUpload = attachedFile;
+        // Compress ảnh trước khi upload vào private chat
+        if (attachedFile.type?.startsWith('image/')) {
+          try {
+            fileToUpload = await compressImage(attachedFile, { maxWidth: 1280, maxHeight: 1280, quality: 0.78 });
+          } catch {
+            fileToUpload = attachedFile; // fallback
+          }
+        }
+        const fileName = `private/${user.id}/${Date.now()}_${fileToUpload.name || attachedFile.name || 'clipboard.png'}`;
         const { error: uploadError } = await supabase.storage
           .from('attachments')
-          .upload(fileName, attachedFile, { cacheControl: '3600', upsert: true });
+          .upload(fileName, fileToUpload, { cacheControl: '3600', upsert: true });
 
         if (uploadError) {
           if (import.meta.env.DEV) {

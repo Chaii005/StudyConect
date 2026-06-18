@@ -2095,9 +2095,7 @@ export default function GlobalMessageListener() {
       })
 
       .subscribe((status) => {
-        if (import.meta.env.DEV) {
-          console.log('[Realtime] KĂªnh thĂ´ng bĂ¡o:', status);
-        }
+        if (import.meta.env.DEV) console.log('[Realtime] KĂªnh thĂ´ng bĂ¡o:', status);
       });
 
     // Láº¯ng nghe broadcast tá»« Admin panel
@@ -2133,6 +2131,17 @@ export default function GlobalMessageListener() {
         addToast(
           `TĂ i liá»‡u "${fileName}" cá»§a báº¡n trong nhĂ³m "${groupName || 'NhĂ³m há»c'}" Ä‘Ă£ bá»‹ Admin tá»« chá»‘i phĂª duyá»‡t vĂ  xĂ³a bá». âŒ`,
           'error', 8000, null, 'đŸ“'
+        );
+      }
+    });
+
+    adminChannel.on('broadcast', { event: 'post_approved' }, async ({ payload }) => {
+      if (!payload) return;
+      const { userId } = payload;
+      if (String(userId) === String(uid)) {
+        addToast(
+          'BĂ i viáº¿t cá»§a báº¡n Ä‘Ă£ Ä‘Æ°á»£c Admin phĂª duyá»‡t! đŸ‰',
+          'success', 7000, '/', 'đŸ“'
         );
       }
     });
@@ -6698,6 +6707,7 @@ export default function CreatePostModal({ user, friends = [], myLeaderGroups = [
         taggedGroupNames: tags.filter(t => t.type === 'group').map(t => t.name),
         taggerName: user.fullName,
       });
+      alert('BĂ i viáº¿t Ä‘Ă£ Ä‘Æ°á»£c gá»­i vĂ  Ä‘ang chá» admin phĂª duyá»‡t.');
       setLoading(false);
       onSubmit(newPost);
       onClose();
@@ -8736,7 +8746,7 @@ export default function useGroupDetail(groupId, user, addToast) {
     try {
       const { data, error } = await supabase
         .from('friendships')
-        .select('*')
+        .select('id, from_user_id, to_user_id, status')
         .or(`from_user_id.eq.${parseInt(user.id, 10)},to_user_id.eq.${parseInt(user.id, 10)}`);
       
       if (!error && data) {
@@ -9989,13 +9999,14 @@ export default function useNotifications(userId) {
         const { data: schedules } = await supabase
           .from('schedules')
           .select(`
-            *,
+            id, group_id, topic, date_time, created_at,
             study_groups (
               name
             )
           `)
           .in('group_id', joinedIds)
-          .gte('date_time', now.toISOString());
+          .gte('date_time', now.toISOString())
+          .limit(50);
 
         if (schedules) {
           schedules
@@ -10016,13 +10027,14 @@ export default function useNotifications(userId) {
         const { data: deadlines } = await supabase
           .from('deadlines')
           .select(`
-            *,
+            id, group_id, title, due_date, assignee_id, created_at,
             study_groups (
               name
             )
           `)
           .in('group_id', joinedIds)
-          .eq('completed', false);
+          .eq('completed', false)
+          .limit(50);
 
         if (deadlines) {
           deadlines
@@ -10439,96 +10451,6 @@ export default function useNotifications(userId) {
         console.warn('Error reading local demotions:', err);
       }
 
-      // 4b. Fetch messages, comments, reactions, and files from localStorage (as fallback/offline/fast sync)
-      // Local Private Messages
-      try {
-        const localChats = JSON.parse(localStorage.getItem('sc_chats') || '[]');
-        if (Array.isArray(localChats)) {
-          localChats.forEach(m => {
-            if (String(m.receiver_id) === String(uid) && String(m.sender_id) !== String(uid)) {
-              const age = now - new Date(m.created_at);
-              if (age > 0 && age < 5 * 60 * 1000) { // 5 minutes
-                const key = `privatemsg:local:${m.id || m.created_at}`;
-                if (!notifsList.some(n => n.key === key)) {
-                  notifsList.push({
-                    key,
-                    type: 'privatemsg',
-                    title: `đŸ’¬ Tin nháº¯n tá»« ${m.sender_name || 'NgÆ°á»i dĂ¹ng'}`,
-                    body: m.content || '',
-                    createdAt: m.created_at,
-                    senderId: String(m.sender_id)
-                  });
-                }
-              }
-            }
-          });
-        }
-      } catch (err) {
-        console.warn('Error parsing local messages:', err);
-      }
-
-
-
-      // Local Reactions
-      try {
-        for (let i = 0; i < localStorage.length; i++) {
-          const lKey = localStorage.key(i);
-          if (lKey && lKey.startsWith('reactions_')) {
-            const postId = lKey.replace('reactions_', '');
-            const localReactions = JSON.parse(localStorage.getItem(lKey) || '[]');
-            if (Array.isArray(localReactions)) {
-              localReactions.forEach(r => {
-                const age = now - new Date(r.createdAt || r.created_at);
-                if (age > 0 && age < 60 * 60 * 1000) { // 1 hour
-                  if (String(r.postOwnerId || r.post_owner_id) === String(uid) && String(r.userId || r.user_id) !== String(uid)) {
-                    const key = `like:local:${postId}:${r.userId || r.user_id}`;
-                    if (!notifsList.some(n => n.key === key)) {
-                      const emoji = r.emoji || 'â¤ï¸';
-                      notifsList.push({
-                        key,
-                        type: 'like',
-                        title: `${emoji} TÆ°Æ¡ng tĂ¡c bĂ i viáº¿t`,
-                        body: `${r.userName || r.user_name || 'NgÆ°á»i dĂ¹ng'} Ä‘Ă£ tháº£ cáº£m xĂºc vĂ o bĂ i viáº¿t cá»§a báº¡n`,
-                        createdAt: r.createdAt || r.created_at,
-                        postId: postId
-                      });
-                    }
-                  }
-                }
-              });
-            }
-          }
-        }
-      } catch (err) {
-        console.warn('Error parsing local reactions:', err);
-      }
-
-      // Local Files
-      try {
-        const localFiles = JSON.parse(localStorage.getItem('sc_files') || '[]');
-        if (Array.isArray(localFiles)) {
-          localFiles.forEach(f => {
-            const age = now - new Date(f.created_at);
-            if (age > 0 && age < 24 * 60 * 60 * 1000) { // 24 hours
-              if (String(f.user_id) !== String(uid) && userGroupIds.has(Number(f.group_id))) {
-                const key = `file:local:${f.id || f.created_at}`;
-                if (!notifsList.some(n => n.key === key)) {
-                  notifsList.push({
-                    key,
-                    type: 'fileupload',
-                    title: 'đŸ“ TĂ i liá»‡u nhĂ³m má»›i',
-                    body: `${f.user_name || 'ThĂ nh viĂªn'} Ä‘Ă£ táº£i lĂªn tĂ i liá»‡u "${f.file_name}" trong nhĂ³m "${f.group_name || 'há»c'}"`,
-                    createdAt: f.created_at,
-                    groupId: String(f.group_id)
-                  });
-                }
-              }
-            }
-          });
-        }
-      } catch (err) {
-        console.warn('Error parsing local files:', err);
-      }
       // Post Tag Notifications (from Supabase post_tags)
       try {
         const joinedGroupIdsStr = Array.from(userGroupIds).map(String);
@@ -11365,7 +11287,7 @@ import { useAuth } from '../context/AuthContext';
 import AppLayout from '../layouts/AppLayout';
 import { adminLogin } from '../services/authService';
 import { adminGetUsers, adminCreateUser, adminUpdateUser, adminDeleteUser, adminGetGroups, adminCreateGroup, adminUpdateGroup, adminDeleteGroup } from '../services/adminService';
-import { getPendingFiles, approveFile, deleteFile as adminDeleteFile } from '../services/interactionService';
+import { getPendingFiles, getPendingPosts, approveFile, approvePost, deleteFile as adminDeleteFile, deletePost as adminDeletePost } from '../services/interactionService';
 import { supabase } from '../config/supabaseClient';
 import UserTable     from '@/components/admin/UserTable';
 import GroupTable    from '@/components/admin/GroupTable';
@@ -11444,6 +11366,36 @@ function MembersModal({ group, users, onClose }) {
         <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '20px' }}>
           <button className="btn btn-secondary" style={{ padding: '10px 24px' }} onClick={onClose}>ÄĂ³ng</button>
         </div>
+      </div>
+    </div>
+  );
+}
+
+// â”€â”€ Post Preview Modal â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+function PostPreviewModal({ post, onClose }) {
+  if (!post) return null;
+  return (
+    <div
+      style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.75)', zIndex: 10000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px' }}
+      onClick={onClose}
+    >
+      <div
+        style={{ background: 'var(--bg-card)', borderRadius: '16px', width: '100%', maxWidth: '560px', maxHeight: '80vh', overflow: 'auto', border: '1px solid var(--border)', padding: '24px' }}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+          <h3 style={{ margin: 0, fontSize: '18px', fontWeight: 700, color: 'var(--text-primary)' }}>Xem trÆ°á»›c bĂ i viáº¿t</h3>
+          <button onClick={onClose} style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', fontSize: '20px' }}>âœ•</button>
+        </div>
+        <p style={{ fontSize: '13px', color: 'var(--text-muted)', margin: '0 0 12px 0' }}>
+          ÄÄƒng bá»Ÿi <strong style={{ color: 'var(--text-secondary)' }}>{post.userFullName}</strong> Â· {new Date(post.createdAt).toLocaleString('vi-VN')}
+        </p>
+        <div style={{ fontSize: '15px', color: 'var(--text-primary)', lineHeight: 1.6, whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>
+          {post.content}
+        </div>
+        {post.image && (
+          <img src={post.image} alt="" style={{ width: '100%', marginTop: '16px', borderRadius: '12px', maxHeight: '320px', objectFit: 'contain' }} />
+        )}
       </div>
     </div>
   );
@@ -11734,7 +11686,9 @@ export default function Admin() {
   const [users,     setUsers]     = useState([]);
   const [groups,    setGroups]    = useState([]);
   const [pendingFiles, setPendingFiles] = useState([]);
+  const [pendingPosts, setPendingPosts] = useState([]);
   const [previewingFile, setPreviewingFile] = useState(null);
+  const [previewingPost, setPreviewingPost] = useState(null);
   const [loading,   setLoading]   = useState(true);
 
   // Toasts
@@ -11771,14 +11725,16 @@ export default function Admin() {
   const loadData = useCallback(async () => {
     try {
       setLoading(true);
-      const [allUsers, allGroups, allPendingFiles] = await Promise.all([
+      const [allUsers, allGroups, allPendingFiles, allPendingPosts] = await Promise.all([
         adminGetUsers(),
         adminGetGroups(),
-        getPendingFiles()
+        getPendingFiles(),
+        getPendingPosts()
       ]);
       setUsers(allUsers);
       setGroups(allGroups);
       setPendingFiles(allPendingFiles);
+      setPendingPosts(allPendingPosts);
     } catch (err) {
       showToast(err.message || 'KhĂ´ng thá»ƒ táº£i dá»¯ liá»‡u admin', 'error');
     } finally {
@@ -11948,6 +11904,8 @@ export default function Admin() {
     );
   }
 
+  const pendingModerationCount = pendingFiles.length + pendingPosts.length;
+
   // â”€â”€ Dashboard â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   return (
     <AppLayout hideSidebar={true} hideNavbar={true}>
@@ -12021,8 +11979,8 @@ export default function Admin() {
                 Báº¢NG ÄIá»€U HĂ€NH QUáº¢N TRá»
               </h2>
               <p style={{ fontSize: '13px', color: 'var(--text-secondary)', margin: '6px 0 0 0', display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
-                <span>Há»‡ thá»‘ng quáº£n lĂ½ tĂ i khoáº£n, phĂ²ng há»c vĂ  kiá»ƒm duyá»‡t tĂ i liá»‡u Ä‘á»™c láº­p</span>
-                {pendingFiles.length > 0 && (
+                <span>Há»‡ thá»‘ng quáº£n lĂ½ tĂ i khoáº£n, phĂ²ng há»c vĂ  kiá»ƒm duyá»‡t ná»™i dung</span>
+                {pendingModerationCount > 0 && (
                   <span style={{
                     background: 'rgba(244,63,94,0.12)',
                     color: 'var(--error)',
@@ -12036,7 +11994,7 @@ export default function Admin() {
                     gap: '4px'
                   }}>
                     <span style={{ display: 'inline-block', width: '6px', height: '6px', borderRadius: '50%', background: 'var(--error)', animation: 'pulseGlow 1.8s infinite' }} />
-                    CĂ³ {pendingFiles.length} tĂ i liá»‡u chá» duyá»‡t
+                    CĂ³ {pendingModerationCount} ná»™i dung chá» duyá»‡t
                   </span>
                 )}
               </p>
@@ -12085,7 +12043,7 @@ export default function Admin() {
               },
               {
                 key: 'pendingFiles',
-                label: 'Kiá»ƒm duyá»‡t tĂ i liá»‡u',
+                label: 'Kiá»ƒm duyá»‡t ná»™i dung',
                 icon: (
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.25" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
@@ -12095,7 +12053,7 @@ export default function Admin() {
                     <polyline points="10 9 9 9 8 9" />
                   </svg>
                 ),
-                count: pendingFiles.length
+                count: pendingModerationCount
               },
               {
                 key: 'stats',
@@ -12201,13 +12159,14 @@ export default function Admin() {
               {activeTab === 'pendingFiles' && (
                 <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 'var(--radius-lg)', padding: '28px 32px', boxShadow: 'var(--shadow), var(--shadow-glow)', backdropFilter: 'blur(16px)' }}>
 
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
                     <div>
-                      <h3 style={{ fontSize: '18px', fontWeight: 700, color: 'var(--text-primary)', margin: 0 }}>Danh sĂ¡ch tĂ i liá»‡u chá» kiá»ƒm duyá»‡t</h3>
-                      <p style={{ fontSize: '13px', color: 'var(--text-muted)', margin: '4px 0 0 0' }}>TĂ i liá»‡u cáº§n Ä‘Æ°á»£c admin phĂª duyá»‡t trÆ°á»›c khi xuáº¥t hiá»‡n trong nhĂ³m há»c</p>
+                      <h3 style={{ fontSize: '18px', fontWeight: 700, color: 'var(--text-primary)', margin: 0 }}>Kiá»ƒm duyá»‡t ná»™i dung</h3>
+                      <p style={{ fontSize: '13px', color: 'var(--text-muted)', margin: '4px 0 0 0' }}>BĂ i viáº¿t vĂ  tĂ i liá»‡u cáº§n Ä‘Æ°á»£c admin phĂª duyá»‡t trÆ°á»›c khi hiá»ƒn thá»‹ cĂ´ng khai</p>
                     </div>
                   </div>
-                  {pendingFiles.length === 0 ? (
+
+                  {pendingModerationCount === 0 ? (
                     <div style={{ textAlign: 'center', padding: '48px 0', color: 'var(--text-muted)' }}>
                       <div style={{ display: 'inline-flex', width: '64px', height: '64px', borderRadius: '50%', background: 'rgba(52,211,153,0.1)', alignItems: 'center', justifyContent: 'center', color: '#34d399', marginBottom: '16px', border: '1px solid rgba(52,211,153,0.2)', boxShadow: '0 0 15px rgba(52,211,153,0.1)' }}>
                         <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
@@ -12215,24 +12174,107 @@ export default function Admin() {
                           <polyline points="22 4 12 14.01 9 11.01"/>
                         </svg>
                       </div>
-                      <p style={{ fontSize: '15px', fontWeight: 600, margin: 0 }}>KhĂ´ng cĂ³ tĂ i liá»‡u nĂ o Ä‘ang chá» duyá»‡t</p>
-                      <p style={{ fontSize: '13px', margin: '4px 0 0 0' }}>Táº¥t cáº£ tĂ i liá»‡u Ä‘Äƒng lĂªn Ä‘Ă£ Ä‘Æ°á»£c xá»­ lĂ½ sáº¡ch sáº½.</p>
+                      <p style={{ fontSize: '15px', fontWeight: 600, margin: 0 }}>KhĂ´ng cĂ³ ná»™i dung nĂ o Ä‘ang chá» duyá»‡t</p>
+                      <p style={{ fontSize: '13px', margin: '4px 0 0 0' }}>Táº¥t cáº£ bĂ i viáº¿t vĂ  tĂ i liá»‡u Ä‘Ă£ Ä‘Æ°á»£c xá»­ lĂ½.</p>
                     </div>
                   ) : (
-                    <div style={{ overflowX: 'auto' }}>
-                      <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '13.5px' }}>
-                        <thead>
-                          <tr style={{ borderBottom: '1px solid var(--border)', color: 'var(--text-muted)', textAlign: 'left' }}>
-                            <th style={{ padding: '12px 16px', fontWeight: 600, whiteSpace: 'nowrap' }}>TĂN TĂ€I LIá»†U</th>
-                            <th style={{ padding: '12px 16px', fontWeight: 600, whiteSpace: 'nowrap' }}>NHĂ“M Há»ŒC</th>
-                            <th style={{ padding: '12px 16px', fontWeight: 600, whiteSpace: 'nowrap' }}>NGÆ¯á»œI ÄÄ‚NG</th>
-                            <th style={{ padding: '12px 16px', fontWeight: 600, whiteSpace: 'nowrap' }}>THá»œI GIAN ÄÄ‚NG</th>
-                            <th style={{ padding: '12px 16px', fontWeight: 600, whiteSpace: 'nowrap' }}>DUNG LÆ¯á»¢NG</th>
-                            <th style={{ padding: '12px 16px', fontWeight: 600, whiteSpace: 'nowrap', width: '1%' }}>HĂ€NH Äá»˜NG</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {pendingFiles.map((f) => (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
+                      {pendingPosts.length > 0 && (
+                        <div>
+                          <h4 style={{ fontSize: '15px', fontWeight: 700, color: 'var(--text-primary)', margin: '0 0 16px 0' }}>BĂ i viáº¿t chá» duyá»‡t ({pendingPosts.length})</h4>
+                          <div style={{ overflowX: 'auto' }}>
+                            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '13.5px' }}>
+                              <thead>
+                                <tr style={{ borderBottom: '1px solid var(--border)', color: 'var(--text-muted)', textAlign: 'left' }}>
+                                  <th style={{ padding: '12px 16px', fontWeight: 600 }}>Ná»˜I DUNG</th>
+                                  <th style={{ padding: '12px 16px', fontWeight: 600, whiteSpace: 'nowrap' }}>NGÆ¯á»œI ÄÄ‚NG</th>
+                                  <th style={{ padding: '12px 16px', fontWeight: 600, whiteSpace: 'nowrap' }}>THá»œI GIAN</th>
+                                  <th style={{ padding: '12px 16px', fontWeight: 600, width: '1%' }}>HĂ€NH Äá»˜NG</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {pendingPosts.map((p) => (
+                                  <tr key={p.id} style={{ borderBottom: '1px solid var(--border)', color: 'var(--text-primary)' }}>
+                                    <td style={{ padding: '16px', maxWidth: '360px' }}>
+                                      <div style={{ fontWeight: 500, overflow: 'hidden', textOverflow: 'ellipsis', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}>
+                                        {p.content}
+                                      </div>
+                                      {p.image && <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>đŸ“· CĂ³ áº£nh Ä‘Ă­nh kĂ¨m</span>}
+                                    </td>
+                                    <td style={{ padding: '16px', color: 'var(--text-secondary)', whiteSpace: 'nowrap' }}>{p.userFullName}</td>
+                                    <td style={{ padding: '16px', color: 'var(--text-muted)', whiteSpace: 'nowrap' }}>{new Date(p.createdAt).toLocaleString('vi-VN')}</td>
+                                    <td style={{ padding: '16px', width: '1%', whiteSpace: 'nowrap' }}>
+                                      <div style={{ display: 'flex', gap: '6px' }}>
+                                        <button onClick={() => setPreviewingPost(p)} style={{ padding: '5px 10px', background: 'rgba(108,99,255,0.1)', border: '1px solid rgba(108,99,255,0.2)', color: 'var(--primary-light)', borderRadius: '6px', cursor: 'pointer', fontWeight: 600, fontSize: '12px' }}>Xem</button>
+                                        <button
+                                          onClick={async () => {
+                                            try {
+                                              await approvePost(p.id);
+                                              if (adminChannelRef.current) {
+                                                adminChannelRef.current.send({
+                                                  type: 'broadcast',
+                                                  event: 'post_approved',
+                                                  payload: { postId: p.id, userId: p.userId, userFullName: p.userFullName }
+                                                });
+                                              }
+                                              showToast('PhĂª duyá»‡t bĂ i viáº¿t thĂ nh cĂ´ng!');
+                                              loadData();
+                                            } catch (err) {
+                                              showToast(err.message || 'Lá»—i duyá»‡t bĂ i viáº¿t', 'error');
+                                            }
+                                          }}
+                                          style={{ padding: '5px 10px', background: 'rgba(34,197,94,0.1)', border: '1px solid rgba(34,197,94,0.2)', color: '#4ade80', borderRadius: '6px', cursor: 'pointer', fontWeight: 600, fontSize: '12px' }}
+                                        >Duyá»‡t</button>
+                                        <button
+                                          onClick={() => {
+                                            setConfirmConfig({
+                                              title: 'Tá»« chá»‘i bĂ i viáº¿t',
+                                              message: 'Báº¡n cĂ³ cháº¯c cháº¯n muá»‘n tá»« chá»‘i vĂ  xĂ³a bĂ i viáº¿t nĂ y?',
+                                              confirmText: 'Tá»« chá»‘i & XĂ³a',
+                                              cancelText: 'Giá»¯ láº¡i',
+                                              variant: 'danger',
+                                              onConfirm: async () => {
+                                                setConfirmConfig(null);
+                                                try {
+                                                  await adminDeletePost(p.id);
+                                                  showToast('ÄĂ£ tá»« chá»‘i vĂ  xĂ³a bĂ i viáº¿t!');
+                                                  loadData();
+                                                } catch (err) {
+                                                  showToast(err.message || 'Lá»—i xĂ³a bĂ i viáº¿t', 'error');
+                                                }
+                                              },
+                                              onCancel: () => setConfirmConfig(null),
+                                            });
+                                          }}
+                                          style={{ padding: '5px 10px', background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.2)', color: '#f87171', borderRadius: '6px', cursor: 'pointer', fontWeight: 600, fontSize: '12px' }}
+                                        >XĂ³a</button>
+                                      </div>
+                                    </td>
+                                  </tr>
+                                ))}
+                              </tbody>
+                            </table>
+                          </div>
+                        </div>
+                      )}
+
+                      {pendingFiles.length > 0 && (
+                        <div>
+                          <h4 style={{ fontSize: '15px', fontWeight: 700, color: 'var(--text-primary)', margin: '0 0 16px 0' }}>TĂ i liá»‡u chá» duyá»‡t ({pendingFiles.length})</h4>
+                          <div style={{ overflowX: 'auto' }}>
+                            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '13.5px' }}>
+                              <thead>
+                                <tr style={{ borderBottom: '1px solid var(--border)', color: 'var(--text-muted)', textAlign: 'left' }}>
+                                  <th style={{ padding: '12px 16px', fontWeight: 600, whiteSpace: 'nowrap' }}>TĂN TĂ€I LIá»†U</th>
+                                  <th style={{ padding: '12px 16px', fontWeight: 600, whiteSpace: 'nowrap' }}>NHĂ“M Há»ŒC</th>
+                                  <th style={{ padding: '12px 16px', fontWeight: 600, whiteSpace: 'nowrap' }}>NGÆ¯á»œI ÄÄ‚NG</th>
+                                  <th style={{ padding: '12px 16px', fontWeight: 600, whiteSpace: 'nowrap' }}>THá»œI GIAN ÄÄ‚NG</th>
+                                  <th style={{ padding: '12px 16px', fontWeight: 600, whiteSpace: 'nowrap' }}>DUNG LÆ¯á»¢NG</th>
+                                  <th style={{ padding: '12px 16px', fontWeight: 600, whiteSpace: 'nowrap', width: '1%' }}>HĂ€NH Äá»˜NG</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {pendingFiles.map((f) => (
                             <tr key={f.id} style={{ borderBottom: '1px solid var(--border)', color: 'var(--text-primary)' }}>
                               <td style={{ padding: '16px', fontWeight: 600 }}>
                                 <a href={f.fileData} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--primary-light)', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -12346,6 +12388,9 @@ export default function Admin() {
                         </tbody>
                       </table>
                     </div>
+                        </div>
+                      )}
+                    </div>
                   )}
                 </div>
               )}
@@ -12451,6 +12496,7 @@ export default function Admin() {
       <GroupFormModal show={showGroupModal} onClose={() => setShowGroupModal(false)} currentEditGroup={currentEditGroup} groupForm={groupForm} setGroupForm={setGroupForm} locationSearchVal={locationSearchVal} setLocationSearchVal={setLocationSearchVal} onSubmit={handleGroupSubmit} submitting={submittingGroup} />
       <MembersModal group={selectedGroupMembers} users={users} onClose={() => setSelectedGroupMembers(null)} />
       <FilePreviewModal file={previewingFile} onClose={() => setPreviewingFile(null)} />
+      <PostPreviewModal post={previewingPost} onClose={() => setPreviewingPost(null)} />
       <ConfirmModal
         isOpen={!!confirmConfig}
         title={confirmConfig?.title}
@@ -16310,7 +16356,7 @@ export default function FriendDetail() {
       try {
         const { data, error } = await supabase
           .from('users')
-          .select('*')
+          .select('id, full_name, email, avatar, university, major, bio, created_at')
           .eq('id', parseInt(id, 10))
           .single();
 
@@ -18934,14 +18980,8 @@ export default function Home() {
   // eslint-disable-next-line react-hooks/preserve-manual-memoization
   const fetchPosts = useCallback(async () => {
     if (!user?.id) return;
-    if (import.meta.env.DEV) {
-      console.log('user.id:', user?.id);
-    }
     try {
       const data = await getPosts(user.id);
-      if (import.meta.env.DEV) {
-        console.log('posts fetched:', data?.length);
-      }
       setPosts(data);
       // Cache removed to comply with quota limits
     } catch (err) {
@@ -19382,7 +19422,7 @@ export default function Home() {
           friends={friends}
           myLeaderGroups={myLeaderGroups}
           onClose={() => setShowCreateModal(false)}
-          onSubmit={(newPost) => setPosts([newPost, ...posts])}
+          onSubmit={() => {}}
         />
       )}
 
@@ -25209,7 +25249,7 @@ const mapGroup = (g) => {
 export const adminGetUsers = async () => {
   const { data, error } = await supabase
     .from('users')
-    .select('id, full_name, email, role, university, major, bio, avatar, created_at')
+    .select('id, full_name, email, role, university, major, avatar, bio, created_at, is_banned')
     .order('created_at', { ascending: false });
 
   if (error) throw new Error(`Lá»—i táº£i danh sĂ¡ch ngÆ°á»i dĂ¹ng: ${error.message}`);
@@ -25243,7 +25283,7 @@ export const adminCreateUser = async ({ fullName, email, password, role, univers
         avatar: ''
       }
     ])
-    .select('id, full_name, email, role, university, major, bio, avatar, created_at')
+    .select('id, full_name, email, role, university, major, avatar, bio, created_at, is_banned')
     .single();
 
   if (insertError) throw new Error(`ThĂªm ngÆ°á»i dĂ¹ng tháº¥t báº¡i: ${insertError.message}`);
@@ -25286,7 +25326,7 @@ export const adminUpdateUser = async (userId, data) => {
     .from('users')
     .update(updateData)
     .eq('id', uid)
-    .select('id, full_name, email, role, university, major, bio, avatar, created_at')
+    .select('id, full_name, email, role, university, major, avatar, bio, created_at, is_banned')
     .single();
 
   if (updateError) throw new Error(`Cáº­p nháº­t ngÆ°á»i dĂ¹ng tháº¥t báº¡i: ${updateError.message}`);
@@ -25337,7 +25377,7 @@ export const adminDeleteUser = async (userId) => {
 export const adminGetGroups = async () => {
   const { data, error } = await supabase
     .from('study_groups')
-    .select('id, name, subject, description, creator_id, created_at, group_members(user_id, role)');
+    .select('id, name, subject, description, is_private, max_members, creator_id, created_at, group_members(user_id, role)');
 
   if (error) throw new Error(`Lá»—i táº£i danh sĂ¡ch nhĂ³m: ${error.message}`);
   
@@ -25643,7 +25683,7 @@ export const login = async ({ email, password }) => {
 
   const { data: user, error } = await supabase
     .from('users')
-    .select('id, full_name, email, role, university, major, avatar, bio, created_at, is_banned, password')
+    .select('id, full_name, email, password, role, university, major, avatar, bio, created_at, is_banned, reset_token, reset_expires')
     .eq('email', normalizedEmail)
     .maybeSingle();
 
@@ -25671,9 +25711,7 @@ export const login = async ({ email, password }) => {
         .from('users')
         .update({ password: hashedPassword })
         .eq('id', user.id);
-      if (import.meta.env.DEV) {
-        console.log(`[Auth] Tá»± Ä‘á»™ng nĂ¢ng cáº¥p máº­t kháº©u lĂªn Salted SHA-256 cho: ${normalizedEmail}`);
-      }
+      if (import.meta.env.DEV) console.log(`[Auth] Tá»± Ä‘á»™ng nĂ¢ng cáº¥p máº­t kháº©u lĂªn Salted SHA-256 cho: ${normalizedEmail}`);
     } catch (upgradeErr) {
       if (import.meta.env.DEV) {
         console.warn('[Auth] KhĂ´ng thá»ƒ nĂ¢ng cáº¥p máº­t kháº©u cÅ©:', upgradeErr);
@@ -25708,7 +25746,7 @@ export const adminLogin = async ({ email, password }) => {
 
   const { data: user, error } = await supabase
     .from('users')
-    .select('id, full_name, email, role, university, major, avatar, bio, created_at, is_banned, password')
+    .select('id, full_name, email, password, role, created_at, is_banned')
     .eq('email', normalizedEmail)
     .maybeSingle();
 
@@ -25736,9 +25774,7 @@ export const adminLogin = async ({ email, password }) => {
         .from('users')
         .update({ password: hashedPassword })
         .eq('id', user.id);
-      if (import.meta.env.DEV) {
-        console.log(`[Auth] Tá»± Ä‘á»™ng nĂ¢ng cáº¥p máº­t kháº©u Admin lĂªn Salted SHA-256`);
-      }
+      if (import.meta.env.DEV) console.log(`[Auth] Tá»± Ä‘á»™ng nĂ¢ng cáº¥p máº­t kháº©u Admin lĂªn Salted SHA-256`);
     } catch (upgradeErr) {
       if (import.meta.env.DEV) {
         console.warn('[Auth] KhĂ´ng thá»ƒ nĂ¢ng cáº¥p máº­t kháº©u Admin:', upgradeErr);
@@ -26010,7 +26046,7 @@ export const refreshCache = async (userId) => {
   try {
     let query = supabase
       .from('messages')
-      .select('*')
+      .select('id, sender_id, receiver_id, content, file_attachment, is_read, created_at')
       .is('group_id', null)
       .or(`sender_id.eq.${uid},receiver_id.eq.${uid}`);
 
@@ -26079,7 +26115,7 @@ export const syncConversation = async (userId, friendId) => {
 
   let query = supabase
     .from('messages')
-    .select('*')
+    .select('id, sender_id, receiver_id, content, file_attachment, is_read, created_at')
     .is('group_id', null)
     .or(`and(sender_id.eq.${uid},receiver_id.eq.${fid}),and(sender_id.eq.${fid},receiver_id.eq.${uid})`)
     .order('created_at', { ascending: true });
@@ -26117,7 +26153,7 @@ export const getConversation = async (userId, friendId) => {
 
   const { data, error } = await supabase
     .from('messages')
-    .select('*')
+    .select('id, sender_id, receiver_id, content, file_attachment, is_read, created_at')
     .is('group_id', null)
     .or(`and(sender_id.eq.${uid},receiver_id.eq.${fid}),and(sender_id.eq.${fid},receiver_id.eq.${uid})`)
     .order('created_at', { ascending: true });
@@ -26282,7 +26318,7 @@ export const removeFriend = async (requestId) => {
 export const getFriends = async (userId, includePending = false) => {
   const uid = Number(userId);
 
-  let query = supabase.from('friendships').select('id, from_user_id, to_user_id, status, created_at, accepted_at');
+  let query = supabase.from('friendships').select('id, from_user_id, to_user_id, status, created_at, accepted_at').limit(100);
   if (includePending) {
     query = query.in('status', ['accepted', 'pending']);
   } else {
@@ -26290,8 +26326,7 @@ export const getFriends = async (userId, includePending = false) => {
   }
 
   const { data: friendships, error: fetchError } = await query
-    .or(`from_user_id.eq.${uid},to_user_id.eq.${uid}`)
-    .limit(50);
+    .or(`from_user_id.eq.${uid},to_user_id.eq.${uid}`);
 
   if (fetchError || !friendships || friendships.length === 0) return [];
 
@@ -26547,8 +26582,8 @@ export const getMyPendingInvites = async (userId) => {
   const inviterIds = invites.map(i => i.inviter_id);
 
   // Fetch groups and inviters details
-  const { data: groups } = await supabase.from('study_groups').select('id, name').in('id', groupIds);
-  const { data: users } = await supabase.from('users').select('id, full_name').in('id', inviterIds);
+  const { data: groups } = await supabase.from('study_groups').select('id, name').in('id', groupIds).limit(50);
+  const { data: users } = await supabase.from('users').select('id, full_name').in('id', inviterIds).limit(50);
 
   return invites.map(inv => {
     const group = groups?.find(g => g.id === inv.group_id);
@@ -27238,7 +27273,8 @@ export const getPosts = async (currentUserId) => {
     .from('friendships')
     .select('from_user_id, to_user_id')
     .eq('status', 'accepted')
-    .or(`from_user_id.eq.${uid},to_user_id.eq.${uid}`);
+    .or(`from_user_id.eq.${uid},to_user_id.eq.${uid}`)
+    .limit(50);
 
   if (friendError) {
     console.error('Error fetching friendships for feed filtering:', friendError);
@@ -27271,14 +27307,11 @@ export const getPosts = async (currentUserId) => {
       )
     `)
     .in('user_id', allowedUserIds)
+    .eq('approved', true)
     .order('created_at', { ascending: false })
     .limit(10);
 
   if (postsError) throw new Error(`Lá»—i táº£i bĂ i viáº¿t: ${postsError.message}`);
-
-  if (import.meta.env.DEV) {
-    console.log('[Debug] postsData count:', postsData?.length);
-  }
 
   if (!postsData || postsData.length === 0) return [];
 
@@ -27302,6 +27335,7 @@ export const getPosts = async (currentUserId) => {
       .from('post_tags')
       .select('post_id, target_type, target_id')
       .in('post_id', postIds)
+      .limit(50)
   ]);
 
   const commentsData = commentsRes.data || [];
@@ -27318,10 +27352,10 @@ export const getPosts = async (currentUserId) => {
 
     const [usersRes, groupsRes] = await Promise.all([
       taggedUserIds.length > 0
-        ? supabase.from('users').select('id, full_name').in('id', taggedUserIds.map(Number))
+        ? supabase.from('users').select('id, full_name').in('id', taggedUserIds.map(Number)).limit(50)
         : Promise.resolve({ data: [] }),
       taggedGroupIds.length > 0
-        ? supabase.from('study_groups').select('id, name').in('id', taggedGroupIds.map(Number))
+        ? supabase.from('study_groups').select('id, name').in('id', taggedGroupIds.map(Number)).limit(50)
         : Promise.resolve({ data: [] })
     ]);
 
@@ -27426,7 +27460,8 @@ export const createPost = async (groupIdOrDetails, detailsObject) => {
         comments_count: 0,
         likes: [],
         group_id: safeGroupId,
-        image: image || null
+        image: image || null,
+        approved: false
       }
     ])
     .select(`
@@ -27560,6 +27595,45 @@ export const deletePost = async (postId) => {
 
   if (error) {
     throw new Error(`XĂ³a cĂ¢u há»i tháº¥t báº¡i: ${error.message}`);
+  }
+};
+
+export const getPendingPosts = async () => {
+  const { data, error } = await supabase
+    .from('posts')
+    .select(`
+      id, content, image, tag, created_at, user_id,
+      users (
+        full_name,
+        avatar
+      )
+    `)
+    .eq('approved', false)
+    .order('created_at', { ascending: false })
+    .limit(50);
+
+  if (error) return [];
+
+  return (data || []).map(p => ({
+    id: p.id.toString(),
+    userId: p.user_id,
+    userFullName: p.users?.full_name || 'NgÆ°á»i dĂ¹ng',
+    userAvatar: p.users?.avatar || '',
+    content: p.content,
+    image: p.image || null,
+    tag: p.tag || null,
+    createdAt: p.created_at
+  }));
+};
+
+export const approvePost = async (postId) => {
+  const { error } = await supabase
+    .from('posts')
+    .update({ approved: true })
+    .eq('id', parseInt(postId, 10));
+
+  if (error) {
+    throw new Error(`Duyá»‡t bĂ i viáº¿t tháº¥t báº¡i: ${error.message}`);
   }
 };
 
@@ -27701,9 +27775,11 @@ export const getFiles = async (groupId) => {
   const { data, error } = await supabase
     .from('files')
     .select(`
-      *,
+      id, group_id, user_id, file_name, file_url, file_type, file_size, approved, created_at,
       users (
-        full_name
+        id,
+        full_name,
+        avatar
       )
     `)
     .eq('group_id', parseInt(groupId, 10))
@@ -27714,7 +27790,7 @@ export const getFiles = async (groupId) => {
     // Fallback if table files doesn't support approved filter or relations
     const { data: fallbackData, error: fallbackError } = await supabase
       .from('files')
-      .select('*')
+      .select('id, group_id, user_id, file_name, file_size, file_type, file_url, approved, created_at')
       .eq('group_id', parseInt(groupId, 10))
       .eq('approved', true);
     
@@ -27751,7 +27827,7 @@ export const getPendingFiles = async () => {
   const { data, error } = await supabase
     .from('files')
     .select(`
-      *,
+      id, group_id, user_id, file_name, file_size, file_type, file_url, approved, created_at,
       users (
         full_name
       ),
@@ -27765,7 +27841,7 @@ export const getPendingFiles = async () => {
   if (error) {
     const { data: fallbackData } = await supabase
       .from('files')
-      .select('*')
+      .select('id, group_id, user_id, file_name, file_size, file_type, file_url, approved, created_at')
       .eq('approved', false);
     return (fallbackData || []).map(f => ({
       id: f.id.toString(),
@@ -27821,7 +27897,8 @@ export const uploadFile = async (groupId, { fileName, fileSize, fileType, fileDa
         file_name: fileName,
         file_size: fileSize || 0,
         file_type: fileType || '',
-        file_url: fileData // Base64 data url or secure URL
+        file_url: fileData, // Base64 data url or secure URL
+        approved: false
       }
     ])
     .select(`
@@ -27864,9 +27941,10 @@ export const deleteFile = async (fileId) => {
 export const getSchedules = async (groupId) => {
   const { data, error } = await supabase
     .from('schedules')
-    .select('*')
+    .select('id, group_id, topic, date_time, location, description, creator_id, created_at')
     .eq('group_id', parseInt(groupId, 10))
-    .order('date_time', { ascending: true });
+    .order('date_time', { ascending: true })
+    .limit(50);
 
   if (error) return [];
 
@@ -27959,17 +28037,18 @@ export const getDeadlines = async (groupId) => {
   const { data, error } = await supabase
     .from('deadlines')
     .select(`
-      *,
+      id, title, due_date, group_id, creator_id, description, assignee_id, completed, created_at,
       users:users!assignee_id (
         full_name
       )
     `)
     .eq('group_id', parseInt(groupId, 10))
-    .order('due_date', { ascending: true });
+    .order('due_date', { ascending: true })
+    .limit(50);
 
   if (error) {
     // Fallback if relation not supported
-    const { data: fbData } = await supabase.from('deadlines').select('*').eq('group_id', parseInt(groupId, 10));
+    const { data: fbData } = await supabase.from('deadlines').select('id, group_id, title, due_date, description, creator_id, assignee_id, assignee_name, completed, created_at').eq('group_id', parseInt(groupId, 10)).limit(50);
     return (fbData || []).map(d => ({
       id: d.id.toString(),
       groupId: d.group_id.toString(),
@@ -28124,7 +28203,8 @@ export const getUserSchedulesAndDeadlines = async (userId) => {
   const { data: joinedMemberships, error: memError } = await supabase
     .from('group_members')
     .select('group_id, role')
-    .eq('user_id', uid);
+    .eq('user_id', uid)
+    .limit(100);
 
   if (memError || !joinedMemberships || joinedMemberships.length === 0) {
     return { schedules: [], deadlines: [] };
@@ -28142,7 +28222,8 @@ export const getUserSchedulesAndDeadlines = async (userId) => {
       )
     `)
     .in('group_id', joinedGroupIds)
-    .order('date_time', { ascending: true });
+    .order('date_time', { ascending: true })
+    .limit(50);
 
   const schedules = (schedulesData || []).map(s => {
     return {
@@ -28166,7 +28247,8 @@ export const getUserSchedulesAndDeadlines = async (userId) => {
       )
     `)
     .in('group_id', joinedGroupIds)
-    .order('due_date', { ascending: true });
+    .order('due_date', { ascending: true })
+    .limit(50);
 
   const deadlines = (deadlinesData || [])
     .filter(d => {
@@ -28198,7 +28280,8 @@ export const getChatMessages = async (groupId) => {
   const { data, error } = await supabase
     .from('messages')
     .select(`
-      *,
+      id, group_id, sender_id, content, file_attachment,
+      reply_to, is_pinned, created_at,
       users:users!sender_id (
         full_name,
         avatar
@@ -28358,6 +28441,7 @@ export const getUserPosts = async (friendId) => {
       users (full_name, avatar, university)
     `)
     .eq('user_id', uid)
+    .eq('approved', true)
     .order('created_at', { ascending: false })
     .limit(10);
 
@@ -28369,14 +28453,15 @@ export const getUserPosts = async (friendId) => {
   const { data: commentsData } = await supabase
     .from('comments')
     .select(`
-      *,
+      id, post_id, user_id, parent_id, content, created_at,
       users (
         full_name,
         avatar
       )
     `)
     .in('post_id', postIds)
-    .order('created_at', { ascending: true });
+    .order('created_at', { ascending: true })
+    .limit(50);
 
   return postsData.map(p => {
     const pCommentsRaw = (commentsData || []).filter(c => c.post_id === p.id);

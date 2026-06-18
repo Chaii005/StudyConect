@@ -1,5 +1,6 @@
 // src/services/authService.js
 import { supabase } from '@/config/supabaseClient';
+import { compressAvatar } from '@/utils/imageCompress';
 
 const SESSION_KEY = 'sc_session';
 const ADMIN_SESSION_KEY = 'sc_admin_session';
@@ -286,11 +287,18 @@ export const updateProfile = async ({ id, fullName, university, major, bio, avat
     if (typeof avatarFile === 'string') {
       avatar = avatarFile;
     } else if (avatarFile instanceof File || avatarFile instanceof Blob) {
-      const fileExt = (avatarFile.name || 'avatar.png').split('.').pop() || 'png';
-      const fileName = `${id}_${Date.now()}.${fileExt}`;
+      // Compress avatar xuống tối đa 400×400 px trước khi upload
+      let uploadFile = avatarFile;
+      try {
+        uploadFile = await compressAvatar(avatarFile);
+      } catch {
+        uploadFile = avatarFile; // fallback: upload nguyên nếu compress lỗi
+      }
+      const ext = (uploadFile.name || uploadFile.type?.split('/')[1] || 'webp').split('.').pop() || 'webp';
+      const fileName = `${id}_${Date.now()}.${ext}`;
       const { error: uploadError } = await supabase.storage
         .from('avatars')
-        .upload(fileName, avatarFile, { cacheControl: '3600', upsert: true });
+        .upload(fileName, uploadFile, { cacheControl: '3600', upsert: true });
 
       if (uploadError) {
         if (import.meta.env.DEV) {

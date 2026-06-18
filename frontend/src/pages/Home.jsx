@@ -157,14 +157,23 @@ export default function Home() {
     fetchPosts();
     fetchSideData();
 
-    // Listen for realtime posts from Supabase
+    // Chỉ refetch khi có post mới INSERT hoặc xóa/sửa post của mình
     const postsChannel = supabase
       .channel('realtime-posts')
       .on(
         'postgres_changes',
         { event: '*', schema: 'public', table: 'posts' },
-        () => {
-          fetchPosts(); // Automatically refetch post feed in real-time!
+        (payload) => {
+          if (payload.eventType === 'INSERT') {
+            // Post mới → luôn refetch (có thể là bạn bè đăng)
+            fetchPosts();
+          } else if (payload.eventType === 'DELETE' || payload.eventType === 'UPDATE') {
+            // Chỉ refetch nếu post đó thuộc về user hiện tại hoặc đang hiển thị trong feed
+            const postUserId = payload.old?.user_id || payload.new?.user_id;
+            if (postUserId && String(postUserId) === String(user?.id)) {
+              fetchPosts();
+            }
+          }
         }
       )
       .subscribe();
@@ -175,7 +184,7 @@ export default function Home() {
       clearInterval(interval);
       supabase.removeChannel(postsChannel);
     };
-  }, [fetchPosts, fetchSideData]);
+  }, [fetchPosts, fetchSideData, user?.id]);
 
   // Post handlers
   const handleLikePost = async (postId, emoji, e) => {

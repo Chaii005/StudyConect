@@ -3,6 +3,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { STORAGE_KEYS } from '@/constants/storageKeys';
 import { formatBytes } from '@/utils';
+import { compressImage } from '@/utils/imageCompress';
 import { getGroupById, assignDeputy, removeDeputy, kickMember } from '@/services/groupService';
 import { sendFriendRequest } from '@/services/friendService';
 import { supabase } from '@/config/supabaseClient';
@@ -801,12 +802,20 @@ export default function useGroupDetail(groupId, user, addToast) {
         setIsUploadingFile(false);
         return;
       }
-      let fileUrlValue = '';
-      const safeName = sanitizeForStorage(selectedFile.name);
+      let fileToUpload = selectedFile;
+      // Compress ảnh trước khi upload (PDF/docx giữ nguyên)
+      if (selectedFile.type.startsWith('image/')) {
+        try {
+          fileToUpload = await compressImage(selectedFile, { maxWidth: 1280, maxHeight: 1280, quality: 0.78 });
+        } catch {
+          fileToUpload = selectedFile; // fallback
+        }
+      }
+      const safeName = sanitizeForStorage(fileToUpload.name || selectedFile.name);
       const fileName = `${groupId}/${Date.now()}_${safeName}`;
       const { error: uploadError } = await supabase.storage
         .from('attachments')
-        .upload(fileName, selectedFile, { cacheControl: '3600', upsert: true });
+        .upload(fileName, fileToUpload, { cacheControl: '3600', upsert: true });
 
       if (uploadError) {
         if (import.meta.env.DEV) {
@@ -818,7 +827,7 @@ export default function useGroupDetail(groupId, user, addToast) {
       const { data: { publicUrl } } = supabase.storage
         .from('attachments')
         .getPublicUrl(fileName);
-      fileUrlValue = publicUrl;
+      let fileUrlValue = publicUrl;
 
       const finalSubject = group?.subject || 'Chung';
       const cleanFileName = customFileName.trim() || selectedFile.name;
@@ -1113,11 +1122,20 @@ export default function useGroupDetail(groupId, user, addToast) {
           return;
         }
 
-        const safeName = sanitizeForStorage(chatAttachedFile.name);
+        let fileToUpload = chatAttachedFile;
+        // Compress ảnh trước khi upload vào group chat
+        if (chatAttachedFile.type.startsWith('image/')) {
+          try {
+            fileToUpload = await compressImage(chatAttachedFile, { maxWidth: 1280, maxHeight: 1280, quality: 0.78 });
+          } catch {
+            fileToUpload = chatAttachedFile; // fallback
+          }
+        }
+        const safeName = sanitizeForStorage(fileToUpload.name || chatAttachedFile.name);
         const chatFileName = `chat/${groupId}/${Date.now()}_${safeName}`;
         const { error: uploadError } = await supabase.storage
           .from('attachments')
-          .upload(chatFileName, chatAttachedFile, { cacheControl: '3600', upsert: true });
+          .upload(chatFileName, fileToUpload, { cacheControl: '3600', upsert: true });
 
         if (uploadError) {
           if (import.meta.env.DEV) {

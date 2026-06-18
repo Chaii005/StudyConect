@@ -880,38 +880,42 @@ export default function MeetRoom() {
   // Auto scroll chat
   useEffect(() => { msgEndRef.current?.scrollIntoView({ behavior: 'smooth' }); }, [messages]);
 
-  // Load and poll meetroom messages from Supabase
+  // Load meetroom messages from Supabase — dùng Realtime thay polling 5s
   useEffect(() => {
     if (!roomId) return;
+
+    const formatMsg = (m) => {
+      const rawContent = m.content;
+      const prefix = `[meetroom:${roomId}] `;
+      const text = rawContent.startsWith(prefix) ? rawContent.slice(prefix.length) : rawContent;
+      return {
+        id: m.id.toString(),
+        text,
+        sender: m.users?.full_name || 'Người dùng',
+        senderId: m.sender_id,
+        avatar: m.users?.avatar || '',
+        time: new Date(m.created_at).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })
+      };
+    };
+
+    // 1. Fetch lần đầu
     const fetchMeetMessages = async () => {
       try {
         const { data, error } = await supabase
           .from('messages')
           .select(`
-            *,
+            id, sender_id, content, created_at,
             users:users!sender_id (
               full_name,
               avatar
             )
           `)
           .like('content', `[meetroom:${roomId}]%`)
-          .order('created_at', { ascending: true });
+          .order('created_at', { ascending: true })
+          .limit(100);
 
         if (!error && data) {
-          const formatted = data.map(m => {
-            const rawContent = m.content;
-            const prefix = `[meetroom:${roomId}] `;
-            const text = rawContent.startsWith(prefix) ? rawContent.slice(prefix.length) : rawContent;
-            return {
-              id: m.id.toString(),
-              text,
-              sender: m.users?.full_name || 'Người dùng',
-              senderId: m.sender_id,
-              avatar: m.users?.avatar || '',
-              time: new Date(m.created_at).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })
-            };
-          });
-          setMessages(formatted);
+          setMessages(data.map(formatMsg));
         }
       } catch (err) {
         console.error('Error fetching meetroom messages:', err);
@@ -919,8 +923,30 @@ export default function MeetRoom() {
     };
 
     fetchMeetMessages();
-    const interval = setInterval(fetchMeetMessages, 5000);
-    return () => clearInterval(interval);
+
+    // 2. Lắng nghe INSERT real-time — không cần polling
+    const channel = supabase
+      .channel(`meetroom-chat-${roomId}`)
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages' }, async (payload) => {
+        const m = payload.new;
+        if (!m.content?.startsWith(`[meetroom:${roomId}]`)) return;
+        // Fetch full row kèm user info
+        try {
+          const { data } = await supabase
+            .from('messages')
+            .select(`id, sender_id, content, created_at, users:users!sender_id (full_name, avatar)`)
+            .eq('id', m.id)
+            .single();
+          if (data) {
+            setMessages(prev => [...prev, formatMsg(data)]);
+          }
+        } catch { /* ignore */ }
+      })
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, [roomId]);
 
   // Screen share — thay track video trong tất cả peer connections để remote peers thấy màn hình
