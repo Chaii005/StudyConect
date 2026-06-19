@@ -159,13 +159,13 @@ export default function Schedule() {
           <div className="grid-responsive">
             {/* LEFT: Schedules */}
             <div id="schedules-section" style={{ display: 'flex', flexDirection: 'column' }}>
-              <div className="section-header" style={{ borderBottomColor: 'rgba(108,99,255,0.3)' }}>
+              <div className="section-header" style={{ borderBottomColor: 'rgba(42, 117, 118, 0.3)' }}>
                 <h2 className="section-title">Buổi học sắp diễn ra</h2>
               </div>
 
               {schedules.length === 0 ? (
-                <div style={{ background: 'rgba(255,255,255,0.02)', border: '1px dashed rgba(255,255,255,0.1)', borderRadius: '16px', padding: '24px 16px', textAlign: 'center' }}>
-                  <p style={{ color: '#94a3b8', fontSize: '13px' }}>Chưa có lịch học nhóm nào sắp tới.</p>
+                <div style={{ background: 'var(--bg-card)', border: '1px dashed var(--border)', borderRadius: '16px', padding: '24px 16px', textAlign: 'center' }}>
+                  <p style={{ color: 'var(--text-secondary)', fontSize: '13px' }}>Chưa có lịch học nhóm nào sắp tới.</p>
                 </div>
               ) : (
                 schedules.map(sched => {
@@ -178,9 +178,9 @@ export default function Schedule() {
                       className={`item-card ${isPast ? 'is-past' : ''}`}
                     >
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '8px', marginBottom: '12px' }}>
-                        <h4 style={{ fontSize: '16px', fontWeight: 700, color: '#fff', margin: 0 }}>{sched.topic}</h4>
+                        <h4 style={{ fontSize: '16px', fontWeight: 700, color: 'var(--text-primary)', margin: 0 }}>{sched.topic}</h4>
                         {countdown && !isPast && (
-                          <span style={{ background: 'rgba(108,99,255,0.2)', color: '#a5b4fc', fontSize: '11px', fontWeight: 700, padding: '4px 10px', borderRadius: '20px', flexShrink: 0, display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                          <span style={{ background: 'rgba(42, 117, 118, 0.12)', color: 'var(--primary)', fontSize: '11px', fontWeight: 700, padding: '4px 10px', borderRadius: '20px', flexShrink: 0, display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
                             <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                               <circle cx="12" cy="12" r="10"/>
                               <polyline points="12 6 12 12 16 14"/>
@@ -189,13 +189,13 @@ export default function Schedule() {
                           </span>
                         )}
                         {isPast && (
-                          <span style={{ background: 'rgba(255,255,255,0.1)', color: '#94a3b8', fontSize: '11px', fontWeight: 700, padding: '4px 10px', borderRadius: '20px', flexShrink: 0 }}>
+                          <span style={{ background: 'var(--bg-input)', color: 'var(--text-muted)', fontSize: '11px', fontWeight: 700, padding: '4px 10px', borderRadius: '20px', flexShrink: 0 }}>
                             Đã qua
                           </span>
                         )}
                       </div>
                       <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#cbd5e1', fontSize: '14px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--text-secondary)', fontSize: '14px' }}>
                           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, color: 'var(--primary-light)' }}>
                             <rect width="18" height="18" x="3" y="4" rx="2" ry="2"/>
                             <line x1="16" x2="16" y1="2" y2="6"/>
@@ -205,7 +205,7 @@ export default function Schedule() {
                           {formatDate(sched.dateTime)}
                         </div>
                         {sched.location && (
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#cbd5e1', fontSize: '14px' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--text-secondary)', fontSize: '14px' }}>
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, color: 'var(--accent)' }}>
                               <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/>
                               <circle cx="12" cy="10" r="3"/>
@@ -213,13 +213,13 @@ export default function Schedule() {
                             {isLink ? (
                               <a href={sched.location} target="_blank" rel="noreferrer" 
                                 onClick={(e) => e.stopPropagation()}
-                                style={{ color: '#3ecfcf', textDecoration: 'none', fontWeight: 600 }}>Tham gia online →</a>
+                                style={{ color: 'var(--primary)', textDecoration: 'none', fontWeight: 600 }}>Tham gia online →</a>
                             ) : (
                               sched.location
                             )}
                           </div>
                         )}
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#a5b4fc', fontSize: '14px', fontWeight: 600 }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--primary)', fontSize: '14px', fontWeight: 600 }}>
                           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
                             <path d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.93a2 2 0 0 1-1.66-.9l-.82-1.2A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/>
                           </svg>
@@ -259,8 +259,8 @@ export default function Schedule() {
                     >
                       <div style={{ flex: 1, overflow: 'hidden' }}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '8px', marginBottom: '8px' }}>
-                          <h4 style={{ fontSize: '16px', fontWeight: 700, margin: 0, color: '#fff' }}>{d.title}</h4>
-                          <span style={{ fontSize: '12px', color: '#3ecfcf', fontWeight: 600, flexShrink: 0, display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                          <h4 style={{ fontSize: '16px', fontWeight: 700, margin: 0, color: 'var(--text-primary)' }}>{d.title}</h4>
+                          <span style={{ fontSize: '12px', color: 'var(--primary)', fontWeight: 600, flexShrink: 0, display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
                             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
                               <path d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.93a2 2 0 0 1-1.66-.9l-.82-1.2A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/>
                             </svg>
@@ -268,10 +268,10 @@ export default function Schedule() {
                           </span>
                         </div>
                         {d.description && (
-                          <p style={{ color: '#94a3b8', fontSize: '13px', margin: '0 0 10px 0', lineHeight: 1.5 }}>{d.description}</p>
+                          <p style={{ color: 'var(--text-secondary)', fontSize: '13px', margin: '0 0 10px 0', lineHeight: 1.5 }}>{d.description}</p>
                         )}
                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
-                          <span style={{ fontSize: '13px', color: d.dueSoon ? '#f87171' : d.overdue ? '#64748b' : '#cbd5e1', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                          <span style={{ fontSize: '13px', color: d.dueSoon ? '#f87171' : d.overdue ? '#64748b' : 'var(--text-secondary)', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
                             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                               <circle cx="12" cy="12" r="10"/>
                               <polyline points="12 6 12 12 16 14"/>
@@ -289,9 +289,9 @@ export default function Schedule() {
                           navigate(`/groups/${d.groupId}?tab=deadlines`);
                         }}
                         style={{
-                          background: 'rgba(62,207,207,0.1)',
-                          border: '1px solid rgba(62,207,207,0.3)',
-                          color: '#5eead4',
+                          background: 'rgba(42, 117, 118, 0.08)',
+                          border: '1px solid rgba(42, 117, 118, 0.35)',
+                          color: 'var(--primary)',
                           cursor: 'pointer',
                           borderRadius: '12px',
                           padding: '10px 16px',
@@ -304,8 +304,8 @@ export default function Schedule() {
                           alignItems: 'center',
                           gap: '6px'
                         }}
-                        onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(62,207,207,0.2)'; }}
-                        onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(62,207,207,0.1)'; }}
+                        onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(42, 117, 118, 0.18)'; }}
+                        onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(42, 117, 118, 0.08)'; }}
                       >
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
                           <rect x="8" y="2" width="8" height="4" rx="1" ry="1"/>
@@ -320,17 +320,17 @@ export default function Schedule() {
 
               {completedDeadlines.length > 0 && (
                 <div id="completed-deadlines-section" style={{ marginTop: '24px' }}>
-                  <div className="section-header" style={{ borderBottomColor: 'rgba(255,255,255,0.05)', paddingBottom: '12px' }}>
-                    <h3 style={{ fontSize: '15px', fontWeight: 600, color: '#64748b', margin: 0 }}>Đã hoàn thành ({completedDeadlines.length})</h3>
+                  <div className="section-header" style={{ borderBottomColor: 'var(--border)', paddingBottom: '12px' }}>
+                    <h3 style={{ fontSize: '15px', fontWeight: 600, color: 'var(--text-muted)', margin: 0 }}>Đã hoàn thành ({completedDeadlines.length})</h3>
                   </div>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', opacity: 0.6 }}>
                     {completedDeadlines.map(d => (
-                      <div key={d.id} style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.05)', borderRadius: '12px', padding: '12px 16px', display: 'flex', gap: '12px', alignItems: 'center' }}>
+                      <div key={d.id} style={{ background: 'var(--bg-input)', border: '1px solid var(--border)', borderRadius: '12px', padding: '12px 16px', display: 'flex', gap: '12px', alignItems: 'center' }}>
                         <input type="checkbox" checked={d.completed} onChange={() => handleDeadlineToggle(d.id)}
-                          style={{ width: '16px', height: '16px', cursor: 'pointer', accentColor: '#6366f1', flexShrink: 0 }} />
+                          style={{ width: '16px', height: '16px', cursor: 'pointer', accentColor: 'var(--primary)', flexShrink: 0 }} />
                         <div style={{ flex: 1, display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '8px', overflow: 'hidden' }}>
-                          <span style={{ fontSize: '14px', textDecoration: 'line-through', color: '#94a3b8', fontWeight: 500 }}>{d.title}</span>
-                          <span style={{ fontSize: '12px', color: '#64748b', flexShrink: 0 }}>{d.groupName}</span>
+                          <span style={{ fontSize: '14px', textDecoration: 'line-through', color: 'var(--text-secondary)', fontWeight: 500 }}>{d.title}</span>
+                          <span style={{ fontSize: '12px', color: 'var(--text-muted)', flexShrink: 0 }}>{d.groupName}</span>
                         </div>
                       </div>
                     ))}
@@ -354,12 +354,12 @@ export default function Schedule() {
         .page-title {
           font-size: 24px;
           font-weight: 800;
-          color: #fff;
+          color: var(--primary);
           margin: 0 0 6px 0;
           line-height: 1.2;
         }
         .page-subtitle {
-          color: #94a3b8;
+          color: var(--text-secondary);
           font-size: 14px;
           margin: 0;
         }
@@ -370,21 +370,20 @@ export default function Schedule() {
           margin-top: 16px;
         }
         .stat-card {
-          background: rgba(255, 255, 255, 0.03);
-          backdrop-filter: blur(20px);
-          -webkit-backdrop-filter: blur(20px);
-          border: 1px solid rgba(255, 255, 255, 0.08);
-          border-radius: 16px;
+          background: var(--bg-card);
+          border: 1px solid var(--border);
+          border-radius: var(--radius-lg);
           padding: 16px;
           display: flex;
           align-items: center;
           gap: 12px;
           transition: all 0.3s;
+          box-shadow: var(--shadow);
         }
         .stat-card:hover {
-          background: rgba(255, 255, 255, 0.06);
+          background: rgba(42, 117, 118, 0.04);
           transform: translateY(-2px);
-          box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+          box-shadow: 0 10px 30px rgba(42, 117, 118, 0.08);
         }
         .stat-value {
           font-size: 28px;
@@ -393,7 +392,7 @@ export default function Schedule() {
         }
         .stat-label {
           font-size: 12px;
-          color: #94a3b8;
+          color: var(--text-secondary);
           margin-top: 4px;
           font-weight: 500;
         }
@@ -425,18 +424,18 @@ export default function Schedule() {
           align-items: center;
           gap: 12px;
           padding-bottom: 16px;
-          border-bottom: 1px solid rgba(255,255,255,0.1);
+          border-bottom: 1px solid var(--border);
           margin-bottom: 20px;
         }
         .section-title {
           font-size: 18px;
           font-weight: 700;
-          color: #fff;
+          color: var(--text-primary);
           margin: 0;
         }
         .badge-count {
-          background: rgba(255,255,255,0.1);
-          color: #fff;
+          background: var(--bg-input);
+          color: var(--text-primary);
           font-size: 12px;
           font-weight: 700;
           padding: 4px 12px;
@@ -445,19 +444,20 @@ export default function Schedule() {
         }
         
         .item-card {
-          background: rgba(255,255,255,0.02);
-          border: 1px solid rgba(255,255,255,0.06);
-          border-radius: 14px;
+          background: var(--bg-card);
+          border: 1px solid var(--border);
+          border-radius: var(--radius-lg);
           padding: 16px;
           transition: all 0.3s;
           cursor: pointer;
           margin-bottom: 12px;
+          box-shadow: var(--shadow);
         }
         .item-card:hover {
-          background: rgba(255,255,255,0.05);
-          border-color: rgba(255,255,255,0.15);
+          background: rgba(42, 117, 118, 0.04);
+          border-color: rgba(42, 117, 118, 0.25);
           transform: translateY(-2px);
-          box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+          box-shadow: 0 8px 24px rgba(42, 117, 118, 0.08);
         }
         
         .item-card.is-past {
@@ -466,7 +466,7 @@ export default function Schedule() {
         .item-card.is-past:hover {
           transform: none;
           box-shadow: none;
-          background: rgba(255,255,255,0.02);
+          background: var(--bg-card);
         }
         
         .item-card.is-urgent {
