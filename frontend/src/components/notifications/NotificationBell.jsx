@@ -173,14 +173,14 @@ export default function NotificationBell({ style }) {
           <span style={{
             position: 'absolute',
             top: '-3px', right: '-3px',
-            background: '#ef4444', color: '#fff',
+            background: '#FFEDD5', color: '#C2410C',
             borderRadius: '50%',
             minWidth: '16px', height: '16px',
             fontSize: '9px', fontWeight: 800,
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             padding: '0 4px', lineHeight: 1, whiteSpace: 'nowrap',
             boxSizing: 'border-box',
-            boxShadow: '0 0 6px rgba(239,68,68,0.6)',
+            boxShadow: '0 2px 6px rgba(194, 65, 12, 0.2)',
             zIndex: 2,
           }}>
             {unreadCount > 99 ? '99+' : unreadCount}

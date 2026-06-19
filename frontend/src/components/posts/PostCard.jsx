@@ -177,8 +177,8 @@ export default function PostCard({ post, currentUser, onLike, onDelete, onCommen
             <span key={`tu:${i}`} style={{
               display: 'inline-flex', alignItems: 'center',
               padding: '3px 10px', borderRadius: '20px',
-              background: 'rgba(108,99,255,0.12)', border: '1px solid rgba(108,99,255,0.25)',
-              color: 'var(--primary-light)', fontSize: '12px', fontWeight: 700,
+              background: '#E0F2FE',
+              color: '#0369A1', fontSize: '12px', fontWeight: 700,
             }}>
               @{name}
             </span>

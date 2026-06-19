@@ -1,6 +1,5 @@
-import { useState, useRef, useEffect } from 'react';
 
-export default function LikeCommentBar({ isLiked, likedEmoji, showComments, onLike, onToggleComments }) {
+export default function LikeCommentBar({ isLiked, showComments, onLike, onToggleComments }) {
   return (
     <div style={{ display: 'flex', padding: '4px 10px' }}>
       {/* Heart (Like) Button */}

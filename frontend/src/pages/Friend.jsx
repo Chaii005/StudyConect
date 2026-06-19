@@ -66,9 +66,9 @@ function PersonCard({ person, actions, isOnline }) {
           <span style={{
             position: 'absolute', bottom: -1, right: -1,
             width: '12px', height: '12px', borderRadius: '50%',
-            background: isOnline ? '#10b981' : '#ef4444',
+            background: isOnline ? '#34D399' : '#ef4444',
             border: '2px solid var(--bg-card)',
-            boxShadow: isOnline ? '0 0 6px #10b981' : 'none'
+            boxShadow: isOnline ? '0 0 6px rgba(52, 211, 153, 0.45)' : 'none'
           }} />
         )}
       </div>

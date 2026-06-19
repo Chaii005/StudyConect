@@ -1106,8 +1106,8 @@ function ConversationView({ user, friend, friends, onBack, onlineUserIds, onNick
           {(() => {
             const isOnline = onlineUserIds.includes(String(friend.userId));
             return (
-              <div style={{ fontSize: '12px', color: isOnline ? '#10b981' : '#ef4444', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '4px' }}>
-                <span style={{ display: 'inline-block', width: '6px', height: '6px', borderRadius: '50%', background: isOnline ? '#10b981' : '#ef4444' }} />
+              <div style={{ fontSize: '12px', color: isOnline ? '#34D399' : '#ef4444', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '4px' }}>
+                <span style={{ display: 'inline-block', width: '6px', height: '6px', borderRadius: '50%', background: isOnline ? '#34D399' : '#ef4444' }} />
                 {isOnline ? 'Đang hoạt động' : 'Ngoại tuyến'}
               </div>
             );
@@ -2380,8 +2380,8 @@ function FriendList({ user, friends, onSelect, lastMessages, onlineUserIds }) {
                 borderRadius: '10px'
               }}
                 onMouseEnter={e => {
-                  e.currentTarget.style.background = 'rgba(255,255,255,0.04)';
-                  e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)';
+                  e.currentTarget.style.background = 'rgba(0,0,0,0.04)';
+                  e.currentTarget.style.borderColor = 'rgba(0,0,0,0.08)';
                 }}
                 onMouseLeave={e => {
                   e.currentTarget.style.background = 'transparent';
@@ -2397,14 +2397,14 @@ function FriendList({ user, friends, onSelect, lastMessages, onlineUserIds }) {
                     width: '12px',
                     height: '12px',
                     borderRadius: '50%',
-                    background: isOnline ? '#10b981' : '#ef4444',
+                    background: isOnline ? '#34D399' : '#ef4444',
                     border: '2px solid var(--bg-card)',
-                    boxShadow: isOnline ? '0 0 6px #10b981' : 'none'
+                    boxShadow: isOnline ? '0 0 6px rgba(52, 211, 153, 0.45)' : 'none'
                   }} />
                 </div>
               <div style={{ flex: 1, minWidth: 0 }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '6px', marginBottom: '2px' }}>
-                  <span style={{ fontWeight: unread > 0 ? 700 : 600, fontSize: '13px', color: '#fff', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{nickname}</span>
+                  <span style={{ fontWeight: unread > 0 ? 700 : 600, fontSize: '13px', color: 'var(--text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{nickname}</span>
                   {f.status === 'pending' ? (
                     <span style={{
                       fontSize: '9px',
@@ -2422,7 +2422,7 @@ function FriendList({ user, friends, onSelect, lastMessages, onlineUserIds }) {
                   )}
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '6px' }}>
-                  <span style={{ fontSize: '12px', color: unread > 0 ? '#cbd5e1' : '#94a3b8', fontWeight: unread > 0 ? 600 : 400, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', flex: 1 }}>
+                  <span style={{ fontSize: '12px', color: unread > 0 ? 'var(--text-primary)' : 'var(--text-secondary)', fontWeight: unread > 0 ? 600 : 400, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', flex: 1 }}>
                     {last
                       ? (last.content?.startsWith('[chat_background]')
                         ? (String(last.fromUserId) === String(user.id) ? 'Bạn đã thay đổi hình nền' : `${nickname} đã thay đổi hình nền`)

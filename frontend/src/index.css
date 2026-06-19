@@ -4,30 +4,28 @@
    DESIGN TOKENS - ENERGETIC FOCUS REDESIGN
    ═══════════════════════════════════════════ */
 :root {
-  --primary: #6366f1;
-  --primary-dark: #4f46e5;
-  --primary-light: #818cf8;
-  --secondary: #ff7a00;
-  --accent: #ec4899;
-  --success: #10b981;
-  --error: #f43f5e;
-  --warning: #ff7a00;
-
-  --bg: #080b11;
-  --bg-card: rgba(16, 20, 35, 0.85);
-  --bg-input: #14192b;
-  --border: rgba(99, 102, 241, 0.12);
-  --border-hover: rgba(255, 122, 0, 0.35);
-
-  --text-primary: #f8fafc;
-  --text-secondary: #94a3b8;
-  --text-muted: #64748b;
-
+  --bg: #F4F9FB;
+  --bg-card: #FFFFFF;
+  --bg-input: #F4F9FB;
+  --border: #E2E8F0;
+  --border-hover: #CBD5E1;
+  --text-primary: #1E293B;
+  --text-secondary: #64748B;
+  --text-muted: #94A3B8;
+  --primary: #2DD4BF;
+  --primary-dark: #0F766E;
+  --primary-light: #99F6E4;
+  --secondary: #38BDF8;
+  --accent: #F97316;
+  --success: #34D399;
+  --error: #EF4444;
+  --warning: #F97316;
+  --shadow: 0 1px 3px rgba(0,0,0,0.06);
+  --shadow-lg: 0 4px 12px rgba(0,0,0,0.08);
+  --shadow-glow: 0 0 0 rgba(0,0,0,0);
   --radius: 16px;
   --radius-sm: 10px;
-  --radius-lg: 24px;
-  --shadow: 0 12px 40px rgba(0, 0, 0, 0.45);
-  --shadow-glow: 0 0 50px rgba(99, 102, 241, 0.08);
+  --radius-lg: 18px;
   --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -54,8 +52,8 @@ body {
   -moz-osx-font-smoothing: grayscale;
   background-color: var(--bg);
   background-image: 
-    radial-gradient(circle at 10% 20%, rgba(99, 102, 241, 0.03) 0%, transparent 40%),
-    radial-gradient(circle at 90% 80%, rgba(255, 122, 0, 0.02) 0%, transparent 45%);
+    radial-gradient(circle at 10% 20%, rgba(45, 212, 191, 0.08) 0%, transparent 40%),
+    radial-gradient(circle at 90% 80%, rgba(56, 189, 248, 0.06) 0%, transparent 45%);
   color: var(--text-primary);
   line-height: 1.6;
   height: 100%;
@@ -428,14 +426,14 @@ select.form-input option {
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
   color: white;
   width: 100%;
-  box-shadow: 0 4px 16px rgba(108, 99, 255, 0.35);
+  box-shadow: 0 4px 16px rgba(45, 212, 191, 0.3);
 }
 .btn-primary:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(108, 99, 255, 0.45);
+  box-shadow: 0 8px 24px rgba(45, 212, 191, 0.45);
 }
 .btn-primary:active { transform: translateY(0); }
 
@@ -1053,14 +1051,14 @@ select.form-input option {
   left: 0;
   right: 0;
   height: 64px;
-  background: rgba(15, 18, 30, 0.94);
+  background: var(--bg-card);
   backdrop-filter: blur(20px);
   border-top: 1px solid var(--border);
   display: none;
   justify-content: space-around;
   align-items: center;
   z-index: 1000;
-  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.05);
 }
 
 .mobile-bottom-nav-item {

@@ -11,6 +11,7 @@ import Avatar from '@/components/common/Avatar';
 import PostList from '@/components/posts/PostList';
 import CreatePostModal from '@/components/posts/CreatePostModal';
 import ConfirmModal from '@/components/ConfirmModal';
+import { Typewriter } from '@/components/common/Typewriter';
 
 
 
@@ -321,11 +322,17 @@ export default function Home() {
                 <Avatar src={user?.avatar} initial={user?.fullName || 'U'} size={42} />
                 <button
                   onClick={() => setShowCreateModal(true)}
-                  style={{ flex: 1, background: 'var(--bg-input)', border: '1px solid var(--border)', borderRadius: '24px', padding: '12px 18px', color: 'var(--text-muted)', fontSize: '14px', textAlign: 'left', cursor: 'pointer', fontFamily: 'inherit', transition: 'all 0.2s ease' }}
+                  style={{ flex: 1, background: 'var(--bg-input)', border: '1px solid var(--border)', borderRadius: '24px', padding: '12px 18px', color: 'var(--text-muted)', fontSize: '14px', textAlign: 'left', cursor: 'pointer', fontFamily: 'inherit', transition: 'all 0.2s ease', display: 'flex', alignItems: 'center' }}
                   onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'rgba(99, 102, 241, 0.4)'; e.currentTarget.style.background = 'rgba(99, 102, 241, 0.05)'; }}
                   onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'var(--border)'; e.currentTarget.style.background = 'var(--bg-input)'; }}
                 >
-                  Bạn muốn chia sẻ điều gì hôm nay? Đăng bài ngay...
+                  <Typewriter
+                    text={[
+                      'Bạn muốn chia sẻ điều gì hôm nay?',
+                      'Hôm nay học gì rồi?',
+                      'Đặt câu hỏi cho nhóm học của bạn...',
+                    ]}
+                  />
                 </button>
               </div>
             </div>
@@ -478,7 +485,7 @@ export default function Home() {
             <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '18px', overflow: 'hidden', boxShadow: 'var(--shadow)' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '14px 16px 12px', borderBottom: '1px solid var(--border)' }}>
                 <span style={{ fontWeight: 700, fontSize: '14px', display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--text-primary)' }}>
-                  <span style={{ display: 'inline-block', width: '8px', height: '8px', borderRadius: '50%', background: '#10b981', boxShadow: '0 0 8px #10b981' }} />
+                  <span style={{ display: 'inline-block', width: '8px', height: '8px', borderRadius: '50%', background: '#34D399', boxShadow: '0 0 8px rgba(52, 211, 153, 0.45)' }} />
                   Bạn bè trực tuyến
                 </span>
                 <Link to="/friends" style={{ fontSize: '12px', color: 'var(--secondary)', textDecoration: 'none', fontWeight: 700 }}
@@ -520,9 +527,9 @@ export default function Home() {
                               <span style={{
                                 position: 'absolute', bottom: -1, right: -1,
                                 width: '10px', height: '10px', borderRadius: '50%',
-                                background: isOnline ? '#10b981' : '#ef4444',
+                                background: isOnline ? '#34D399' : '#ef4444',
                                 border: '2px solid var(--bg-card)',
-                                boxShadow: isOnline ? '0 0 6px #10b981' : 'none'
+                                boxShadow: isOnline ? '0 0 6px rgba(52, 211, 153, 0.45)' : 'none'
                               }} />
                             </div>
                             <div style={{ flex: 1, minWidth: 0 }}>

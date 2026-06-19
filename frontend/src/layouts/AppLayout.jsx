@@ -6,22 +6,22 @@ import NotificationBell from '@/components/notifications/NotificationBell';
 import { supabase } from '@/config/supabaseClient';
 import Avatar from '@/components/common/Avatar';
 const NAV_ICONS = {
-  home: (isActive) => (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" style={{ transition: 'all 0.3s', color: isActive ? 'var(--secondary)' : 'var(--text-secondary)' }}>
+  home: (isActive, activeColor) => (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" style={{ transition: 'all 0.3s', color: isActive ? (activeColor || 'var(--secondary)') : 'var(--text-secondary)' }}>
       <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
       <polyline points="9 22 9 12 15 12 15 22"/>
     </svg>
   ),
-  groups: (isActive) => (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" style={{ transition: 'all 0.3s', color: isActive ? 'var(--secondary)' : 'var(--text-secondary)' }}>
+  groups: (isActive, activeColor) => (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" style={{ transition: 'all 0.3s', color: isActive ? (activeColor || 'var(--secondary)') : 'var(--text-secondary)' }}>
       <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
       <circle cx="9" cy="7" r="4"/>
       <path d="M22 21v-2a4 4 0 0 0-3-3.87"/>
       <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
     </svg>
   ),
-  schedule: (isActive) => (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" style={{ transition: 'all 0.3s', color: isActive ? 'var(--secondary)' : 'var(--text-secondary)' }}>
+  schedule: (isActive, activeColor) => (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" style={{ transition: 'all 0.3s', color: isActive ? (activeColor || 'var(--secondary)') : 'var(--text-secondary)' }}>
       <rect width="18" height="18" x="3" y="4" rx="2" ry="2"/>
       <line x1="16" x2="16" y1="2" y2="6"/>
       <line x1="8" x2="8" y1="2" y2="6"/>
@@ -29,16 +29,16 @@ const NAV_ICONS = {
       <path d="m9 16 2 2 4-4"/>
     </svg>
   ),
-  friends: (isActive) => (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" style={{ transition: 'all 0.3s', color: isActive ? 'var(--secondary)' : 'var(--text-secondary)' }}>
+  friends: (isActive, activeColor) => (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" style={{ transition: 'all 0.3s', color: isActive ? (activeColor || 'var(--secondary)') : 'var(--text-secondary)' }}>
       <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
       <circle cx="9" cy="7" r="4"/>
       <line x1="19" x2="19" y1="8" y2="14"/>
       <line x1="16" x2="22" y1="11" y2="11"/>
     </svg>
   ),
-  docs: (isActive) => (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" style={{ transition: 'all 0.3s', color: isActive ? 'var(--secondary)' : 'var(--text-secondary)' }}>
+  docs: (isActive, activeColor) => (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" style={{ transition: 'all 0.3s', color: isActive ? (activeColor || 'var(--secondary)') : 'var(--text-secondary)' }}>
       <path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/>
       <path d="M14 2v4a2 2 0 0 0 2 2h4"/>
       <path d="M10 9H8"/>
@@ -46,25 +46,25 @@ const NAV_ICONS = {
       <path d="M16 17H8"/>
     </svg>
   ),
-  chat: (isActive) => (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" style={{ transition: 'all 0.3s', color: isActive ? 'var(--secondary)' : 'var(--text-secondary)' }}>
+  chat: (isActive, activeColor) => (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" style={{ transition: 'all 0.3s', color: isActive ? (activeColor || 'var(--secondary)') : 'var(--text-secondary)' }}>
       <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
     </svg>
   ),
-  flashcards: (isActive) => (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" style={{ transition: 'all 0.3s', color: isActive ? 'var(--secondary)' : 'var(--text-secondary)' }}>
+  flashcards: (isActive, activeColor) => (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" style={{ transition: 'all 0.3s', color: isActive ? (activeColor || 'var(--secondary)') : 'var(--text-secondary)' }}>
       <rect width="18" height="10" x="3" y="3" rx="2" ry="2"/>
       <rect width="18" height="10" x="3" y="11" rx="2" ry="2"/>
     </svg>
   ),
-  profile: (isActive) => (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" style={{ transition: 'all 0.3s', color: isActive ? 'var(--secondary)' : 'var(--text-secondary)' }}>
+  profile: (isActive, activeColor) => (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" style={{ transition: 'all 0.3s', color: isActive ? (activeColor || 'var(--secondary)') : 'var(--text-secondary)' }}>
       <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/>
       <circle cx="12" cy="7" r="4"/>
     </svg>
   ),
-  more: (isActive) => (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" style={{ transition: 'all 0.3s', color: isActive ? 'var(--secondary)' : 'var(--text-secondary)' }}>
+  more: (isActive, activeColor) => (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" style={{ transition: 'all 0.3s', color: isActive ? (activeColor || 'var(--secondary)') : 'var(--text-secondary)' }}>
       <line x1="4" x2="20" y1="12" y2="12"/>
       <line x1="4" x2="20" y1="6" y2="6"/>
       <line x1="4" x2="20" y1="18" y2="18"/>
@@ -162,28 +162,28 @@ export default function AppLayout({ children, hideNavbar = false, hideSidebar = 
   return (
     <div className="app-layout-wrapper" style={{ height: '100%', overflow: 'hidden', overscrollBehavior: 'none', background: 'var(--bg)', position: 'relative' }}>
       {/* Decorative background glows */}
-      <div style={{
-        position: 'fixed', top: '-200px', right: '-200px',
-        width: '600px', height: '600px',
-        background: 'radial-gradient(circle, rgba(255,122,0,0.06) 0%, transparent 70%)',
-        borderRadius: '50%', pointerEvents: 'none', zIndex: 0
-      }} />
-      <div style={{
-        position: 'fixed', bottom: '-150px', left: '-150px',
-        width: '500px', height: '500px',
-        background: 'radial-gradient(circle, rgba(99,102,241,0.05) 0%, transparent 70%)',
-        borderRadius: '50%', pointerEvents: 'none', zIndex: 0
-      }} />
+      <div
+        style={{
+          position: 'absolute',
+          inset: 0,
+          zIndex: 0,
+          pointerEvents: 'none',
+          backgroundImage: `
+            radial-gradient(circle at top right, rgba(45, 212, 191, 0.18), transparent 60%),
+            radial-gradient(circle at bottom left, rgba(56, 189, 248, 0.12), transparent 60%)
+          `,
+        }}
+      />
 
       {!hideNavbar && (
         <nav className="navbar" style={{ 
           position: 'sticky', 
           top: 0, 
           zIndex: 100,
-          background: 'rgba(9, 12, 21, 0.85)',
+          background: 'rgba(255, 255, 255, 0.85)',
           backdropFilter: 'blur(20px)',
           borderBottom: '1px solid var(--border)',
-          boxShadow: '0 4px 30px rgba(0, 0, 0, 0.2)'
+          boxShadow: '0 4px 30px rgba(0, 0, 0, 0.05)'
         }}>
           <Link to="/" className="nav-brand" style={{ display: 'flex', alignItems: 'center', gap: '8px', textDecoration: 'none' }}>
             <div className="nav-brand-icon" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '20px' }}>
@@ -309,18 +309,18 @@ export default function AppLayout({ children, hideNavbar = false, hideSidebar = 
 
             {displayUser && (
               <button className="btn-logout desktop-only" onClick={handleLogout} style={{
-                background: 'none',
-                border: '1.5px solid var(--border)',
+                background: 'transparent',
+                border: '1px solid #2DD4BF',
                 borderRadius: '8px',
-                color: 'var(--text-secondary)',
+                color: '#0F766E',
                 padding: '6px 14px',
                 fontSize: '13px',
                 fontWeight: 600,
                 cursor: 'pointer',
                 transition: 'var(--transition)'
               }}
-                onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'var(--error)'; e.currentTarget.style.color = 'var(--error)'; }}
-                onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'var(--border)'; e.currentTarget.style.color = 'var(--text-secondary)'; }}>
+                onMouseEnter={(e) => { e.currentTarget.style.borderColor = '#0f766e'; e.currentTarget.style.background = 'rgba(45, 212, 191, 0.08)'; }}
+                onMouseLeave={(e) => { e.currentTarget.style.borderColor = '#2DD4BF'; e.currentTarget.style.color = '#0F766E'; e.currentTarget.style.background = 'transparent'; }}>
                 Đăng xuất
               </button>
             )}
@@ -390,7 +390,7 @@ export default function AppLayout({ children, hideNavbar = false, hideSidebar = 
           </div>
 
           <div style={{ padding: '16px', borderTop: '1px solid var(--border)' }}>
-            <button onClick={handleLogout} className="btn-logout" style={{ width: '100%', display: 'flex', justifyContent: 'center', padding: '10px', borderRadius: '8px', background: 'none', border: '1.5px solid var(--border)', color: 'var(--text-secondary)', fontWeight: 600, fontSize: '13px', cursor: 'pointer' }}>
+            <button onClick={handleLogout} className="btn-logout" style={{ width: '100%', display: 'flex', justifyContent: 'center', padding: '10px', borderRadius: '8px', background: 'transparent', border: '1px solid #2DD4BF', color: '#0F766E', fontWeight: 600, fontSize: '13px', cursor: 'pointer' }}>
               Đăng xuất
             </button>
           </div>
@@ -454,8 +454,8 @@ export default function AppLayout({ children, hideNavbar = false, hideSidebar = 
                           gap: '12px', 
                           padding: '11px 14px', 
                           borderRadius: '12px', 
-                          background: isActive ? 'linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(255, 122, 0, 0.08))' : 'none', 
-                          border: isActive ? '1px solid rgba(255, 122, 0, 0.25)' : '1px solid transparent',
+                          background: isActive ? 'linear-gradient(135deg, #2DD4BF, #38BDF8)' : 'none', 
+                          border: isActive ? '1px solid transparent' : '1px solid transparent',
                           transition: 'all 0.25s cubic-bezier(0.4, 0, 0.2, 1)', 
                           transform: 'translateY(0)',
                           position: 'relative' 
@@ -481,14 +481,14 @@ export default function AppLayout({ children, hideNavbar = false, hideSidebar = 
                           alignItems: 'center', 
                           justifyContent: 'center', 
                           flexShrink: 0, 
-                          filter: isActive ? 'drop-shadow(0 0 8px rgba(255, 122, 0, 0.55))' : 'none' 
+                          filter: isActive ? 'drop-shadow(0 0 8px rgba(45, 212, 191, 0.5))' : 'none' 
                         }}>
-                          {NAV_ICONS[item.icon] ? NAV_ICONS[item.icon](isActive) : item.icon}
+                          {NAV_ICONS[item.icon] ? NAV_ICONS[item.icon](isActive, '#FFFFFF') : item.icon}
                         </span>
                         <span style={{ 
                           fontSize: '14px', 
                           fontWeight: isActive ? 700 : 500, 
-                          color: isActive ? 'var(--secondary)' : 'var(--text-secondary)', 
+                          color: isActive ? '#FFFFFF' : 'var(--text-secondary)', 
                           flex: 1,
                           whiteSpace: 'nowrap'
                         }}>

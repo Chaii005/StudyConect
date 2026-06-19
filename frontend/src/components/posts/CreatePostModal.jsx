@@ -269,9 +269,9 @@ export default function CreatePostModal({ user, friends = [], myLeaderGroups = [
                 display: 'inline-flex', alignItems: 'center', gap: '6px',
                 padding: '4px 10px 4px 8px',
                 borderRadius: '20px',
-                background: t.type === 'friend' ? 'rgba(108,99,255,0.15)' : 'rgba(255,122,0,0.12)',
-                border: t.type === 'friend' ? '1px solid rgba(108,99,255,0.35)' : '1px solid rgba(255,122,0,0.3)',
-                color: t.type === 'friend' ? 'var(--primary-light)' : 'var(--secondary)',
+                background: t.type === 'friend' ? '#E0F2FE' : 'rgba(255,122,0,0.12)',
+                border: t.type === 'friend' ? '1px solid #BAE6FD' : '1px solid rgba(255,122,0,0.3)',
+                color: t.type === 'friend' ? '#0369A1' : 'var(--secondary)',
                 fontSize: '12px', fontWeight: 700,
               }}>
                 {t.type === 'friend' ? (

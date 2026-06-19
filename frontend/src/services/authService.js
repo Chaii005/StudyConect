@@ -288,7 +288,7 @@ export const updateProfile = async ({ id, fullName, university, major, bio, avat
       avatar = avatarFile;
     } else if (avatarFile instanceof File || avatarFile instanceof Blob) {
       // Compress avatar xuống tối đa 400×400 px trước khi upload
-      let uploadFile = avatarFile;
+      let uploadFile;
       try {
         uploadFile = await compressAvatar(avatarFile);
       } catch {
@@ -404,11 +404,4 @@ export const changePassword = async ({ id, currentPassword, newPassword }) => {
 // ─── HELPERS ─────────────────────────────────────────
 export const getCurrentUser = () => getSession();
 export const isAuthenticated = () => !!getSession();
-
-const fileToBase64 = (file) =>
-  new Promise((res, rej) => {
-    const r = new FileReader();
-    r.readAsDataURL(file);
-    r.onload = () => res(r.result);
-    r.onerror = rej;
-  });
+
