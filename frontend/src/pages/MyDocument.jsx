@@ -265,13 +265,13 @@ export default function MyDocuments() {
       <AppLayout>
         <main className="document-page-container">
           {/* Header Panel with search */}
-          <div className="premium-panel" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '20px', flexWrap: 'wrap', marginBottom: '24px', padding: '28px 32px' }}>
+          <div className="premium-panel" style={{ display: 'flex', flexDirection: 'column', gap: '14px', marginBottom: '20px', padding: '16px 20px' }}>
             <div>
-              <h1 style={{ fontSize: '28px', fontWeight: 800, color: '#fff', margin: 0, fontFamily: "'Plus Jakarta Sans', sans-serif", letterSpacing: '-0.02em' }}>Tài liệu của tôi</h1>
-              <p style={{ fontSize: '14px', color: '#94a3b8', margin: '6px 0 0 0' }}>Danh sách tài liệu bạn đã chia sẻ trong các nhóm học.</p>
+              <h1 style={{ fontSize: '20px', fontWeight: 800, color: '#fff', margin: 0, fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Tài liệu của tôi</h1>
+              <p style={{ fontSize: '13px', color: '#94a3b8', margin: '4px 0 0 0' }}>Danh sách tài liệu bạn đã chia sẻ trong các nhóm học.</p>
             </div>
             
-            <div className="search-container" style={{ width: '100%', maxWidth: '420px', margin: 0 }}>
+            <div className="search-container" style={{ width: '100%', margin: 0 }}>
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ color: 'var(--text-muted)', flexShrink: 0 }}>
                 <circle cx="11" cy="11" r="8"/>
                 <path d="m21 21-4.3-4.3"/>
@@ -291,9 +291,9 @@ export default function MyDocuments() {
               Đang tải tài liệu...
             </div>
           ) : files.length === 0 ? (
-            <div className="premium-panel" style={{ textAlign: 'center', padding: '64px 24px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-              <div style={{ color: 'var(--text-muted)', display: 'flex', justifyContent: 'center', marginBottom: '18px' }}>
-                <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{ opacity: 0.6 }}>
+            <div className="premium-panel" style={{ textAlign: 'center', padding: '48px 24px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+              <div style={{ color: 'var(--text-muted)', display: 'flex', justifyContent: 'center', marginBottom: '14px' }}>
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{ opacity: 0.6 }}>
                   <path d="M22 13V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v7" />
                   <path d="M22 13a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4" />
                   <path d="M22 13h-4M4 13H2" />
@@ -301,24 +301,24 @@ export default function MyDocuments() {
                   <path d="m9 11 3 3 3-3" />
                 </svg>
               </div>
-              <h2 style={{ fontSize: '22px', fontWeight: 800, color: '#fff', margin: '0 0 8px 0' }}>
+              <h2 style={{ fontSize: '18px', fontWeight: 800, color: '#fff', margin: '0 0 6px 0' }}>
                 Chưa có tài liệu nào
               </h2>
-              <p style={{ fontSize: '14px', color: '#94a3b8', margin: '0 0 28px 0', maxWidth: '480px' }}>
+              <p style={{ fontSize: '13px', color: '#94a3b8', margin: '0 0 20px 0', maxWidth: '400px' }}>
                 Vào các nhóm học để tải lên tài liệu đầu tiên của bạn.
               </p>
               <Link to="/groups" style={{
                 display: 'inline-block',
-                padding: '12px 28px', borderRadius: '12px',
+                padding: '10px 24px', borderRadius: '12px',
                 background: 'linear-gradient(135deg, #6366f1, #8b5cf6)', color: 'white',
-                textDecoration: 'none', fontSize: '15px', fontWeight: 700,
+                textDecoration: 'none', fontSize: '14px', fontWeight: 700,
                 boxShadow: '0 4px 15px rgba(99,102,241,0.3)', transition: 'all 0.2s'
               }}>Đến nhóm học</Link>
             </div>
           ) : filtered.length === 0 ? (
-            <div className="premium-panel" style={{ textAlign: 'center', padding: '32px 16px' }}>
-              <div style={{ color: 'var(--text-muted)', display: 'flex', justifyContent: 'center', marginBottom: '12px' }}>
-                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+            <div className="premium-panel" style={{ textAlign: 'center', padding: '24px 16px' }}>
+              <div style={{ color: 'var(--text-muted)', display: 'flex', justifyContent: 'center', marginBottom: '10px' }}>
+                <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M22 13V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v7" />
                   <path d="M22 13a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4" />
                   <path d="M22 13h-4M4 13H2" />
@@ -326,7 +326,7 @@ export default function MyDocuments() {
                   <path d="m9 11 3 3 3-3" />
                 </svg>
               </div>
-              <div style={{ fontSize: '15px', fontWeight: 700, color: '#fff', marginBottom: '6px' }}>
+              <div style={{ fontSize: '14px', fontWeight: 700, color: '#fff', marginBottom: '4px' }}>
                 Không tìm thấy tài liệu
               </div>
               <div style={{ fontSize: '12px', color: '#94a3b8' }}>
@@ -345,23 +345,23 @@ export default function MyDocuments() {
               ))}
             </div>
           ) : (
-            <div className="premium-panel" style={{ padding: '24px', overflowX: 'auto' }}>
+            <div className="premium-panel" style={{ padding: '16px 20px', overflowX: 'auto' }}>
               <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', minWidth: '700px' }}>
                 <thead>
-                  <tr style={{ borderBottom: '2px solid var(--border)', color: 'var(--text-muted)', fontSize: '12.5px', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
-                    <th style={{ padding: '15px 16px' }}>Tên tài liệu</th>
-                    <th style={{ padding: '15px 16px' }}>Đã chia sẻ vào nhóm</th>
-                    <th style={{ padding: '15px 16px' }}>Thời gian chia sẻ</th>
-                    <th style={{ padding: '15px 16px' }}>Dung lượng</th>
-                    <th style={{ padding: '15px 16px', textAlign: 'right', width: '1%', whiteSpace: 'nowrap' }}>Thao tác</th>
+                  <tr style={{ borderBottom: '2px solid var(--border)', color: 'var(--text-muted)', fontSize: '12px', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                    <th style={{ padding: '10px 12px' }}>Tên tài liệu</th>
+                    <th style={{ padding: '10px 12px' }}>Đã chia sẻ vào nhóm</th>
+                    <th style={{ padding: '10px 12px' }}>Thời gian chia sẻ</th>
+                    <th style={{ padding: '10px 12px' }}>Dung lượng</th>
+                    <th style={{ padding: '10px 12px', textAlign: 'right', width: '1%', whiteSpace: 'nowrap' }}>Thao tác</th>
                   </tr>
                 </thead>
                 <tbody>
                   {filtered.map((file) => (
-                    <tr key={file.id} style={{ borderBottom: '1px solid var(--border)', fontSize: '14px', transition: 'var(--transition)' }} className="table-row-hover">
-                      <td style={{ padding: '19px 16px' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', fontWeight: 600 }}>
-                          <div className="file-icon-box" style={{ width: '32px', height: '32px', margin: 0 }}>
+                    <tr key={file.id} style={{ borderBottom: '1px solid var(--border)', fontSize: '13.5px', transition: 'var(--transition)' }} className="table-row-hover">
+                      <td style={{ padding: '12px 12px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 600 }}>
+                          <div className="file-icon-box" style={{ width: '28px', height: '28px', margin: 0 }}>
                             {fileIconSvg(file.fileType)}
                           </div>
                           {file.fileData && file.fileType?.startsWith('image/') ? (
@@ -373,23 +373,23 @@ export default function MyDocuments() {
                           )}
                         </div>
                       </td>
-                      <td style={{ padding: '19px 16px' }}>
+                      <td style={{ padding: '12px 12px' }}>
                         <Link to={`/groups/${file.groupId}`} style={{ color: 'var(--primary-light)', textDecoration: 'none', fontWeight: 600 }}>
                           {file.groupName}
                         </Link>
                       </td>
-                      <td style={{ padding: '19px 16px', color: 'var(--text-muted)' }}>
+                      <td style={{ padding: '12px 12px', color: 'var(--text-muted)' }}>
                         {new Date(file.createdAt).toLocaleString('vi-VN')}
                       </td>
-                      <td style={{ padding: '19px 16px', color: 'var(--text-secondary)' }}>
+                      <td style={{ padding: '12px 12px', color: 'var(--text-secondary)' }}>
                         {formatFileSize(file.fileSize)}
                       </td>
-                      <td style={{ padding: '19px 16px', textAlign: 'right', width: '1%', whiteSpace: 'nowrap' }}>
-                        <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
+                      <td style={{ padding: '12px 12px', textAlign: 'right', width: '1%', whiteSpace: 'nowrap' }}>
+                        <div style={{ display: 'flex', gap: '6px', justifyContent: 'flex-end' }}>
                           <button
                             onClick={() => handleDownload(file)}
                             className="file-action-btn"
-                            style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', padding: '6px 12px' }}
+                            style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', padding: '5px 10px' }}
                           >
                             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                               <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
@@ -405,7 +405,7 @@ export default function MyDocuments() {
                               display: 'inline-flex',
                               alignItems: 'center',
                               gap: '4px',
-                              padding: '6px 12px',
+                              padding: '5px 10px',
                               background: 'rgba(239,68,68,0.1)',
                               border: '1px solid rgba(239,68,68,0.2)',
                               color: '#f87171'
@@ -430,8 +430,9 @@ export default function MyDocuments() {
         <style>{`
           .document-page-container {
             padding: 24px;
-            max-width: 1200px;
-            margin: 0 auto;
+            max-width: 100%;
+            width: 100%;
+            box-sizing: border-box;
             font-family: 'Inter', sans-serif;
           }
           .file-cards-grid {
@@ -470,7 +471,7 @@ export default function MyDocuments() {
             -webkit-backdrop-filter: blur(20px);
             border: 1px solid rgba(255, 255, 255, 0.08);
             border-radius: 16px;
-            padding: 24px;
+            padding: 16px 20px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.1), inset 0 1px 0 rgba(255,255,255,0.05);
             margin-bottom: 24px;
           }
@@ -478,15 +479,15 @@ export default function MyDocuments() {
             display: flex;
             align-items: center;
             gap: 8px;
-            background: rgba(0,0,0,0.25);
+            background: rgba(0,0,0,0.2);
             border: 1px solid rgba(255,255,255,0.1);
             border-radius: 12px;
-            padding: 10px 16px;
+            padding: 8px 12px;
             transition: all 0.3s;
           }
           .search-container:focus-within {
             border-color: #6366f1;
-            background: rgba(0,0,0,0.35);
+            background: rgba(0,0,0,0.3);
             box-shadow: 0 0 0 2px rgba(99,102,241,0.2);
           }
           .search-input {
@@ -494,7 +495,7 @@ export default function MyDocuments() {
             color: #fff; font-size: 13px; font-family: inherit;
           }
           .file-icon-box {
-            width: 36px; height: 36px; border-radius: 8px; flex-shrink: 0;
+            width: 32px; height: 32px; border-radius: 8px; flex-shrink: 0;
             background: rgba(108,99,255,0.15); border: 1px solid rgba(108,99,255,0.25);
             display: flex; align-items: center; justify-content: center;
           }
@@ -502,7 +503,7 @@ export default function MyDocuments() {
             background: rgba(255,255,255,0.05);
             border: 1px solid rgba(255,255,255,0.1);
             color: #e2e8f0;
-            padding: 6px 12px;
+            padding: 5px 10px;
             border-radius: 8px;
             font-size: 12px;
             font-weight: 600;
