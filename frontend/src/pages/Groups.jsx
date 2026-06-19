@@ -7,6 +7,8 @@ import { getFriends } from '../services/friendService';
 import { sendGroupInvite, getGroupInvitesSent } from '../services/groupInviteService';
 import AppLayout from '../layouts/AppLayout';
 import ConfirmModal from '../components/ConfirmModal';
+import { supabase } from '../config/supabaseClient';
+import { formatBytes } from '../utils';
 
 import { geocodeAddress, staticMapUrl, googleMapsSearchUrl } from '../utils/geocoding';
 
@@ -255,11 +257,13 @@ function CreateGroupModal({ formData, setFormData, meetingMode, setMeetingMode, 
                 </div>
               </div>
 
-              {/* Mô tả */}
-              <div className="form-group" style={{ marginBottom: 0 }}>
-                <label className="form-label" style={{ fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 4 }}>Mô tả nhóm</label>
-                <textarea className="form-textarea" placeholder="Mô tả ngắn gọn về nhóm để thành viên hiểu mục tiêu học" style={{ height: '56px', resize: 'none', padding: '8px 12px', fontSize: 13 }} value={formData.description} onChange={e => setFormData({ ...formData, description: e.target.value })} />
-              </div>
+              {/* Mô tả - Chỉ hiển thị khi tạo nhóm công khai */}
+              {!isPrivate && (
+                <div className="form-group" style={{ marginBottom: 0 }}>
+                  <label className="form-label" style={{ fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 4 }}>Mô tả nhóm</label>
+                  <textarea className="form-textarea" placeholder="Mô tả ngắn gọn về nhóm để thành viên hiểu mục tiêu học" style={{ height: '56px', resize: 'none', padding: '8px 12px', fontSize: 13 }} value={formData.description} onChange={e => setFormData({ ...formData, description: e.target.value })} />
+                </div>
+              )}
 
               {/* Location Picker for Offline mode */}
               {meetingMode === 'offline' && (
@@ -355,10 +359,15 @@ function CreateGroupModal({ formData, setFormData, meetingMode, setMeetingMode, 
                         : 'Bất kỳ ai cũng có thể tham gia nhóm ngay mà không cần chờ duyệt.'}
                     </p>
                   </div>
-                  {/* Toggle switch */}
                   <button
                     type="button"
-                    onClick={() => setIsPrivate(p => !p)}
+                    onClick={() => setIsPrivate(p => {
+                      const next = !p;
+                      if (next) {
+                        setFormData(prev => ({ ...prev, description: '' }));
+                      }
+                      return next;
+                    })}
                     style={{
                       width: 44, height: 24, borderRadius: 12, border: 'none', cursor: 'pointer', flexShrink: 0,
                       background: isPrivate ? '#ef4444' : '#10b981',
@@ -738,6 +747,10 @@ export default function Groups() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [inviteGroup, setInviteGroup] = useState(null);
 
+  const [reviewGroup, setReviewGroup] = useState(null);
+  const [reviewGroupFiles, setReviewGroupFiles] = useState([]);
+  const [loadingFiles, setLoadingFiles] = useState(false);
+
   const [formData, setFormData] = useState({ name: '', subject: '', description: '', maxMembers: 10 });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [meetingMode, setMeetingMode] = useState('online');
@@ -815,6 +828,31 @@ export default function Groups() {
   };
 
   const handleJoin = async (group) => {
+    setReviewGroup(group);
+    setLoadingFiles(true);
+    try {
+      const { data, error } = await supabase
+        .from('files')
+        .select('file_name, file_size')
+        .eq('group_id', parseInt(group.id, 10))
+        .order('created_at', { ascending: false })
+        .limit(5);
+      if (!error && data) {
+        setReviewGroupFiles(data);
+      } else {
+        setReviewGroupFiles([]);
+      }
+    } catch {
+      setReviewGroupFiles([]);
+    } finally {
+      setLoadingFiles(false);
+    }
+  };
+
+  const handleConfirmJoin = async () => {
+    if (!reviewGroup) return;
+    const group = reviewGroup;
+    setReviewGroup(null);
     try {
       const result = await joinGroup(user.id, group.id);
       if (result?.requested) {
@@ -1517,6 +1555,164 @@ export default function Groups() {
         joinRequestStatus={joinRequestStatus}
         handleJoin={handleJoin}
       />
+    )}
+
+    {reviewGroup && (
+      <div style={{
+        position: 'fixed',
+        bottom: '24px',
+        right: '24px',
+        width: '360px',
+        maxHeight: '450px',
+        background: 'rgba(16, 20, 35, 0.95)',
+        backdropFilter: 'blur(16px)',
+        border: '1.5px solid var(--primary)',
+        borderRadius: '16px',
+        boxShadow: '0 20px 50px rgba(0, 0, 0, 0.6), var(--shadow-glow)',
+        zIndex: 11000,
+        padding: '20px',
+        display: 'flex',
+        flexDirection: 'column',
+        color: 'var(--text-primary)',
+        animation: 'slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) ease',
+      }}>
+        {/* Header */}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', borderBottom: '1px solid var(--border)', paddingBottom: '10px', marginBottom: '12px' }}>
+          <div>
+            <h3 style={{ margin: 0, fontSize: '16px', fontWeight: 800, color: '#ffffff' }}>
+              Thông tin nhóm học
+            </h3>
+            <p style={{ margin: '2px 0 0', fontSize: '11px', color: 'var(--text-muted)' }}>
+              Đọc kỹ thông tin trước khi tham gia
+            </p>
+          </div>
+          <button 
+            onClick={() => setReviewGroup(null)}
+            style={{
+              background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', fontSize: '16px', padding: '2px'
+            }}
+          >
+            ✕
+          </button>
+        </div>
+
+        {/* Body content scrollable */}
+        <div style={{ flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '12px', paddingRight: '4px' }} className="no-scrollbar">
+          {/* Tên nhóm */}
+          <div>
+            <div style={{ fontSize: '11px', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 700, letterSpacing: '0.05em' }}>
+              Tên nhóm
+            </div>
+            <div style={{ fontSize: '14px', fontWeight: 700, color: 'var(--primary-light)', marginTop: '2px' }}>
+              {reviewGroup.name}
+            </div>
+          </div>
+
+          {/* Môn học & Thành viên */}
+          <div style={{ display: 'flex', gap: '20px' }}>
+            <div style={{ flex: 1 }}>
+              <div style={{ fontSize: '11px', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 700, letterSpacing: '0.05em' }}>
+                Môn học
+              </div>
+              <div style={{ fontSize: '13px', fontWeight: 600, marginTop: '2px' }}>
+                {reviewGroup.subject}
+              </div>
+            </div>
+            <div>
+              <div style={{ fontSize: '11px', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 700, letterSpacing: '0.05em' }}>
+                Thành viên
+              </div>
+              <div style={{ fontSize: '13px', fontWeight: 600, marginTop: '2px' }}>
+                {reviewGroup.members?.length || 0} / {reviewGroup.maxMembers || 10}
+              </div>
+            </div>
+          </div>
+
+          {/* Mô tả */}
+          <div>
+            <div style={{ fontSize: '11px', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 700, letterSpacing: '0.05em' }}>
+              Mô tả
+            </div>
+            <p style={{ margin: '3px 0 0', fontSize: '12px', color: 'var(--text-secondary)', lineHeight: 1.4, fontStyle: reviewGroup.description ? 'normal' : 'italic' }}>
+              {reviewGroup.description ? `"${reviewGroup.description}"` : 'Không có mô tả.'}
+            </p>
+          </div>
+
+          {/* Tài liệu của các thành viên */}
+          <div>
+            <div style={{ fontSize: '11px', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 700, letterSpacing: '0.05em', marginBottom: '6px' }}>
+              Tài liệu đã tải lên ({loadingFiles ? '...' : reviewGroupFiles.length})
+            </div>
+            {loadingFiles ? (
+              <div style={{ fontSize: '12px', color: 'var(--text-muted)', padding: '4px 0' }}>
+                Đang tải danh sách tài liệu...
+              </div>
+            ) : reviewGroupFiles.length === 0 ? (
+              <div style={{ fontSize: '12px', color: 'var(--text-muted)', fontStyle: 'italic', padding: '4px 0' }}>
+                Nhóm chưa có tài liệu nào được tải lên.
+              </div>
+            ) : (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                {reviewGroupFiles.map((file, idx) => (
+                  <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: '8px', background: 'rgba(255, 255, 255, 0.03)', padding: '6px 10px', borderRadius: '8px', border: '1px solid var(--border)' }}>
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ color: 'var(--primary-light)', flexShrink: 0 }}>
+                      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                      <polyline points="14 2 14 8 20 8" />
+                    </svg>
+                    <span style={{ fontSize: '11px', color: 'var(--text-secondary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', flex: 1 }}>
+                      {file.file_name}
+                    </span>
+                    {file.file_size && (
+                      <span style={{ fontSize: '10px', color: 'var(--text-muted)' }}>
+                        {formatBytes(file.file_size)}
+                      </span>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Footer Actions */}
+        <div style={{ borderTop: '1px solid var(--border)', paddingTop: '12px', marginTop: '8px', display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
+          <button 
+            onClick={() => setReviewGroup(null)}
+            style={{
+              padding: '6px 12px',
+              borderRadius: '8px',
+              border: '1px solid var(--border)',
+              background: 'transparent',
+              color: 'var(--text-secondary)',
+              fontSize: '12px',
+              fontWeight: 600,
+              cursor: 'pointer',
+            }}
+            onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.05)'; e.currentTarget.style.color = 'var(--text-primary)'; }}
+            onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'var(--text-secondary)'; }}
+          >
+            Hủy
+          </button>
+          <button 
+            onClick={handleConfirmJoin}
+            style={{
+              padding: '6px 14px',
+              borderRadius: '8px',
+              border: 'none',
+              background: 'linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%)',
+              color: '#ffffff',
+              fontSize: '12px',
+              fontWeight: 700,
+              cursor: 'pointer',
+              boxShadow: '0 4px 12px rgba(108, 99, 255, 0.25)',
+            }}
+            onMouseEnter={e => { e.currentTarget.style.opacity = '0.9'; }}
+            onMouseLeave={e => { e.currentTarget.style.opacity = '1'; }}
+          >
+            {reviewGroup.isPrivate ? 'Đồng ý gửi yêu cầu' : 'Đồng ý tham gia'}
+          </button>
+        </div>
+      </div>
     )}
 
     <ConfirmModal

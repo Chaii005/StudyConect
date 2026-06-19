@@ -827,6 +827,7 @@ function ConversationView({ user, friend, friends, onBack, onlineUserIds, onNick
           fileName: attachedFile?.name || 'document.file',
           fileType: attachedFile?.type || 'application/octet-stream',
           fileData: fileUrlValue,
+          // eslint-disable-next-line no-undef
           fileSize: formatBytes(fileToUpload?.size || attachedFile?.size || 0)
         };
         await sendMessage(user.id, friend.userId, '', 'text', fileData);

@@ -9353,7 +9353,7 @@ export default function useGroupDetail(groupId, user, addToast) {
 
       await uploadFile(groupId, {
         fileName: prefixedName,
-        fileSize: selectedFile.size,
+        fileSize: fileToUpload.size,
         fileType: selectedFile.type,
         fileData: fileUrlValue,
         userId: user.id,
@@ -9670,7 +9670,7 @@ export default function useGroupDetail(groupId, user, addToast) {
           fileName: chatAttachedFile.name,
           fileType: chatAttachedFile.type,
           fileData: chatFileUrl,
-          fileSize: formatBytes(chatAttachedFile.size),
+          fileSize: formatBytes(fileToUpload.size),
           name: chatAttachedFile.name,
           type: chatAttachedFile.type,
           data: chatFileUrl,
@@ -9994,7 +9994,8 @@ export default function useNotifications(userId) {
             )
           `)
           .in('group_id', joinedIds)
-          .neq('user_id', uid);
+          .neq('user_id', uid)
+          .limit(50);
 
         if (otherJoinedMembers) {
           otherJoinedMembers
@@ -10174,7 +10175,8 @@ export default function useNotifications(userId) {
             )
           `)
           .in('group_id', joinedIds)
-          .neq('user_id', uid);
+          .neq('user_id', uid)
+          .limit(50);
 
         if (recentFiles) {
           recentFiles
@@ -10410,7 +10412,8 @@ export default function useNotifications(userId) {
             )
           `)
           .in('group_id', myGroupIds)
-          .eq('status', 'pending');
+          .eq('status', 'pending')
+          .limit(50);
 
         if (pendingRequests) {
           pendingRequests
@@ -10492,7 +10495,8 @@ export default function useNotifications(userId) {
               )
             )
           `)
-          .or(orFilter);
+          .or(orFilter)
+          .limit(50);
 
         if (!dbTagsError && dbTags) {
           dbTags
@@ -13359,7 +13363,8 @@ function ConversationView({ user, friend, friends, onBack, onlineUserIds, onNick
           fileName: attachedFile?.name || 'document.file',
           fileType: attachedFile?.type || 'application/octet-stream',
           fileData: fileUrlValue,
-          fileSize: formatBytes(attachedFile?.size || 0)
+          // eslint-disable-next-line no-undef
+          fileSize: formatBytes(fileToUpload?.size || attachedFile?.size || 0)
         };
         await sendMessage(user.id, friend.userId, '', 'text', fileData);
       }
