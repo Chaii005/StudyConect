@@ -8,9 +8,9 @@
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "cap:sync": "npm run build && npx cap sync android",
+    "cap:sync": "npm run build ; npx cap sync android",
     "cap:open": "npx cap open android",
-    "cap:build": "npm run build && npx cap sync android && npx cap open android"
+    "cap:build": "npm run build ; npx cap sync android ; npx cap open android"
   },
   "dependencies": {
     "@capacitor/android": "^8.4.1",
@@ -24,6 +24,7 @@
     "react-router-dom": "^7.15.1"
   },
   "devDependencies": {
+    "@capacitor/assets": "^3.0.5",
     "@eslint/js": "^10.0.1",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
