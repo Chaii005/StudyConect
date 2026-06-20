@@ -4,20 +4,20 @@
    DESIGN TOKENS - ENERGETIC FOCUS REDESIGN
    ═══════════════════════════════════════════ */
 :root {
-  --bg: #E6F7F4;
-  --bg-card: #FFFFFF;
-  --bg-input: #F0FAF8;
-  --border: #D2EBE6;
-  --border-hover: #B8E0D9;
-  --text-primary: #1A365D;
-  --text-secondary: #2D3748;
-  --text-muted: #5A6B7A;
-  --primary: #2A7576;
-  --primary-dark: #1F5859;
-  --primary-light: #4FA3A4;
-  --secondary: #D69E2E;
-  --accent: #D69E2E;
-  --success: #2A7576;
+  --bg: #D4EFE9;
+  --bg-card: #F7FBFA;
+  --bg-input: #E3F3EE;
+  --border: #BFE0D8;
+  --border-hover: #A3D2C7;
+  --text-primary: #15294A;
+  --text-secondary: #222B38;
+  --text-muted: #48586A;
+  --primary: #23615F;
+  --primary-dark: #194645;
+  --primary-light: #3F8A8A;
+  --secondary: #B9821F;
+  --accent: #B9821F;
+  --success: #23615F;
   --error: #E53E3E;
   --warning: #D69E2E;
   --shadow: 0 1px 3px rgba(26, 54, 93, 0.06);
