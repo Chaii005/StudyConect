@@ -1170,11 +1170,11 @@ function ConversationView({ user, friend, friends, onBack, onlineUserIds, onNick
                 position: 'absolute',
                 top: '48px',
                 right: '0',
-                background: '#15152a',
-                border: '1px solid rgba(255, 255, 255, 0.08)',
+                background: 'var(--bg-card)',
+                border: '1px solid var(--border)',
                 borderRadius: '12px',
                 width: '160px',
-                boxShadow: '0 8px 32px rgba(0, 0, 0, 0.5)',
+                boxShadow: 'var(--shadow-lg)',
                 zIndex: 1000,
                 overflow: 'hidden',
                 animation: 'fadeIn 0.15s ease-out'
@@ -1190,14 +1190,14 @@ function ConversationView({ user, friend, friends, onBack, onlineUserIds, onNick
                     background: 'none',
                     border: 'none',
                     textAlign: 'left',
-                    color: '#fff',
+                    color: 'var(--text-primary)',
                     fontSize: '13px',
                     fontWeight: 600,
                     cursor: 'pointer',
                     transition: 'background 0.2s',
                     fontFamily: 'inherit'
                   }}
-                  onMouseEnter={e => e.currentTarget.style.background = 'rgba(255, 255, 255, 0.05)'}
+                  onMouseEnter={e => e.currentTarget.style.background = 'var(--bg-input)'}
                   onMouseLeave={e => e.currentTarget.style.background = 'none'}
                 >
                   Đổi tên
@@ -1217,15 +1217,15 @@ function ConversationView({ user, friend, friends, onBack, onlineUserIds, onNick
                     background: 'none',
                     border: 'none',
                     textAlign: 'left',
-                    color: '#fff',
+                    color: 'var(--text-primary)',
                     fontSize: '13px',
                     fontWeight: 600,
                     cursor: 'pointer',
                     transition: 'background 0.2s',
                     fontFamily: 'inherit',
-                    borderTop: '1px solid rgba(255, 255, 255, 0.04)'
+                    borderTop: '1px solid var(--border)'
                   }}
-                  onMouseEnter={e => e.currentTarget.style.background = 'rgba(255, 255, 255, 0.05)'}
+                  onMouseEnter={e => e.currentTarget.style.background = 'var(--bg-input)'}
                   onMouseLeave={e => e.currentTarget.style.background = 'none'}
                 >
                   Đổi hình nền
@@ -1247,9 +1247,9 @@ function ConversationView({ user, friend, friends, onBack, onlineUserIds, onNick
                     cursor: 'pointer',
                     transition: 'background 0.2s',
                     fontFamily: 'inherit',
-                    borderTop: '1px solid rgba(255, 255, 255, 0.04)'
+                    borderTop: '1px solid var(--border)'
                   }}
-                  onMouseEnter={e => e.currentTarget.style.background = 'rgba(255, 255, 255, 0.05)'}
+                  onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,77,77,0.08)'}
                   onMouseLeave={e => e.currentTarget.style.background = 'none'}
                 >
                   Xóa tin nhắn

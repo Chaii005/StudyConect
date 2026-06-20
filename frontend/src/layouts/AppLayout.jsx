@@ -354,37 +354,37 @@ export default function AppLayout({ children, hideNavbar = false, hideSidebar = 
           )}
 
           <div style={{ flex: 1, padding: '16px 12px', display: 'flex', flexDirection: 'column', gap: '4px' }}>
-            <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '12px', borderRadius: '8px', textDecoration: 'none', color: location.pathname === '/' ? '#FFFFFF' : 'var(--text-primary)', background: location.pathname === '/' ? '#23615F' : 'none', fontWeight: 600, fontSize: '14px' }}>
-              {NAV_ICONS.home(location.pathname === '/', '#FFFFFF')}
+            <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '12px', borderRadius: '8px', textDecoration: 'none', color: 'var(--text-primary)', background: location.pathname === '/' ? 'var(--bg-input)' : 'none', border: location.pathname === '/' ? '1px solid var(--border)' : '1px solid transparent', fontWeight: 600, fontSize: '14px' }}>
+              {NAV_ICONS.home(location.pathname === '/', 'var(--text-primary)')}
               Trang chủ
             </Link>
 
-            <Link to="/flashcards" style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '12px', borderRadius: '8px', textDecoration: 'none', color: location.pathname === '/flashcards' ? '#FFFFFF' : 'var(--text-primary)', background: location.pathname === '/flashcards' ? '#23615F' : 'none', fontWeight: 600, fontSize: '14px' }}>
-              {NAV_ICONS.flashcards(location.pathname === '/flashcards', '#FFFFFF')}
+            <Link to="/flashcards" style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '12px', borderRadius: '8px', textDecoration: 'none', color: 'var(--text-primary)', background: location.pathname === '/flashcards' ? 'var(--bg-input)' : 'none', border: location.pathname === '/flashcards' ? '1px solid var(--border)' : '1px solid transparent', fontWeight: 600, fontSize: '14px' }}>
+              {NAV_ICONS.flashcards(location.pathname === '/flashcards', 'var(--text-primary)')}
               Thẻ học &amp; Trắc nghiệm
             </Link>
-            <Link to="/groups" style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '12px', borderRadius: '8px', textDecoration: 'none', color: location.pathname.startsWith('/groups') ? '#FFFFFF' : 'var(--text-primary)', background: location.pathname.startsWith('/groups') ? '#23615F' : 'none', fontWeight: 600, fontSize: '14px' }}>
-              {NAV_ICONS.groups(location.pathname.startsWith('/groups'), '#FFFFFF')}
+            <Link to="/groups" style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '12px', borderRadius: '8px', textDecoration: 'none', color: 'var(--text-primary)', background: location.pathname.startsWith('/groups') ? 'var(--bg-input)' : 'none', border: location.pathname.startsWith('/groups') ? '1px solid var(--border)' : '1px solid transparent', fontWeight: 600, fontSize: '14px' }}>
+              {NAV_ICONS.groups(location.pathname.startsWith('/groups'), 'var(--text-primary)')}
               Nhóm học
             </Link>
-            <Link to="/schedule" style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '12px', borderRadius: '8px', textDecoration: 'none', color: location.pathname === '/schedule' ? '#FFFFFF' : 'var(--text-primary)', background: location.pathname === '/schedule' ? '#23615F' : 'none', fontWeight: 600, fontSize: '14px' }}>
-              {NAV_ICONS.schedule(location.pathname === '/schedule', '#FFFFFF')}
+            <Link to="/schedule" style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '12px', borderRadius: '8px', textDecoration: 'none', color: 'var(--text-primary)', background: location.pathname === '/schedule' ? 'var(--bg-input)' : 'none', border: location.pathname === '/schedule' ? '1px solid var(--border)' : '1px solid transparent', fontWeight: 600, fontSize: '14px' }}>
+              {NAV_ICONS.schedule(location.pathname === '/schedule', 'var(--text-primary)')}
               Lịch học &amp; Deadline
             </Link>
-            <Link to="/friends" style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '12px', borderRadius: '8px', textDecoration: 'none', color: location.pathname === '/friends' ? '#FFFFFF' : 'var(--text-primary)', background: location.pathname === '/friends' ? '#23615F' : 'none', fontWeight: 600, fontSize: '14px' }}>
-              {NAV_ICONS.friends(location.pathname === '/friends', '#FFFFFF')}
+            <Link to="/friends" style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '12px', borderRadius: '8px', textDecoration: 'none', color: 'var(--text-primary)', background: location.pathname === '/friends' ? 'var(--bg-input)' : 'none', border: location.pathname === '/friends' ? '1px solid var(--border)' : '1px solid transparent', fontWeight: 600, fontSize: '14px' }}>
+              {NAV_ICONS.friends(location.pathname === '/friends', 'var(--text-primary)')}
               Kết bạn
             </Link>
-            <Link to="/my-documents" style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '12px', borderRadius: '8px', textDecoration: 'none', color: location.pathname === '/my-documents' ? '#FFFFFF' : 'var(--text-primary)', background: location.pathname === '/my-documents' ? '#23615F' : 'none', fontWeight: 600, fontSize: '14px' }}>
-              {NAV_ICONS.docs(location.pathname === '/my-documents', '#FFFFFF')}
+            <Link to="/my-documents" style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '12px', borderRadius: '8px', textDecoration: 'none', color: 'var(--text-primary)', background: location.pathname === '/my-documents' ? 'var(--bg-input)' : 'none', border: location.pathname === '/my-documents' ? '1px solid var(--border)' : '1px solid transparent', fontWeight: 600, fontSize: '14px' }}>
+              {NAV_ICONS.docs(location.pathname === '/my-documents', 'var(--text-primary)')}
               Tài liệu của tôi
             </Link>
-            <Link to="/chat" style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '12px', borderRadius: '8px', textDecoration: 'none', color: location.pathname === '/chat' ? '#FFFFFF' : 'var(--text-primary)', background: location.pathname === '/chat' ? '#23615F' : 'none', fontWeight: 600, fontSize: '14px' }}>
-              {NAV_ICONS.chat(location.pathname === '/chat', '#FFFFFF')}
+            <Link to="/chat" style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '12px', borderRadius: '8px', textDecoration: 'none', color: 'var(--text-primary)', background: location.pathname === '/chat' ? 'var(--bg-input)' : 'none', border: location.pathname === '/chat' ? '1px solid var(--border)' : '1px solid transparent', fontWeight: 600, fontSize: '14px' }}>
+              {NAV_ICONS.chat(location.pathname === '/chat', 'var(--text-primary)')}
               Nhắn tin
             </Link>
-            <Link to="/profile" style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '12px', borderRadius: '8px', textDecoration: 'none', color: location.pathname === '/profile' ? '#FFFFFF' : 'var(--text-primary)', background: location.pathname === '/profile' ? '#23615F' : 'none', fontWeight: 600, fontSize: '14px' }}>
-              {NAV_ICONS.profile(location.pathname === '/profile', '#FFFFFF')}
+            <Link to="/profile" style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '12px', borderRadius: '8px', textDecoration: 'none', color: 'var(--text-primary)', background: location.pathname === '/profile' ? 'var(--bg-input)' : 'none', border: location.pathname === '/profile' ? '1px solid var(--border)' : '1px solid transparent', fontWeight: 600, fontSize: '14px' }}>
+              {NAV_ICONS.profile(location.pathname === '/profile', 'var(--text-primary)')}
               Hồ sơ cá nhân
             </Link>
           </div>
@@ -443,14 +443,11 @@ export default function AppLayout({ children, hideNavbar = false, hideSidebar = 
                 {/* Sidebar items */}
                 {NAV_ITEMS.map((item) => {
                   const isActive = item.to === '/' ? location.pathname === '/' : location.pathname.startsWith(item.to);
-                  const isAtHome = location.pathname === '/';
-                  const isHomeActive = isActive && isAtHome;
-                  const isNonHomeActive = isActive && !isAtHome;
 
-                  const sidebarBg = isHomeActive ? '#23615F' : (isNonHomeActive ? 'var(--bg-input)' : 'none');
-                  const sidebarBorder = isHomeActive ? '1px solid transparent' : (isNonHomeActive ? '1px solid var(--border)' : '1px solid transparent');
-                  const sidebarTextColor = isHomeActive ? '#FFFFFF' : (isNonHomeActive ? 'var(--text-primary)' : 'var(--text-secondary)');
-                  const sidebarIconColor = isHomeActive ? '#FFFFFF' : 'var(--text-primary)';
+                  const sidebarBg = isActive ? 'var(--bg-input)' : 'none';
+                  const sidebarBorder = isActive ? '1px solid var(--border)' : '1px solid transparent';
+                  const sidebarTextColor = isActive ? 'var(--text-primary)' : 'var(--text-secondary)';
+                  const sidebarIconColor = 'var(--text-primary)';
 
                   const hasUnread = item.key === 'chat' && unreadCount > 0;
                   const hasPending = item.key === 'friends' && pendingFriendsCount > 0;
