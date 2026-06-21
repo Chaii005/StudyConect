@@ -46,7 +46,9 @@ export default function Login() {
       <div className="auth-card">
         {/* Logo */}
         <div className="auth-logo">
-          <div className="auth-logo-icon">📚</div>
+          <div className="auth-logo-icon">
+            <img src="/studyconect_logo.png" alt="Logo" style={{ width: '28px', height: '28px', objectFit: 'contain' }} />
+          </div>
           <div className="auth-logo-text">
             <h2>Studyconect</h2>
             <span>Học nhóm hiệu quả hơn</span>

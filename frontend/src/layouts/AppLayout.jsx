@@ -186,8 +186,8 @@ export default function AppLayout({ children, hideNavbar = false, hideSidebar = 
           boxShadow: '0 4px 30px rgba(0, 0, 0, 0.05)'
         }}>
           <Link to="/" className="nav-brand" style={{ display: 'flex', alignItems: 'center', gap: '8px', textDecoration: 'none' }}>
-            <div className="nav-brand-icon" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '20px' }}>
-              📚
+            <div className="nav-brand-icon" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <img src="/studyconect_logo.png" alt="Logo" style={{ width: '24px', height: '24px', objectFit: 'contain' }} />
             </div>
             <span className="nav-brand-text" style={{
               fontFamily: "'Playfair Display', serif",
@@ -333,7 +333,7 @@ export default function AppLayout({ children, hideNavbar = false, hideSidebar = 
         <div className={`mobile-drawer ${mobileMenuOpen ? 'open' : ''}`} onClick={(e) => e.stopPropagation()}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '20px', borderBottom: '1px solid var(--border)' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <span style={{ fontSize: '18px' }}>📚</span>
+              <img src="/studyconect_logo.png" alt="Logo" style={{ width: '18px', height: '18px', objectFit: 'contain' }} />
               <span style={{ fontSize: '18px', fontWeight: 900, fontFamily: "'Playfair Display', serif", fontStyle: 'italic', background: 'linear-gradient(135deg, var(--text-primary) 30%, var(--primary-light) 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>Studyconect</span>
             </div>
             <button onClick={() => setMobileMenuOpen(false)} style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', fontSize: '20px' }}>✕</button>

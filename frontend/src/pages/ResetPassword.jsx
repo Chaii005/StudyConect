@@ -127,7 +127,9 @@ export default function ResetPassword() {
       <div className="auth-card" style={{ animation: 'slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1)', backdropFilter: 'blur(20px)' }}>
         {/* Brand Header */}
         <div className="auth-logo">
-          <div className="auth-logo-icon">📚</div>
+          <div className="auth-logo-icon">
+            <img src="/studyconect_logo.png" alt="Logo" style={{ width: '28px', height: '28px', objectFit: 'contain' }} />
+          </div>
           <div className="auth-logo-text">
             <h2>Studyconect</h2>
             <span>Học nhóm hiệu quả hơn</span>
