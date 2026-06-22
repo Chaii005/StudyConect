@@ -169,11 +169,6 @@ export default function AppLayout({ children, hideNavbar = false, hideSidebar = 
           inset: 0,
           zIndex: 0,
           pointerEvents: 'none',
-          backgroundImage: `
-            radial-gradient(circle at top right, rgba(168, 124, 135, 0.18), transparent 60%),
-            radial-gradient(circle at bottom left, rgba(232, 211, 195, 0.25), transparent 65%),
-            radial-gradient(circle at 10% 30%, rgba(74, 37, 48, 0.08), transparent 50%)
-          `,
         }}
       />
 
