@@ -44,7 +44,8 @@ export const adminGetUsers = async () => {
   const { data, error } = await supabase
     .from('users')
     .select('id, full_name, email, role, university, major, avatar, bio, created_at, is_banned')
-    .order('created_at', { ascending: false });
+    .order('created_at', { ascending: false })
+    .limit(100);
 
   if (error) throw new Error(`Lỗi tải danh sách người dùng: ${error.message}`);
   return (data || []).map(mapUser);
@@ -171,7 +172,8 @@ export const adminDeleteUser = async (userId) => {
 export const adminGetGroups = async () => {
   const { data, error } = await supabase
     .from('study_groups')
-    .select('id, name, subject, description, is_private, max_members, creator_id, created_at, group_members(user_id, role)');
+    .select('id, name, subject, description, is_private, max_members, creator_id, created_at, group_members(user_id, role)')
+    .limit(100);
 
   if (error) throw new Error(`Lỗi tải danh sách nhóm: ${error.message}`);
   

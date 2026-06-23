@@ -27305,7 +27305,8 @@ export const adminGetUsers = async () => {
   const { data, error } = await supabase
     .from('users')
     .select('id, full_name, email, role, university, major, avatar, bio, created_at, is_banned')
-    .order('created_at', { ascending: false });
+    .order('created_at', { ascending: false })
+    .limit(100);
 
   if (error) throw new Error(`Lỗi tải danh sách người dùng: ${error.message}`);
   return (data || []).map(mapUser);
@@ -27432,7 +27433,8 @@ export const adminDeleteUser = async (userId) => {
 export const adminGetGroups = async () => {
   const { data, error } = await supabase
     .from('study_groups')
-    .select('id, name, subject, description, is_private, max_members, creator_id, created_at, group_members(user_id, role)');
+    .select('id, name, subject, description, is_private, max_members, creator_id, created_at, group_members(user_id, role)')
+    .limit(100);
 
   if (error) throw new Error(`Lỗi tải danh sách nhóm: ${error.message}`);
   
@@ -28505,7 +28507,8 @@ export const getSuggestions = async (userId) => {
   const { data: friendships } = await supabase
     .from('friendships')
     .select('from_user_id, to_user_id')
-    .or(`from_user_id.eq.${uid},to_user_id.eq.${uid}`);
+    .or(`from_user_id.eq.${uid},to_user_id.eq.${uid}`)
+    .limit(100);
 
   const relatedIds = new Set(
     friendships ? friendships.flatMap(f => [Number(f.from_user_id), Number(f.to_user_id)]) : []
@@ -28613,7 +28616,8 @@ export const getGroupInvitesSent = async (groupId, fromUserId) => {
     .from('group_invites')
     .select('id, group_id, inviter_id, invitee_id, status, created_at')
     .eq('group_id', gId)
-    .eq('inviter_id', fromId);
+    .eq('inviter_id', fromId)
+    .limit(50);
 
   if (error) return [];
 
@@ -28634,7 +28638,8 @@ export const getMyPendingInvites = async (userId) => {
     .from('group_invites')
     .select('id, group_id, inviter_id, invitee_id, status, created_at')
     .eq('invitee_id', uid)
-    .eq('status', 'pending');
+    .eq('status', 'pending')
+    .limit(50);
 
   if (error || !invites || invites.length === 0) return [];
 
@@ -29846,7 +29851,8 @@ export const getFiles = async (groupId) => {
     `)
     .eq('group_id', parseInt(groupId, 10))
     .eq('approved', true)
-    .order('created_at', { ascending: false });
+    .order('created_at', { ascending: false })
+    .limit(100);
 
   if (error) {
     // Fallback if table files doesn't support approved filter or relations
@@ -29854,7 +29860,8 @@ export const getFiles = async (groupId) => {
       .from('files')
       .select('id, group_id, user_id, file_name, file_size, file_type, file_url, approved, created_at')
       .eq('group_id', parseInt(groupId, 10))
-      .eq('approved', true);
+      .eq('approved', true)
+      .limit(100);
     
     if (fallbackError) return [];
     return fallbackData.map(f => ({
@@ -29898,13 +29905,15 @@ export const getPendingFiles = async () => {
       )
     `)
     .eq('approved', false)
-    .order('created_at', { ascending: false });
+    .order('created_at', { ascending: false })
+    .limit(100);
 
   if (error) {
     const { data: fallbackData } = await supabase
       .from('files')
       .select('id, group_id, user_id, file_name, file_size, file_type, file_url, approved, created_at')
-      .eq('approved', false);
+      .eq('approved', false)
+      .limit(100);
     return (fallbackData || []).map(f => ({
       id: f.id.toString(),
       groupId: f.group_id.toString(),

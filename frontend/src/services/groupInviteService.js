@@ -53,7 +53,8 @@ export const getGroupInvitesSent = async (groupId, fromUserId) => {
     .from('group_invites')
     .select('id, group_id, inviter_id, invitee_id, status, created_at')
     .eq('group_id', gId)
-    .eq('inviter_id', fromId);
+    .eq('inviter_id', fromId)
+    .limit(50);
 
   if (error) return [];
 
@@ -74,7 +75,8 @@ export const getMyPendingInvites = async (userId) => {
     .from('group_invites')
     .select('id, group_id, inviter_id, invitee_id, status, created_at')
     .eq('invitee_id', uid)
-    .eq('status', 'pending');
+    .eq('status', 'pending')
+    .limit(50);
 
   if (error || !invites || invites.length === 0) return [];
 

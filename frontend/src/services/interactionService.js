@@ -527,7 +527,8 @@ export const getFiles = async (groupId) => {
     `)
     .eq('group_id', parseInt(groupId, 10))
     .eq('approved', true)
-    .order('created_at', { ascending: false });
+    .order('created_at', { ascending: false })
+    .limit(100);
 
   if (error) {
     // Fallback if table files doesn't support approved filter or relations
@@ -535,7 +536,8 @@ export const getFiles = async (groupId) => {
       .from('files')
       .select('id, group_id, user_id, file_name, file_size, file_type, file_url, approved, created_at')
       .eq('group_id', parseInt(groupId, 10))
-      .eq('approved', true);
+      .eq('approved', true)
+      .limit(100);
     
     if (fallbackError) return [];
     return fallbackData.map(f => ({
@@ -579,13 +581,15 @@ export const getPendingFiles = async () => {
       )
     `)
     .eq('approved', false)
-    .order('created_at', { ascending: false });
+    .order('created_at', { ascending: false })
+    .limit(100);
 
   if (error) {
     const { data: fallbackData } = await supabase
       .from('files')
       .select('id, group_id, user_id, file_name, file_size, file_type, file_url, approved, created_at')
-      .eq('approved', false);
+      .eq('approved', false)
+      .limit(100);
     return (fallbackData || []).map(f => ({
       id: f.id.toString(),
       groupId: f.group_id.toString(),

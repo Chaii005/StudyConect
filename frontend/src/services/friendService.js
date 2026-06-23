@@ -211,7 +211,8 @@ export const getSuggestions = async (userId) => {
   const { data: friendships } = await supabase
     .from('friendships')
     .select('from_user_id, to_user_id')
-    .or(`from_user_id.eq.${uid},to_user_id.eq.${uid}`);
+    .or(`from_user_id.eq.${uid},to_user_id.eq.${uid}`)
+    .limit(100);
 
   const relatedIds = new Set(
     friendships ? friendships.flatMap(f => [Number(f.from_user_id), Number(f.to_user_id)]) : []
