@@ -858,7 +858,7 @@ select.form-input option {
 .profile-tabs {
   display: flex;
   gap: 6px;
-  background: rgba(15, 18, 36, 0.6);
+  background: #F5F5F7;
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
   padding: 5px;
@@ -892,7 +892,7 @@ select.form-input option {
 
 .profile-tab:not(.active):hover {
   color: var(--text-primary);
-  background: rgba(255, 255, 255, 0.03);
+  background: rgba(26, 26, 26, 0.04);
 }
 
 /* ═══════════════════════════════════════════
@@ -1220,7 +1220,7 @@ select.form-input option {
     gap: 8px !important;
     padding: 6px 8px !important;
     margin-bottom: 20px !important;
-    background: rgba(20, 25, 43, 0.6) !important;
+    background: #F5F5F7 !important;
     border-radius: 12px !important;
     border: 1px solid var(--border);
   }
