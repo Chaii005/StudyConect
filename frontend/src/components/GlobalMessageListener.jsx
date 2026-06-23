@@ -10,11 +10,37 @@ export default function GlobalMessageListener() {
   const location = useLocation();
 
   // Cache lookups to prevent N+1 queries during real-time updates
-  const senderCache = useRef({});
-  const groupCache = useRef({});
+  const userNameCache = useRef({});
+  const groupNameCache = useRef({});
 
   const [userGroupIds, setUserGroupIds] = useState(new Set());
   const [managedGroupIds, setManagedGroupIds] = useState(new Set());
+
+  const getUserName = useCallback(async (id) => {
+    if (!id) return 'Người dùng';
+    const sId = String(id);
+    if (userNameCache.current[sId]) return userNameCache.current[sId];
+    try {
+      const { data } = await supabase.from('users').select('full_name').eq('id', parseInt(id, 10)).single();
+      userNameCache.current[sId] = data?.full_name || 'Người dùng';
+    } catch {
+      userNameCache.current[sId] = 'Người dùng';
+    }
+    return userNameCache.current[sId];
+  }, []);
+
+  const getGroupName = useCallback(async (groupId) => {
+    if (!groupId) return 'Nhóm';
+    const gIdStr = String(groupId);
+    if (groupNameCache.current[gIdStr]) return groupNameCache.current[gIdStr];
+    try {
+      const { data } = await supabase.from('study_groups').select('name').eq('id', parseInt(groupId, 10)).single();
+      groupNameCache.current[gIdStr] = data?.name || 'Nhóm';
+    } catch {
+      groupNameCache.current[gIdStr] = 'Nhóm';
+    }
+    return groupNameCache.current[gIdStr];
+  }, []);
 
   const addToast = useCallback((...args) => {
     // Không xuất hiện thông báo bên phải (toast popup) khi đang họp hoặc đang gọi điện
@@ -65,6 +91,36 @@ export default function GlobalMessageListener() {
 
         setUserGroupIds(groupIds);
         setManagedGroupIds(managedIds);
+
+        // Batch prefetch user names and group names for all user's groups to cache
+        if (groupIds.size > 0) {
+          const groupIdsArr = Array.from(groupIds);
+          const [mRes, gRes] = await Promise.all([
+            supabase
+              .from('group_members')
+              .select('user_id, users:users!user_id(full_name)')
+              .in('group_id', groupIdsArr),
+            supabase
+              .from('study_groups')
+              .select('id, name')
+              .in('id', groupIdsArr)
+          ]);
+
+          if (mRes.data) {
+            mRes.data.forEach(item => {
+              if (item.user_id && item.users?.full_name) {
+                userNameCache.current[String(item.user_id)] = item.users.full_name;
+              }
+            });
+          }
+          if (gRes.data) {
+            gRes.data.forEach(item => {
+              if (item.id && item.name) {
+                groupNameCache.current[String(item.id)] = item.name;
+              }
+            });
+          }
+        }
       } catch (err) {
         if (import.meta.env.DEV) {
           console.error('[Realtime] Lỗi tải danh sách nhóm:', err);
@@ -107,14 +163,8 @@ export default function GlobalMessageListener() {
         if (location.pathname === '/chat' && String(openChat) === String(msg.sender_id)) return;
 
         try {
-          const senderName = await (async () => {
-            const nickname = localStorage.getItem(`sc_nickname_${uid}_${msg.sender_id}`);
-            if (nickname) return nickname;
-            if (senderCache.current[msg.sender_id]) return senderCache.current[msg.sender_id];
-            const { data } = await supabase.from('users').select('full_name').eq('id', msg.sender_id).single();
-            if (data?.full_name) senderCache.current[msg.sender_id] = data.full_name;
-            return data?.full_name || 'Người dùng';
-          })();
+          const nickname = localStorage.getItem(`sc_nickname_${uid}_${msg.sender_id}`);
+          const senderName = nickname || await getUserName(msg.sender_id);
 
           const text = (msg.content?.startsWith('data:image') || msg.content?.match(/\.(jpeg|jpg|gif|png|webp)(\?|$)/i))
             ? 'Đã gửi một ảnh'
@@ -128,12 +178,7 @@ export default function GlobalMessageListener() {
           const f = payload.new;
           if (f.status !== 'pending') return;
           try {
-            const senderName = await (async () => {
-              if (senderCache.current[f.from_user_id]) return senderCache.current[f.from_user_id];
-              const { data } = await supabase.from('users').select('full_name').eq('id', f.from_user_id).single();
-              if (data?.full_name) senderCache.current[f.from_user_id] = data.full_name;
-              return data?.full_name || 'Ai đó';
-            })();
+            const senderName = await getUserName(f.from_user_id);
             addToast(`${senderName} muốn kết bạn với bạn`, 'notification', 7000, '/friends', '🤝');
           } catch { /* ignore */ }
         }
@@ -143,12 +188,7 @@ export default function GlobalMessageListener() {
         const oldF = payload.old;
         if (newF.status === 'accepted' && oldF?.status !== 'accepted') {
           try {
-            const accepterName = await (async () => {
-              if (senderCache.current[newF.to_user_id]) return senderCache.current[newF.to_user_id];
-              const { data } = await supabase.from('users').select('full_name').eq('id', newF.to_user_id).single();
-              if (data?.full_name) senderCache.current[newF.to_user_id] = data.full_name;
-              return data?.full_name || 'Bạn mới';
-            })();
+            const accepterName = await getUserName(newF.to_user_id);
             addToast(`${accepterName} đã đồng ý kết bạn`, 'notification', 7000, '/friends', '🎉');
           } catch { /* ignore */ }
         }
@@ -159,18 +199,8 @@ export default function GlobalMessageListener() {
         if (inv.status !== 'pending') return;
         try {
           const [inviterName, groupName] = await Promise.all([
-            (async () => {
-              if (senderCache.current[inv.inviter_id]) return senderCache.current[inv.inviter_id];
-              const { data } = await supabase.from('users').select('full_name').eq('id', inv.inviter_id).single();
-              if (data?.full_name) senderCache.current[inv.inviter_id] = data.full_name;
-              return data?.full_name || 'Ai đó';
-            })(),
-            (async () => {
-              if (groupCache.current[inv.group_id]) return groupCache.current[inv.group_id];
-              const { data } = await supabase.from('study_groups').select('name').eq('id', inv.group_id).single();
-              if (data?.name) groupCache.current[inv.group_id] = data.name;
-              return data?.name || 'nhóm học';
-            })()
+            getUserName(inv.inviter_id),
+            getGroupName(inv.group_id)
           ]);
           addToast(
             `${inviterName} mời bạn vào nhóm "${groupName}"`,
@@ -185,22 +215,12 @@ export default function GlobalMessageListener() {
           const old = payload.old;
           if (m.role === 'admin' && old?.role !== 'admin') {
             try {
-              const groupName = await (async () => {
-                if (groupCache.current[m.group_id]) return groupCache.current[m.group_id];
-                const { data } = await supabase.from('study_groups').select('name').eq('id', m.group_id).single();
-                if (data?.name) groupCache.current[m.group_id] = data.name;
-                return data?.name || 'nhóm';
-              })();
+              const groupName = await getGroupName(m.group_id);
               addToast(`Bạn được bổ nhiệm làm Phó nhóm "${groupName}"`, 'success', 7000, `/groups/${m.group_id}`, '👑');
             } catch { /* ignore */ }
           } else if (m.role === 'member' && (old?.role === 'admin' || !old || old.role === undefined)) {
             try {
-              const groupName = await (async () => {
-                if (groupCache.current[m.group_id]) return groupCache.current[m.group_id];
-                const { data } = await supabase.from('study_groups').select('name').eq('id', m.group_id).single();
-                if (data?.name) groupCache.current[m.group_id] = data.name;
-                return data?.name || 'nhóm';
-              })();
+              const groupName = await getGroupName(m.group_id);
               addToast(`Bạn đã bị tước quyền phó nhóm của "${groupName}"`, 'error', 7000, `/groups/${m.group_id}`, '⚠️');
               try {
                 const demotions = JSON.parse(localStorage.getItem('studyconect_demoted_notifications') || '[]');
@@ -216,12 +236,7 @@ export default function GlobalMessageListener() {
             return;
           }
           try {
-            const groupName = await (async () => {
-              if (groupCache.current[m.group_id]) return groupCache.current[m.group_id];
-              const { data } = await supabase.from('study_groups').select('name').eq('id', m.group_id).single();
-              if (data?.name) groupCache.current[m.group_id] = data.name;
-              return data?.name || 'Nhóm';
-            })();
+            const groupName = await getGroupName(m.group_id);
             addToast(`Bạn đã bị rời khỏi nhóm "${groupName}"`, 'error', 8000, '/groups', '⚠️');
             try {
               const kicks = JSON.parse(localStorage.getItem('studyconect_kicked_notifications') || '[]');
@@ -240,12 +255,7 @@ export default function GlobalMessageListener() {
           if (!post) return;
           if (String(post.user_id) === String(uid)) return;
 
-          const taggerName = await (async () => {
-            if (senderCache.current[post.user_id]) return senderCache.current[post.user_id];
-            const { data } = await supabase.from('users').select('full_name').eq('id', post.user_id).single();
-            if (data?.full_name) senderCache.current[post.user_id] = data.full_name;
-            return data?.full_name || 'Ai đó';
-          })();
+          const taggerName = await getUserName(post.user_id);
 
           addToast(
             `${taggerName} đã tag bạn trong bài viết`,
@@ -266,13 +276,7 @@ export default function GlobalMessageListener() {
           const c = payload.new;
           if (String(c.user_id) === String(uid)) return;
           try {
-            const commenterName = await (async () => {
-              if (senderCache.current[c.user_id]) return senderCache.current[c.user_id];
-              const { data } = await supabase.from('users').select('full_name').eq('id', c.user_id).single();
-              if (data?.full_name) senderCache.current[c.user_id] = data.full_name;
-              return data?.full_name || 'Người dùng';
-            })();
-
+            const commenterName = await getUserName(c.user_id);
             addToast(`${commenterName} bình luận: "${c.content}"`, 'notification', 6000, '/', '💬');
           } catch { /* ignore */ }
         }
@@ -291,13 +295,7 @@ export default function GlobalMessageListener() {
           const r = payload.new;
           if (String(r.user_id) === String(uid)) return;
           try {
-            const reactorName = await (async () => {
-              if (senderCache.current[r.user_id]) return senderCache.current[r.user_id];
-              const { data } = await supabase.from('users').select('full_name').eq('id', r.user_id).single();
-              if (data?.full_name) senderCache.current[r.user_id] = data.full_name;
-              return data?.full_name || 'Người dùng';
-            })();
-
+            const reactorName = await getUserName(r.user_id);
             const emoji = r.emoji || '❤️';
             addToast(`${reactorName} đã bày tỏ cảm xúc với bài viết của bạn`, 'notification', 6000, '/', emoji);
           } catch { /* ignore */ }
@@ -326,18 +324,8 @@ export default function GlobalMessageListener() {
 
           try {
             const [senderName, groupName] = await Promise.all([
-              (async () => {
-                if (senderCache.current[msg.sender_id]) return senderCache.current[msg.sender_id];
-                const { data } = await supabase.from('users').select('full_name').eq('id', msg.sender_id).single();
-                if (data?.full_name) senderCache.current[msg.sender_id] = data.full_name;
-                return data?.full_name || 'Thành viên';
-              })(),
-              (async () => {
-                if (groupCache.current[gId]) return groupCache.current[gId];
-                const { data } = await supabase.from('study_groups').select('name').eq('id', gId).single();
-                if (data?.name) groupCache.current[gId] = data.name;
-                return data?.name || 'Nhóm';
-              })()
+              getUserName(msg.sender_id),
+              getGroupName(gId)
             ]);
 
             const raw = msg.content || '';
@@ -363,12 +351,7 @@ export default function GlobalMessageListener() {
           const s = payload.new;
           if (String(s.creator_id) === String(uid)) return;
           try {
-            const groupName = await (async () => {
-              if (groupCache.current[gId]) return groupCache.current[gId];
-              const { data } = await supabase.from('study_groups').select('name').eq('id', gId).single();
-              if (data?.name) groupCache.current[gId] = data.name;
-              return data?.name || 'học';
-            })();
+            const groupName = await getGroupName(gId);
             addToast(
               `Lịch học mới: "${s.topic}" — Nhóm "${groupName}"`,
               'notification', 7000, `/groups/${gId}?tab=schedule`, '📅'
@@ -380,12 +363,7 @@ export default function GlobalMessageListener() {
           const d = payload.new;
           if (d.assignee_id && String(d.assignee_id) !== String(uid)) return;
           try {
-            const groupName = await (async () => {
-              if (groupCache.current[gId]) return groupCache.current[gId];
-              const { data } = await supabase.from('study_groups').select('name').eq('id', gId).single();
-              if (data?.name) groupCache.current[gId] = data.name;
-              return data?.name || 'học';
-            })();
+            const groupName = await getGroupName(gId);
             const personal = d.assignee_id ? ' (Giao cho bạn)' : '';
             addToast(
               `Deadline mới: "${d.title}" — ${groupName}${personal}`,
@@ -399,18 +377,8 @@ export default function GlobalMessageListener() {
           if (String(m.user_id) === String(uid)) return;
           try {
             const [newUserName, groupName] = await Promise.all([
-              (async () => {
-                if (senderCache.current[m.user_id]) return senderCache.current[m.user_id];
-                const { data } = await supabase.from('users').select('full_name').eq('id', m.user_id).single();
-                if (data?.full_name) senderCache.current[m.user_id] = data.full_name;
-                return data?.full_name || 'Thành viên mới';
-              })(),
-              (async () => {
-                if (groupCache.current[gId]) return groupCache.current[gId];
-                const { data } = await supabase.from('study_groups').select('name').eq('id', gId).single();
-                if (data?.name) groupCache.current[gId] = data.name;
-                return data?.name || 'học';
-              })()
+              getUserName(m.user_id),
+              getGroupName(gId)
             ]);
             addToast(`${newUserName} đã tham gia nhóm "${groupName}"`, 'info', 5000, `/groups/${gId}`, '👥');
           } catch { /* ignore */ }
@@ -434,18 +402,8 @@ export default function GlobalMessageListener() {
 
           try {
             const [uploaderName, groupName] = await Promise.all([
-              (async () => {
-                if (senderCache.current[f.user_id]) return senderCache.current[f.user_id];
-                const { data } = await supabase.from('users').select('full_name').eq('id', f.user_id).single();
-                if (data?.full_name) senderCache.current[f.user_id] = data.full_name;
-                return data?.full_name || 'Thành viên';
-              })(),
-              (async () => {
-                if (groupCache.current[gId]) return groupCache.current[gId];
-                const { data } = await supabase.from('study_groups').select('name').eq('id', gId).single();
-                if (data?.name) groupCache.current[gId] = data.name;
-                return data?.name || 'Nhóm';
-              })()
+              getUserName(f.user_id),
+              getGroupName(gId)
             ]);
             addToast(
               `Tài liệu mới được duyệt: "${f.file_name}" — Đăng bởi ${uploaderName} trong nhóm ${groupName}`,
@@ -462,19 +420,8 @@ export default function GlobalMessageListener() {
             if (!post) return;
             if (String(post.user_id) === String(uid)) return;
 
-            const taggerName = await (async () => {
-              if (senderCache.current[post.user_id]) return senderCache.current[post.user_id];
-              const { data } = await supabase.from('users').select('full_name').eq('id', post.user_id).single();
-              if (data?.full_name) senderCache.current[post.user_id] = data.full_name;
-              return data?.full_name || 'Ai đó';
-            })();
-
-            const groupName = await (async () => {
-              if (groupCache.current[gId]) return groupCache.current[gId];
-              const { data } = await supabase.from('study_groups').select('name').eq('id', gId).single();
-              if (data?.name) groupCache.current[gId] = data.name;
-              return data?.name || 'nhóm';
-            })();
+            const taggerName = await getUserName(post.user_id);
+            const groupName = await getGroupName(gId);
             addToast(
               `${taggerName} đã tag nhóm "${groupName}" trong bài viết`,
               'notification', 6000, '/', '🏷️'
@@ -489,18 +436,8 @@ export default function GlobalMessageListener() {
           if (req.status !== 'pending') return;
           try {
             const [requesterName, groupName] = await Promise.all([
-              (async () => {
-                if (senderCache.current[req.user_id]) return senderCache.current[req.user_id];
-                const { data } = await supabase.from('users').select('full_name').eq('id', req.user_id).single();
-                if (data?.full_name) senderCache.current[req.user_id] = data.full_name;
-                return data?.full_name || 'Ai đó';
-              })(),
-              (async () => {
-                if (groupCache.current[gId]) return groupCache.current[gId];
-                const { data } = await supabase.from('study_groups').select('name').eq('id', gId).single();
-                if (data?.name) groupCache.current[gId] = data.name;
-                return data?.name || 'học';
-              })()
+              getUserName(req.user_id),
+              getGroupName(gId)
             ]);
             addToast(
               `${requesterName} xin tham gia nhóm "${groupName}"`,
@@ -573,7 +510,7 @@ export default function GlobalMessageListener() {
       supabase.removeChannel(adminChannel);
       activeGroupChannels.forEach((ch) => supabase.removeChannel(ch));
     };
-  }, [user?.id, location.pathname, addToast, userGroupIds, managedGroupIds]);
+  }, [user?.id, location.pathname, addToast, userGroupIds, managedGroupIds, getUserName, getGroupName]);
 
   return null;
 }

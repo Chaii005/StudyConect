@@ -792,6 +792,15 @@ export default function useNotifications(userId) {
     }
   }, [userId]);
 
+  const debounceRef = useRef(null);
+
+  const refreshDebounced = useCallback(() => {
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    debounceRef.current = setTimeout(() => {
+      refresh();
+    }, 2000);
+  }, [refresh]);
+
   useEffect(() => {
     if (!userId) return;
     // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -802,120 +811,23 @@ export default function useNotifications(userId) {
       .on(
         'postgres_changes',
         { event: '*', schema: 'public', table: 'friendships', filter: `to_user_id=eq.${userId}` },
-        () => refresh()
+        () => refreshDebounced()
       )
       .on(
         'postgres_changes',
         { event: '*', schema: 'public', table: 'friendships', filter: `from_user_id=eq.${userId}` },
-        () => refresh()
+        () => refreshDebounced()
       )
       .on(
         'postgres_changes',
         { event: '*', schema: 'public', table: 'group_invites', filter: `invitee_id=eq.${userId}` },
-        () => refresh()
+        () => refreshDebounced()
       )
       .on(
         'postgres_changes',
         // Filter server-side theo user_id để tránh nhận event của toàn hệ thống
         { event: '*', schema: 'public', table: 'group_members', filter: `user_id=eq.${userId}` },
-        () => refresh()
-      )
-      // Lắng nghe thêm group_members theo group để phát hiện thành viên mới vào nhóm mình
-      .on(
-        'postgres_changes',
-        { event: 'INSERT', schema: 'public', table: 'group_members' },
-        (payload) => {
-          const memGroupId = payload.new?.group_id;
-          if (memGroupId && myGroupIdsRef.current.includes(Number(memGroupId))) {
-            refresh();
-          }
-        }
-      )
-      .on(
-        'postgres_changes',
-        { event: '*', schema: 'public', table: 'files' },
-        (payload) => {
-          const groupId = payload.new?.group_id || payload.old?.group_id;
-          if (groupId && myGroupIdsRef.current.includes(Number(groupId))) {
-            refresh();
-          }
-        }
-      )
-      .on(
-        'postgres_changes',
-        { event: '*', schema: 'public', table: 'post_tags' },
-        (payload) => {
-          const targetType = payload.new?.target_type || payload.old?.target_type;
-          const targetId = payload.new?.target_id || payload.old?.target_id;
-          if (
-            (targetType === 'user' && Number(targetId) === Number(userId)) ||
-            (targetType === 'group' && targetId && myGroupIdsRef.current.includes(Number(targetId)))
-          ) {
-            refresh();
-          }
-        }
-      )
-      .on(
-        'postgres_changes',
-        { event: '*', schema: 'public', table: 'comments' },
-        (payload) => {
-          const postId = payload.new?.post_id || payload.old?.post_id;
-          const parentId = payload.new?.parent_id || payload.old?.parent_id;
-          if (
-            (postId && myPostIdsRef.current.includes(Number(postId))) ||
-            (parentId && myCommentIdsRef.current.includes(Number(parentId)))
-          ) {
-            refresh();
-          }
-        }
-      )
-      .on(
-        'postgres_changes',
-        { event: '*', schema: 'public', table: 'messages' },
-        (payload) => {
-          const senderId = payload.new?.sender_id || payload.old?.sender_id;
-          if (senderId && Number(senderId) === Number(userId)) return;
-
-          const groupId = payload.new?.group_id || payload.old?.group_id;
-          const receiverId = payload.new?.receiver_id || payload.old?.receiver_id;
-
-          if (
-            (groupId && myGroupIdsRef.current.includes(Number(groupId))) ||
-            (receiverId && Number(receiverId) === Number(userId))
-          ) {
-            refresh();
-          }
-        }
-      )
-      .on(
-        'postgres_changes',
-        { event: '*', schema: 'public', table: 'group_join_requests' },
-        (payload) => {
-          const groupId = payload.new?.group_id || payload.old?.group_id;
-          if (groupId && myCreatedGroupIdsRef.current.includes(Number(groupId))) {
-            refresh();
-          }
-        }
-      )
-      .on(
-        'postgres_changes',
-        { event: '*', schema: 'public', table: 'schedules' },
-        (payload) => {
-          const groupId = payload.new?.group_id || payload.old?.group_id;
-          if (groupId && myGroupIdsRef.current.includes(Number(groupId))) {
-            refresh();
-          }
-        }
-      )
-      .on(
-        'postgres_changes',
-        { event: '*', schema: 'public', table: 'deadlines' },
-        (payload) => {
-          const groupId = payload.new?.group_id || payload.old?.group_id;
-          if (groupId && myGroupIdsRef.current.includes(Number(groupId))) {
-            refresh();
-          }
-        }
+        () => refreshDebounced()
       )
       .subscribe();
 
@@ -923,13 +835,14 @@ export default function useNotifications(userId) {
       if (document.visibilityState === 'visible') {
         refresh();
       }
-    }, 300000); // fallback 5 phút
+    }, 900000); // fallback 15 phút
     
     return () => {
       clearInterval(interval);
       supabase.removeChannel(notifChannel);
+      if (debounceRef.current) clearTimeout(debounceRef.current);
     };
-  }, [refresh, userId]);
+  }, [refresh, refreshDebounced, userId]);
 
   const markAllRead = useCallback(() => {
     const newSeen = new Set([...seen, ...notifs.map(n => n.key)]);

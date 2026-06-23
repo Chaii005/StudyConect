@@ -787,7 +787,7 @@ export default function useGroupDetail(groupId, user, addToast) {
       const fileName = `${groupId}/${Date.now()}_${safeName}`;
       const { error: uploadError } = await supabase.storage
         .from('attachments')
-        .upload(fileName, fileToUpload, { cacheControl: '3600', upsert: true });
+        .upload(fileName, fileToUpload, { cacheControl: '86400', upsert: true });
 
       if (uploadError) {
         if (import.meta.env.DEV) {
@@ -1008,7 +1008,7 @@ export default function useGroupDetail(groupId, user, addToast) {
         const storageFileName = `submissions/${groupId}/${user.id}_${Date.now()}_${safeName}`;
         const { error: uploadError } = await supabase.storage
           .from('attachments')
-          .upload(storageFileName, fileToUpload, { cacheControl: '3600', upsert: true });
+          .upload(storageFileName, fileToUpload, { cacheControl: '86400', upsert: true });
 
         if (uploadError) {
           if (import.meta.env.DEV) {
@@ -1115,7 +1115,7 @@ export default function useGroupDetail(groupId, user, addToast) {
         const chatFileName = `chat/${groupId}/${Date.now()}_${safeName}`;
         const { error: uploadError } = await supabase.storage
           .from('attachments')
-          .upload(chatFileName, fileToUpload, { cacheControl: '3600', upsert: true });
+          .upload(chatFileName, fileToUpload, { cacheControl: '86400', upsert: true });
 
         if (uploadError) {
           if (import.meta.env.DEV) {

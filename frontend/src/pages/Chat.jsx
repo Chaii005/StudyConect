@@ -835,7 +835,7 @@ function ConversationView({ user, friend, friends, onBack, onlineUserIds, onNick
         const fileName = `private/${user.id}/${Date.now()}_${fileToUpload.name || attachedFile.name || 'clipboard.png'}`;
         const { error: uploadError } = await supabase.storage
           .from('attachments')
-          .upload(fileName, fileToUpload, { cacheControl: '3600', upsert: true });
+          .upload(fileName, fileToUpload, { cacheControl: '86400', upsert: true });
 
         if (uploadError) {
           if (import.meta.env.DEV) {
