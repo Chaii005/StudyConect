@@ -131,7 +131,7 @@ export default function ResetPassword() {
             <img src="/studyconect_logo.png" alt="Logo" style={{ width: '48px', height: '48px', objectFit: 'contain' }} />
           </div>
           <div className="auth-logo-text">
-            <h2>Studyconect</h2>
+            <h2>StudyConnect</h2>
             <span>Học nhóm hiệu quả hơn</span>
           </div>
         </div>

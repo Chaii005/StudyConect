@@ -1,6 +1,6 @@
 {
   "appId": "com.studyconect.app",
-  "appName": "StudyConect",
+  "appName": "StudyConnect",
   "webDir": "dist",
   "server": {
     "androidScheme": "https",

@@ -12546,7 +12546,7 @@ export default function AppLayout({ children, hideNavbar = false, hideSidebar = 
               WebkitTextFillColor: 'transparent',
               backgroundClip: 'text',
               letterSpacing: '-0.3px'
-            }}>Studyconect</span>
+            }}>StudyConnect</span>
           </Link>
 
           <div className="nav-actions" style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
@@ -12681,7 +12681,7 @@ export default function AppLayout({ children, hideNavbar = false, hideSidebar = 
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '20px', borderBottom: '1px solid var(--border)' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
               <img src="/studyconect_logo.png" alt="Logo" style={{ width: '18px', height: '18px', objectFit: 'contain' }} />
-              <span style={{ fontSize: '18px', fontWeight: 900, fontFamily: "'Fraunces', serif", fontStyle: 'italic', background: 'linear-gradient(135deg, var(--text-primary) 30%, var(--primary-light) 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>Studyconect</span>
+              <span style={{ fontSize: '18px', fontWeight: 900, fontFamily: "'Fraunces', serif", fontStyle: 'italic', background: 'linear-gradient(135deg, var(--text-primary) 30%, var(--primary-light) 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>StudyConnect</span>
             </div>
             <button onClick={() => setMobileMenuOpen(false)} style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', fontSize: '20px' }}>✕</button>
           </div>
@@ -16949,7 +16949,7 @@ export default function ForgotPassword() {
             <img src="/studyconect_logo.png" alt="Logo" style={{ width: '48px', height: '48px', objectFit: 'contain' }} />
           </div>
           <div className="auth-logo-text">
-            <h2>Studyconect</h2>
+            <h2>StudyConnect</h2>
             <span>Học nhóm hiệu quả hơn</span>
           </div>
         </div>
@@ -19979,7 +19979,7 @@ export default function Groups() {
             <div style={{ width: 38, height: 38, background: 'linear-gradient(135deg, var(--text-primary), var(--text-primary))', borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: '20px' }}>
               📚
             </div>
-            <span style={{ fontSize: 18, fontWeight: 900, fontFamily: "'Fraunces', serif", fontStyle: 'italic', background: 'linear-gradient(135deg, var(--text-primary) 30%, var(--text-primary) 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text', letterSpacing: '-0.3px' }}>Studyconect</span>
+            <span style={{ fontSize: 18, fontWeight: 900, fontFamily: "'Fraunces', serif", fontStyle: 'italic', background: 'linear-gradient(135deg, var(--text-primary) 30%, var(--text-primary) 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text', letterSpacing: '-0.3px' }}>StudyConnect</span>
           </div>
           <button onClick={() => setSidebarOpen(false)} style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', fontSize: 20, lineHeight: 1, padding: '2px 6px', borderRadius: 6, transition: 'var(--transition)' }}>✕</button>
         </div>
@@ -21480,7 +21480,7 @@ export default function Login() {
             <img src="/studyconect_logo.png" alt="Logo" style={{ width: '48px', height: '48px', objectFit: 'contain' }} />
           </div>
           <div className="auth-logo-text">
-            <h2>Studyconect</h2>
+            <h2>StudyConnect</h2>
             <span>Học nhóm hiệu quả hơn</span>
           </div>
         </div>
@@ -26111,7 +26111,7 @@ export default function Register() {
             <img src="/studyconect_logo.png" alt="Logo" style={{ width: '48px', height: '48px', objectFit: 'contain' }} />
           </div>
           <div className="auth-logo-text">
-            <h2>Studyconect</h2>
+            <h2>StudyConnect</h2>
             <span>Học nhóm hiệu quả hơn</span>
           </div>
         </div>
@@ -26593,7 +26593,7 @@ export default function ResetPassword() {
             <img src="/studyconect_logo.png" alt="Logo" style={{ width: '48px', height: '48px', objectFit: 'contain' }} />
           </div>
           <div className="auth-logo-text">
-            <h2>Studyconect</h2>
+            <h2>StudyConnect</h2>
             <span>Học nhóm hiệu quả hơn</span>
           </div>
         </div>

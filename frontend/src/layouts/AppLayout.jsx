@@ -187,7 +187,7 @@ export default function AppLayout({ children, hideNavbar = false, hideSidebar = 
               WebkitTextFillColor: 'transparent',
               backgroundClip: 'text',
               letterSpacing: '-0.3px'
-            }}>Studyconect</span>
+            }}>StudyConnect</span>
           </Link>
 
           <div className="nav-actions" style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
@@ -322,7 +322,7 @@ export default function AppLayout({ children, hideNavbar = false, hideSidebar = 
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '20px', borderBottom: '1px solid var(--border)' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
               <img src="/studyconect_logo.png" alt="Logo" style={{ width: '18px', height: '18px', objectFit: 'contain' }} />
-              <span style={{ fontSize: '18px', fontWeight: 900, fontFamily: "'Fraunces', serif", fontStyle: 'italic', background: 'linear-gradient(135deg, var(--text-primary) 30%, var(--primary-light) 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>Studyconect</span>
+              <span style={{ fontSize: '18px', fontWeight: 900, fontFamily: "'Fraunces', serif", fontStyle: 'italic', background: 'linear-gradient(135deg, var(--text-primary) 30%, var(--primary-light) 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>StudyConnect</span>
             </div>
             <button onClick={() => setMobileMenuOpen(false)} style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', fontSize: '20px' }}>✕</button>
           </div>
