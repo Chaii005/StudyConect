@@ -5,25 +5,25 @@
    DESIGN TOKENS - ENERGETIC FOCUS REDESIGN
    ═══════════════════════════════════════════ */
 :root {
-  --bg: linear-gradient(115deg, #ff004c, #ffffff, #0099ff); /* Pink-White-Blue Gradient */
-  --bg-card: rgba(255, 255, 255, 0.65); /* Glassmorphic Card background */
-  --bg-input: rgba(255, 255, 255, 0.85); /* Clean white for inputs */
-  --border: rgba(0, 0, 0, 0.08);        /* Subtle dark divider lines */
+  --bg: #ffffff;                  /* Pure White background */
+  --bg-card: #ffffff;             /* Clean White Card background */
+  --bg-input: #f8fafc;            /* Clean light grey-white for inputs */
+  --border: #e2e8f0;              /* Subtle light divider lines */
   --border-hover: #ff004c;        /* Vibrant pink border on hover */
   --text-primary: #0a0813;        /* Midnight slate/indigo primary text */
-  --text-secondary: #3b365e;      /* Slate lavender secondary text */
-  --text-muted: #6b6691;          /* Muted lavender grey for captions */
+  --text-secondary: #475569;      /* Slate secondary text */
+  --text-muted: #64748b;          /* Muted grey for captions */
   --primary: #ff004c;             /* Vibrant electric pink button */
   --primary-dark: #d6003f;        /* Deep pink button on hover */
   --primary-light: #ff4d80;       /* Glow pink */
   --secondary: #0099ff;           /* Sky blue second color */
   --accent: #9400d3;              /* Neon purple accent */
-  --success: #00b06b;             /* Emerald green success */
+  --success: #10b981;             /* Emerald green success */
   --error: #ff004c;               /* Electric pink error */
-  --warning: #ff8c00;             /* Warm orange warning */
-  --shadow: 0 8px 32px rgba(10, 8, 19, 0.08);
-  --shadow-lg: 0 12px 40px rgba(10, 8, 19, 0.12);
-  --shadow-glow: 0 0 20px rgba(255, 0, 76, 0.15);
+  --warning: #f59e0b;             /* Warm amber warning */
+  --shadow: 0 4px 12px rgba(10, 8, 19, 0.04);
+  --shadow-lg: 0 10px 25px rgba(10, 8, 19, 0.06);
+  --shadow-glow: 0 0 15px rgba(255, 0, 76, 0.1);
   --radius: 16px;
   --radius-sm: 10px;
   --radius-md: 14px;
