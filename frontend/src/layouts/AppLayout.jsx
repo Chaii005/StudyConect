@@ -168,7 +168,7 @@ export default function AppLayout({ children, hideNavbar = false, hideSidebar = 
           position: 'sticky', 
           top: 0, 
           zIndex: 100,
-          background: 'rgba(28, 24, 24, 0.85)',
+          background: 'var(--bg-card)',
           backdropFilter: 'blur(20px)',
           borderBottom: '1px solid var(--border)',
           boxShadow: '0 4px 30px rgba(0, 0, 0, 0.05)'
