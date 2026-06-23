@@ -1,0 +1,8 @@
+frontend/android
+node_modules
+frontend/node_modules
+backend_code.txt
+frontend_code.txt
+.git
+.vscode
+.vercel

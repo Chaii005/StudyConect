@@ -540,8 +540,8 @@ export default function AppLayout({ children, hideNavbar = false, hideSidebar = 
                 {NAV_ITEMS.map((item) => {
                   const isActive = item.to === '/' ? location.pathname === '/' : location.pathname.startsWith(item.to);
 
-                  const sidebarBg = isActive ? 'linear-gradient(135deg, #4A2530, #6B3744)' : 'none';
-                  const sidebarBorder = isActive ? '1px solid transparent' : '1px solid transparent';
+                  const sidebarBg = isActive ? '#1A1A1A' : 'none';
+                  const sidebarBorder = isActive ? '1px solid #1A1A1A' : '1px solid transparent';
                   const sidebarTextColor = isActive ? '#ffffff' : 'var(--text-secondary)';
                   const sidebarIconColor = isActive ? '#ffffff' : 'var(--text-primary)';
 
@@ -576,7 +576,7 @@ export default function AppLayout({ children, hideNavbar = false, hideSidebar = 
                           alignItems: 'center', 
                           justifyContent: 'center', 
                           flexShrink: 0, 
-                          filter: isActive ? 'drop-shadow(0 0 8px rgba(168, 124, 135, 0.5))' : 'none' 
+                          filter: 'none' 
                         }}>
                           {NAV_ICONS[item.icon] ? NAV_ICONS[item.icon](isActive, sidebarIconColor) : item.icon}
                         </span>
@@ -635,10 +635,10 @@ export default function AppLayout({ children, hideNavbar = false, hideSidebar = 
                 <aside className="desktop-only no-scrollbar" style={{ width: '300px', position: 'sticky', top: 0, alignSelf: 'start', display: 'flex', flexDirection: 'column', gap: '14px', maxHeight: 'calc(100vh - 100px)', overflowY: 'auto', paddingBottom: '24px', flexShrink: 0 }}>
                   
                   {/* Schedule and Deadline card */}
-                  <div className="sc-card-animated" style={{ background: 'linear-gradient(135deg, #4A2530, #6B3744)', border: '1.5px solid #ffffff', borderRadius: '18px', overflow: 'hidden', boxShadow: 'var(--shadow)', display: 'flex', flexDirection: 'column', maxHeight: '420px', animationDelay: '0.1s', color: '#ffffff' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '14px 16px 12px', borderBottom: '1px solid rgba(255, 255, 255, 0.15)' }}>
-                      <span style={{ fontWeight: 700, fontSize: '14px', display: 'flex', alignItems: 'center', gap: '8px', color: '#ffffff' }}>
-                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#ffffff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <div className="sc-card-animated" style={{ background: 'var(--bg-card)', border: '1px solid #1A1A1A', borderRadius: '18px', overflow: 'hidden', boxShadow: 'var(--shadow)', display: 'flex', flexDirection: 'column', maxHeight: '420px', animationDelay: '0.1s', color: 'var(--text-primary)' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '14px 16px 12px', borderBottom: '1px solid var(--border)' }}>
+                      <span style={{ fontWeight: 700, fontSize: '14px', display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--text-primary)' }}>
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--text-primary)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                           <rect width="18" height="18" x="3" y="4" rx="2" ry="2"/>
                           <line x1="16" x2="16" y1="2" y2="6"/>
                           <line x1="8" x2="8" y1="2" y2="6"/>
@@ -647,39 +647,39 @@ export default function AppLayout({ children, hideNavbar = false, hideSidebar = 
                         </svg>
                         Lịch và Deadline
                       </span>
-                      <Link to="/schedule" style={{ fontSize: '12px', color: '#ffffff', textDecoration: 'none', fontWeight: 700 }}>Tất cả</Link>
+                      <Link to="/schedule" style={{ fontSize: '12px', color: 'var(--text-primary)', textDecoration: 'none', fontWeight: 700 }}>Tất cả</Link>
                     </div>
 
                     <div className="no-scrollbar" style={{ overflowY: 'auto', flex: 1 }}>
                       <div style={{ padding: '10px 16px 6px' }}>
-                        <div style={{ fontSize: '11px', fontWeight: 700, color: '#ffffff', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '6px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                        <div style={{ fontSize: '11px', fontWeight: 700, color: 'var(--text-primary)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '6px', display: 'flex', alignItems: 'center', gap: '6px' }}>
                           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                             <rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/>
                           </svg>
                           Buổi học sắp tới
                         </div>
                         {schedules.length === 0 ? (
-                          <div style={{ padding: '10px 0 8px', textAlign: 'center', color: '#ffffff', fontSize: '12px' }}>
+                          <div style={{ padding: '10px 0 8px', textAlign: 'center', color: 'var(--text-muted)', fontSize: '12px' }}>
                             Chưa có lịch học nào
                           </div>
                         ) : (
                           schedules.map((s) => (
                             <Link key={s.id} to={`/groups/${s.groupId}?tab=schedule`} style={{ textDecoration: 'none', color: 'inherit', display: 'block' }}>
                               <div
-                                style={{ display: 'flex', gap: '10px', alignItems: 'flex-start', padding: '8px 0', borderBottom: '1px solid rgba(255, 255, 255, 0.1)', cursor: 'pointer', transition: 'all 0.2s ease' }}
-                                onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(255, 255, 255, 0.08)'}
+                                style={{ display: 'flex', gap: '10px', alignItems: 'flex-start', padding: '8px 0', borderBottom: '1px solid var(--border)', cursor: 'pointer', transition: 'all 0.2s ease' }}
+                                onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(26, 26, 26, 0.05)'}
                                 onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
                               >
-                                <div style={{ width: '30px', height: '30px', borderRadius: '7px', flexShrink: 0, background: 'rgba(255, 255, 255, 0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ffffff' }}>
+                                <div style={{ width: '30px', height: '30px', borderRadius: '7px', flexShrink: 0, background: 'rgba(26, 26, 26, 0.05)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-primary)' }}>
                                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                                     <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"/>
                                     <path d="M6 6h10"/><path d="M6 10h10"/>
                                   </svg>
                                 </div>
                                 <div style={{ flex: 1, minWidth: 0 }}>
-                                  <div style={{ fontWeight: 600, fontSize: '12.5px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', color: '#ffffff' }}>{s.topic}</div>
-                                  <div style={{ fontSize: '11px', color: '#ffffff', marginTop: '2px', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, color: '#ffffff' }}>
+                                  <div style={{ fontWeight: 600, fontSize: '12.5px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', color: 'var(--text-primary)' }}>{s.topic}</div>
+                                  <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '2px', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, color: 'var(--text-muted)' }}>
                                       <circle cx="12" cy="12" r="10" />
                                       <polyline points="12 6 12 12 16 14" />
                                     </svg>
@@ -692,17 +692,17 @@ export default function AppLayout({ children, hideNavbar = false, hideSidebar = 
                         )}
                       </div>
 
-                      <div style={{ height: '1px', background: 'linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent)', margin: '0 16px' }} />
+                      <div style={{ height: '1px', background: 'var(--border)', margin: '0 16px' }} />
 
                       <div style={{ padding: '10px 16px 14px' }}>
-                        <div style={{ fontSize: '10px', fontWeight: 800, color: '#ffffff', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '8px', display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                        <div style={{ fontSize: '10px', fontWeight: 800, color: 'var(--text-primary)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '8px', display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
                           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                             <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
                           </svg>
                           Deadline cần nộp
                         </div>
                         {deadlines.length === 0 ? (
-                          <div style={{ padding: '10px 0', textAlign: 'center', color: '#ffffff', fontSize: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>
+                          <div style={{ padding: '10px 0', textAlign: 'center', color: 'var(--text-muted)', fontSize: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>
                             Không còn deadline nào
                             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#2ecc71" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
                               <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
@@ -720,25 +720,25 @@ export default function AppLayout({ children, hideNavbar = false, hideSidebar = 
                                   padding: '8px 8px',
                                   margin: '2px 0',
                                   borderRadius: '8px',
-                                  borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
-                                  background: d.dueSoon ? 'rgba(255, 255, 255, 0.08)' : 'none',
+                                  borderBottom: '1px solid var(--border)',
+                                  background: d.dueSoon ? 'rgba(255, 77, 77, 0.05)' : 'none',
                                   transition: 'all 0.2s ease',
                                   cursor: 'pointer'
                                 }}
-                                onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(255, 255, 255, 0.12)'}
-                                onMouseLeave={(e) => e.currentTarget.style.background = d.dueSoon ? 'rgba(255, 255, 255, 0.08)' : 'transparent'}
+                                onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(26, 26, 26, 0.05)'}
+                                onMouseLeave={(e) => e.currentTarget.style.background = d.dueSoon ? 'rgba(255, 77, 77, 0.05)' : 'transparent'}
                               >
-                                <div style={{ width: '8px', height: '8px', borderRadius: '50%', flexShrink: 0, background: d.overdue ? 'rgba(255, 255, 255, 0.4)' : d.dueSoon ? '#ff4d4d' : '#2ecc71', boxShadow: d.overdue ? 'none' : d.dueSoon ? '0 0 8px #ff4d4d' : '0 0 8px #2ecc71' }} />
+                                <div style={{ width: '8px', height: '8px', borderRadius: '50%', flexShrink: 0, background: d.overdue ? 'var(--text-muted)' : d.dueSoon ? '#ff4d4d' : '#2ecc71' }} />
                                 <div style={{ flex: 1, minWidth: 0 }}>
-                                  <div style={{ fontSize: '12px', fontWeight: 600, color: '#ffffff', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{d.title}</div>
+                                  <div style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{d.title}</div>
                                   <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '2px', alignItems: 'center' }}>
-                                    <span style={{ fontSize: '11px', color: '#ffffff', display: 'inline-flex', alignItems: 'center', gap: '3px' }}>
+                                    <span style={{ fontSize: '11px', color: 'var(--text-muted)', display: 'inline-flex', alignItems: 'center', gap: '3px' }}>
                                       <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
                                         <path d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.93a2 2 0 0 1-1.66-.9l-.82-1.2A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z" />
                                       </svg>
                                       {d.groupName}
                                     </span>
-                                    <span style={{ fontSize: '11px', fontWeight: 700, color: '#ffffff', display: 'inline-flex', alignItems: 'center', gap: '2px' }}>
+                                    <span style={{ fontSize: '11px', fontWeight: 700, color: d.dueSoon ? '#ff4d4d' : 'var(--text-primary)', display: 'inline-flex', alignItems: 'center', gap: '2px' }}>
                                       {d.dueSoon ? (
                                         <>
                                           <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
@@ -761,38 +761,38 @@ export default function AppLayout({ children, hideNavbar = false, hideSidebar = 
                   </div>
 
                   {/* Online Friends card */}
-                  <div className="sc-card-animated" style={{ background: 'linear-gradient(135deg, #4A2530, #6B3744)', border: '1.5px solid #ffffff', borderRadius: '18px', overflow: 'hidden', boxShadow: 'var(--shadow)', animationDelay: '0.15s', color: '#ffffff' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '14px 16px 12px', borderBottom: '1px solid rgba(255, 255, 255, 0.15)' }}>
-                      <span style={{ fontWeight: 700, fontSize: '14px', display: 'flex', alignItems: 'center', gap: '8px', color: '#ffffff' }}>
-                        <span className="sc-online-dot" style={{ display: 'inline-block', width: '8px', height: '8px', borderRadius: '50%', background: '#2ecc71', boxShadow: '0 0 6px rgba(46, 204, 113, 0.6)' }} />
+                  <div className="sc-card-animated" style={{ background: 'var(--bg-card)', border: '1px solid #1A1A1A', borderRadius: '18px', overflow: 'hidden', boxShadow: 'var(--shadow)', animationDelay: '0.15s', color: 'var(--text-primary)' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '14px 16px 12px', borderBottom: '1px solid var(--border)' }}>
+                      <span style={{ fontWeight: 700, fontSize: '14px', display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--text-primary)' }}>
+                        <span className="sc-online-dot" style={{ display: 'inline-block', width: '8px', height: '8px', borderRadius: '50%', background: '#2ecc71' }} />
                         Bạn bè trực tuyến ({friends.filter(f => onlineUserIds.includes(f.userId.toString())).length})
                       </span>
-                      <Link to="/friends" style={{ fontSize: '12px', color: '#ffffff', textDecoration: 'none', fontWeight: 700 }}>Tất cả</Link>
+                      <Link to="/friends" style={{ fontSize: '12px', color: 'var(--text-primary)', textDecoration: 'none', fontWeight: 700 }}>Tất cả</Link>
                     </div>
 
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', maxHeight: '200px', overflowY: 'auto', overscrollBehavior: 'contain', padding: '10px 16px 16px 16px' }}>
                       {friends.length === 0 ? (
-                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '12px 0', textAlign: 'center', color: '#ffffff', fontSize: '12px' }}>
-                          <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="#ffffff" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" style={{ marginBottom: '10px', opacity: 0.55 }}>
+                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '12px 0', textAlign: 'center', color: 'var(--text-muted)', fontSize: '12px' }}>
+                          <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="var(--text-primary)" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" style={{ marginBottom: '10px', opacity: 0.55 }}>
                             <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
                             <circle cx="9" cy="7" r="4" />
                             <line x1="17" y1="8" x2="21" y2="12" />
                             <line x1="21" y1="8" x2="17" y2="12" />
                           </svg>
-                          <span style={{ color: '#ffffff' }}>Chưa có bạn bè nào. <Link to="/friends" style={{ color: '#ffffff', fontWeight: 600, textDecoration: 'underline' }}>Kết bạn ngay</Link></span>
+                          <span style={{ color: 'var(--text-muted)' }}>Chưa có bạn bè nào. <Link to="/friends" style={{ color: 'var(--text-primary)', fontWeight: 600, textDecoration: 'underline' }}>Kết bạn ngay</Link></span>
                         </div>
                       ) : (() => {
                         const onlineFriends = friends.filter(f => onlineUserIds.includes(f.userId.toString()));
                         if (onlineFriends.length === 0) {
                           return (
-                            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '12px 0', textAlign: 'center', color: '#ffffff', fontSize: '12px' }}>
-                              <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="#ffffff" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" style={{ marginBottom: '10px', opacity: 0.55 }}>
+                            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '12px 0', textAlign: 'center', color: 'var(--text-muted)', fontSize: '12px' }}>
+                              <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="var(--text-primary)" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" style={{ marginBottom: '10px', opacity: 0.55 }}>
                                 <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
                                 <circle cx="9" cy="7" r="4" />
                                 <line x1="17" y1="8" x2="21" y2="12" />
                                 <line x1="21" y1="8" x2="17" y2="12" />
                               </svg>
-                              <span style={{ color: '#ffffff' }}>Chưa có bạn bè nào trực tuyến.</span>
+                              <span style={{ color: 'var(--text-muted)' }}>Chưa có bạn bè nào trực tuyến.</span>
                             </div>
                           );
                         }
@@ -800,7 +800,7 @@ export default function AppLayout({ children, hideNavbar = false, hideSidebar = 
                           <Link key={f.userId} to={`/friends/${f.userId}`} style={{ textDecoration: 'none', color: 'inherit', display: 'block' }}>
                             <div
                               style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '8px', borderRadius: '10px', transition: 'all 0.2s ease', cursor: 'pointer', background: 'transparent' }}
-                              onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(255, 255, 255, 0.08)'}
+                              onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(26, 26, 26, 0.05)'}
                               onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
                             >
                               <div style={{ position: 'relative', flexShrink: 0 }}>
@@ -809,15 +809,14 @@ export default function AppLayout({ children, hideNavbar = false, hideSidebar = 
                                   position: 'absolute', bottom: -1, right: -1,
                                   width: '10px', height: '10px', borderRadius: '50%',
                                   background: '#2ecc71',
-                                  border: '2px solid #5A2C35',
-                                  boxShadow: '0 0 6px rgba(46, 204, 113, 0.6)'
+                                  border: '2px solid var(--bg-card)',
                                 }} />
                               </div>
                               <div style={{ flex: 1, minWidth: 0 }}>
-                                <div style={{ fontWeight: 600, fontSize: '13px', color: '#ffffff', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                                <div style={{ fontWeight: 600, fontSize: '13px', color: 'var(--text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                                   {f.fullName}
                                 </div>
-                                <div style={{ fontSize: '11px', color: '#ffffff', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                                <div style={{ fontSize: '11px', color: 'var(--text-muted)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                                   Đang hoạt động
                                 </div>
                               </div>

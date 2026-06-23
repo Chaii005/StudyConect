@@ -5,30 +5,30 @@
    DESIGN TOKENS - ENERGETIC FOCUS REDESIGN
    ═══════════════════════════════════════════ */
 :root {
-  --bg: #ffffff;                  /* Pure White background */
-  --bg-card: #ffffff;             /* Pure White Card background */
-  --bg-input: #ffffff;            /* Pure White input background */
-  --border: #000000;              /* Pure Black border */
-  --border-hover: #000000;        /* Pure Black border on hover */
-  --text-primary: #000000;        /* Pure Black primary text */
-  --text-secondary: #000000;      /* Pure Black secondary text */
-  --text-muted: #555555;          /* Dark grey for muted captions */
-  --primary: #000000;             /* Pure Black button background */
-  --primary-dark: #333333;        /* Dark grey button background on hover */
-  --primary-light: #000000;       /* Glow black */
-  --secondary: #ffffff;           /* White second color */
-  --accent: #000000;              /* Black accent */
-  --success: #000000;             /* Black success */
-  --error: #000000;               /* Black error */
-  --warning: #000000;             /* Black warning */
-  --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.12);
-  --shadow-glow: 0 0 15px rgba(0, 0, 0, 0.1);
+  --bg: #FFFFFF;
+  --bg-card: #FFFFFF;
+  --bg-input: #FFFFFF;
+  --border: #CCCCCC;
+  --border-hover: #1A1A1A;
+  --text-primary: #1A1A1A;
+  --text-secondary: #4A4A4A;
+  --text-muted: #8A8A8A;
+  --primary: #1A1A1A;
+  --primary-dark: #000000;
+  --primary-light: #4A4A4A;
+  --secondary: #4A4A4A;
+  --accent: #1A1A1A;
+  --success: #1A1A1A;
+  --error: #E53E3E;
+  --warning: #8A8A8A;
+  --shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 4px 12px rgba(0, 0, 0, 0.1);
+  --shadow-glow: 0 0 0 rgba(0,0,0,0);
   --radius: 12px;
   --radius-sm: 8px;
   --radius-md: 10px;
   --radius-lg: 14px;
-  --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition: all 0.2s ease;
 }
 
 /* ═══════════════════════════════════════════
@@ -1413,148 +1413,64 @@ select.form-input option {
 }
 
 /* ═══════════════════════════════════════════
-   WARM DARK RED/MAROON CARD & PANEL THEME
+   MONOCHROME BUTTON & COMPONENT OVERRIDES
    ═══════════════════════════════════════════ */
 
-/* Target all card, panel, navbar, profile sidebar, and modal content elements */
-.sc-card-animated,
-.premium-panel,
-.person-card,
-.file-card-item,
-.group-card,
-.stat-card,
-article,
-.navbar,
-[data-profilecard="true"],
-.auth-card,
-.profile-card,
-.profile-sidebar,
-div[style*="background: var(--bg-card)"],
-div[style*="background:var(--bg-card)"],
-div[style*="background: 'var(--bg-card)'"],
-div[style*="background: var(--bg-input)"] {
-  --bg-card: linear-gradient(135deg, #4A2530 0%, #6B3744 100%) !important;
-  --bg-input: rgba(255, 255, 255, 0.1) !important;
-  --border: #ffffff !important;
-  --border-hover: #ffffff !important;
-  --text-primary: #ffffff !important;
-  --text-secondary: #ffffff !important;
-  --text-muted: rgba(255, 255, 255, 0.7) !important;
-  
-  background: var(--bg-card) !important;
-  color: #ffffff !important;
-  border: 1.5px solid #ffffff !important;
+/* Button CTA chính dạng pill */
+.btn-primary, .btn-cta, .btn-submit, button.btn-primary {
+  background: #1A1A1A !important;
+  color: #FFFFFF !important;
+  border-radius: 24px !important;
+  border: 1.5px solid #1A1A1A !important;
+}
+.btn-primary:hover, .btn-cta:hover, .btn-submit:hover, button.btn-primary:hover {
+  background: #000000 !important;
+  border-color: #000000 !important;
 }
 
-/* Specific text color overrides to ensure headers, labels, and icons are white inside dark panels */
-.sc-card-animated h1, .sc-card-animated h2, .sc-card-animated h3, .sc-card-animated h4, .sc-card-animated p, .sc-card-animated span, .sc-card-animated label,
-.premium-panel h1, .premium-panel h2, .premium-panel h3, .premium-panel h4, .premium-panel p, .premium-panel span, .premium-panel label,
-.person-card h1, .person-card h2, .person-card h3, .person-card p, .person-card span, .person-card label,
-.file-card-item h1, .file-card-item h2, .file-card-item p, .file-card-item span,
-.group-card h1, .group-card h2, .group-card h3, .group-card p, .group-card span, .group-card label,
-article p, article span, article a, article strong,
-.navbar span, .navbar a,
-.auth-card h1, .auth-card h2, .auth-card h3, .auth-card label, .auth-card span,
-.profile-card h1, .profile-card h2, .profile-card h3, .profile-card label, .profile-card span, .profile-card div,
-.profile-sidebar div, .profile-sidebar span {
-  color: #ffffff !important;
+/* Button outline */
+.btn-secondary, .btn-outline, .btn-outline-primary, button.btn-secondary {
+  background: transparent !important;
+  border: 1.5px solid #1A1A1A !important;
+  color: #1A1A1A !important;
+  border-radius: 24px !important;
+}
+.btn-secondary:hover, .btn-outline:hover, button.btn-secondary:hover {
+  background: #FAFAFA !important;
+  color: #1A1A1A !important;
+  border-color: #1A1A1A !important;
 }
 
-/* Hover overrides for lists and cards to keep text visible */
-.person-card:hover,
-.file-card-item:hover,
-.group-card:hover,
-article:hover,
-.stat-card:hover {
-  background: linear-gradient(135deg, #5A2C3A, #7C4051) !important;
-  border-color: #ffffff !important;
+/* Fix navbar/header components styling for monochrome flat style */
+.navbar {
+  background: #FFFFFF !important;
+  border-bottom: 1.5px solid #E0E0E0 !important;
+  color: #1A1A1A !important;
 }
 
-/* Tab button overrides for the page container view (white page background) */
-.tab-btn:not(.active) {
-  background: #ffffff !important;
-  color: #4b5563 !important;
-  border: 1px solid #e5e7eb !important;
-}
-.tab-btn:not(.active):hover {
-  background: #f3f4f6 !important;
-  color: #000000 !important;
-}
-.tab-btn.active {
-  background: linear-gradient(135deg, #4A2530, #6B3744) !important;
-  color: #ffffff !important;
-  border: 1.5px solid transparent !important;
-}
-.tab-btn.active .tab-badge {
-  background: rgba(255, 255, 255, 0.25) !important;
-  color: #ffffff !important;
-}
-.tab-btn:not(.active) .tab-badge {
-  background: #e5e7eb !important;
-  color: #4b5563 !important;
+.nav-brand-text {
+  background: none !important;
+  -webkit-text-fill-color: initial !important;
+  color: #1A1A1A !important;
 }
 
-/* Ensure inputs, selects, and textareas inside dark cards/panels have proper borders, placeholder colors, and backgrounds */
-.sc-card-animated input, .sc-card-animated textarea, .sc-card-animated select,
-.premium-panel input, .premium-panel textarea, .premium-panel select,
-.person-card input, .person-card textarea, .person-card select,
-.group-card input, .group-card textarea, .group-card select,
-article input, article textarea, article select,
-.navbar input, .navbar textarea, .navbar select,
-.auth-card input, .auth-card textarea, .auth-card select,
-.profile-card input, .profile-card textarea, .profile-card select,
-[data-profilecard="true"] input {
-  background: rgba(255, 255, 255, 0.1) !important;
-  border: 1.5px solid #ffffff !important;
-  color: #ffffff !important;
-  border-radius: 10px !important;
+/* Clean up datetime input backgrounds */
+input[type="datetime-local"].form-input {
+  background: var(--bg-input) !important;
+  color: var(--text-primary) !important;
+  border: 1.5px solid var(--border) !important;
+}
+input[type="datetime-local"].form-input::-webkit-calendar-picker-indicator {
+  filter: none !important;
+}
+input[type="datetime-local"].form-input::-webkit-datetime-edit {
+  color: var(--text-primary) !important;
 }
 
-.sc-card-animated input::placeholder, .sc-card-animated textarea::placeholder,
-.premium-panel input::placeholder, .premium-panel textarea::placeholder,
-article input::placeholder, article textarea::placeholder,
-.auth-card input::placeholder, .auth-card textarea::placeholder,
-.profile-card input::placeholder, .profile-card textarea::placeholder {
-  color: rgba(255, 255, 255, 0.6) !important;
+/* Remove colored hover icons and transition gradients */
+.sc-nav-item:hover {
+  background: rgba(26, 26, 26, 0.05) !important;
 }
-
-.sc-card-animated input:focus, .premium-panel input:focus, article input:focus,
-.auth-card input:focus, .profile-card input:focus {
-  background: rgba(255, 255, 255, 0.15) !important;
-  border-color: #ffffff !important;
-  outline: none !important;
-}
-
-/* Dropdown selections, options and tags */
-.search-suggestion-item,
-.dropdown-menu,
-.dropdown-item,
-.custom-select-option {
-  color: #000000 !important;
-}
-
-/* Buttons inside the cards: keep danger/success/logout distinct, make others solid white with black text */
-.sc-card-animated button:not(.btn-primary):not(.btn-danger):not(.btn-logout):not(.btn-submit),
-.premium-panel button:not(.btn-primary):not(.btn-danger):not(.btn-logout):not(.btn-submit),
-.person-card button:not(.btn-primary):not(.btn-danger):not(.btn-logout):not(.btn-submit),
-.file-card-item button:not(.btn-primary):not(.btn-danger):not(.btn-logout):not(.btn-submit),
-.group-card button:not(.btn-primary):not(.btn-danger):not(.btn-logout):not(.btn-submit),
-article button:not(.btn-primary):not(.btn-danger):not(.btn-logout):not(.btn-submit),
-.navbar button:not(.btn-primary):not(.btn-danger):not(.btn-logout):not(.btn-submit),
-.profile-card button:not(.btn-primary):not(.btn-danger):not(.btn-logout):not(.btn-submit),
-[data-profilecard="true"] button:not(.btn-primary):not(.btn-danger):not(.btn-logout):not(.btn-submit) {
-  background: #ffffff !important;
-  color: #000000 !important;
-  border: 1px solid #ffffff !important;
-}
-
-.sc-card-animated button:hover,
-.premium-panel button:hover,
-.person-card button:hover,
-.file-card-item button:hover,
-.group-card button:hover,
-article button:hover,
-.navbar button:hover,
-.profile-card button:hover {
-  opacity: 0.95 !important;
+.sc-card-hover:hover {
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08) !important;
 }

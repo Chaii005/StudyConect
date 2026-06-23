@@ -10987,30 +10987,30 @@ export default function useNotifications(userId) {
    DESIGN TOKENS - ENERGETIC FOCUS REDESIGN
    ═══════════════════════════════════════════ */
 :root {
-  --bg: #ffffff;                  /* Pure White background */
-  --bg-card: #ffffff;             /* Pure White Card background */
-  --bg-input: #ffffff;            /* Pure White input background */
-  --border: #000000;              /* Pure Black border */
-  --border-hover: #000000;        /* Pure Black border on hover */
-  --text-primary: #000000;        /* Pure Black primary text */
-  --text-secondary: #000000;      /* Pure Black secondary text */
-  --text-muted: #555555;          /* Dark grey for muted captions */
-  --primary: #000000;             /* Pure Black button background */
-  --primary-dark: #333333;        /* Dark grey button background on hover */
-  --primary-light: #000000;       /* Glow black */
-  --secondary: #ffffff;           /* White second color */
-  --accent: #000000;              /* Black accent */
-  --success: #000000;             /* Black success */
-  --error: #000000;               /* Black error */
-  --warning: #000000;             /* Black warning */
-  --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.12);
-  --shadow-glow: 0 0 15px rgba(0, 0, 0, 0.1);
+  --bg: #FFFFFF;
+  --bg-card: #FFFFFF;
+  --bg-input: #FFFFFF;
+  --border: #CCCCCC;
+  --border-hover: #1A1A1A;
+  --text-primary: #1A1A1A;
+  --text-secondary: #4A4A4A;
+  --text-muted: #8A8A8A;
+  --primary: #1A1A1A;
+  --primary-dark: #000000;
+  --primary-light: #4A4A4A;
+  --secondary: #4A4A4A;
+  --accent: #1A1A1A;
+  --success: #1A1A1A;
+  --error: #E53E3E;
+  --warning: #8A8A8A;
+  --shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 4px 12px rgba(0, 0, 0, 0.1);
+  --shadow-glow: 0 0 0 rgba(0,0,0,0);
   --radius: 12px;
   --radius-sm: 8px;
   --radius-md: 10px;
   --radius-lg: 14px;
-  --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition: all 0.2s ease;
 }
 
 /* ═══════════════════════════════════════════
@@ -12395,150 +12395,66 @@ select.form-input option {
 }
 
 /* ═══════════════════════════════════════════
-   WARM DARK RED/MAROON CARD & PANEL THEME
+   MONOCHROME BUTTON & COMPONENT OVERRIDES
    ═══════════════════════════════════════════ */
 
-/* Target all card, panel, navbar, profile sidebar, and modal content elements */
-.sc-card-animated,
-.premium-panel,
-.person-card,
-.file-card-item,
-.group-card,
-.stat-card,
-article,
-.navbar,
-[data-profilecard="true"],
-.auth-card,
-.profile-card,
-.profile-sidebar,
-div[style*="background: var(--bg-card)"],
-div[style*="background:var(--bg-card)"],
-div[style*="background: 'var(--bg-card)'"],
-div[style*="background: var(--bg-input)"] {
-  --bg-card: linear-gradient(135deg, #4A2530 0%, #6B3744 100%) !important;
-  --bg-input: rgba(255, 255, 255, 0.1) !important;
-  --border: #ffffff !important;
-  --border-hover: #ffffff !important;
-  --text-primary: #ffffff !important;
-  --text-secondary: #ffffff !important;
-  --text-muted: rgba(255, 255, 255, 0.7) !important;
-  
-  background: var(--bg-card) !important;
-  color: #ffffff !important;
-  border: 1.5px solid #ffffff !important;
+/* Button CTA chính dạng pill */
+.btn-primary, .btn-cta, .btn-submit, button.btn-primary {
+  background: #1A1A1A !important;
+  color: #FFFFFF !important;
+  border-radius: 24px !important;
+  border: 1.5px solid #1A1A1A !important;
+}
+.btn-primary:hover, .btn-cta:hover, .btn-submit:hover, button.btn-primary:hover {
+  background: #000000 !important;
+  border-color: #000000 !important;
 }
 
-/* Specific text color overrides to ensure headers, labels, and icons are white inside dark panels */
-.sc-card-animated h1, .sc-card-animated h2, .sc-card-animated h3, .sc-card-animated h4, .sc-card-animated p, .sc-card-animated span, .sc-card-animated label,
-.premium-panel h1, .premium-panel h2, .premium-panel h3, .premium-panel h4, .premium-panel p, .premium-panel span, .premium-panel label,
-.person-card h1, .person-card h2, .person-card h3, .person-card p, .person-card span, .person-card label,
-.file-card-item h1, .file-card-item h2, .file-card-item p, .file-card-item span,
-.group-card h1, .group-card h2, .group-card h3, .group-card p, .group-card span, .group-card label,
-article p, article span, article a, article strong,
-.navbar span, .navbar a,
-.auth-card h1, .auth-card h2, .auth-card h3, .auth-card label, .auth-card span,
-.profile-card h1, .profile-card h2, .profile-card h3, .profile-card label, .profile-card span, .profile-card div,
-.profile-sidebar div, .profile-sidebar span {
-  color: #ffffff !important;
+/* Button outline */
+.btn-secondary, .btn-outline, .btn-outline-primary, button.btn-secondary {
+  background: transparent !important;
+  border: 1.5px solid #1A1A1A !important;
+  color: #1A1A1A !important;
+  border-radius: 24px !important;
+}
+.btn-secondary:hover, .btn-outline:hover, button.btn-secondary:hover {
+  background: #FAFAFA !important;
+  color: #1A1A1A !important;
+  border-color: #1A1A1A !important;
 }
 
-/* Hover overrides for lists and cards to keep text visible */
-.person-card:hover,
-.file-card-item:hover,
-.group-card:hover,
-article:hover,
-.stat-card:hover {
-  background: linear-gradient(135deg, #5A2C3A, #7C4051) !important;
-  border-color: #ffffff !important;
+/* Fix navbar/header components styling for monochrome flat style */
+.navbar {
+  background: #FFFFFF !important;
+  border-bottom: 1.5px solid #E0E0E0 !important;
+  color: #1A1A1A !important;
 }
 
-/* Tab button overrides for the page container view (white page background) */
-.tab-btn:not(.active) {
-  background: #ffffff !important;
-  color: #4b5563 !important;
-  border: 1px solid #e5e7eb !important;
-}
-.tab-btn:not(.active):hover {
-  background: #f3f4f6 !important;
-  color: #000000 !important;
-}
-.tab-btn.active {
-  background: linear-gradient(135deg, #4A2530, #6B3744) !important;
-  color: #ffffff !important;
-  border: 1.5px solid transparent !important;
-}
-.tab-btn.active .tab-badge {
-  background: rgba(255, 255, 255, 0.25) !important;
-  color: #ffffff !important;
-}
-.tab-btn:not(.active) .tab-badge {
-  background: #e5e7eb !important;
-  color: #4b5563 !important;
+.nav-brand-text {
+  background: none !important;
+  -webkit-text-fill-color: initial !important;
+  color: #1A1A1A !important;
 }
 
-/* Ensure inputs, selects, and textareas inside dark cards/panels have proper borders, placeholder colors, and backgrounds */
-.sc-card-animated input, .sc-card-animated textarea, .sc-card-animated select,
-.premium-panel input, .premium-panel textarea, .premium-panel select,
-.person-card input, .person-card textarea, .person-card select,
-.group-card input, .group-card textarea, .group-card select,
-article input, article textarea, article select,
-.navbar input, .navbar textarea, .navbar select,
-.auth-card input, .auth-card textarea, .auth-card select,
-.profile-card input, .profile-card textarea, .profile-card select,
-[data-profilecard="true"] input {
-  background: rgba(255, 255, 255, 0.1) !important;
-  border: 1.5px solid #ffffff !important;
-  color: #ffffff !important;
-  border-radius: 10px !important;
+/* Clean up datetime input backgrounds */
+input[type="datetime-local"].form-input {
+  background: var(--bg-input) !important;
+  color: var(--text-primary) !important;
+  border: 1.5px solid var(--border) !important;
+}
+input[type="datetime-local"].form-input::-webkit-calendar-picker-indicator {
+  filter: none !important;
+}
+input[type="datetime-local"].form-input::-webkit-datetime-edit {
+  color: var(--text-primary) !important;
 }
 
-.sc-card-animated input::placeholder, .sc-card-animated textarea::placeholder,
-.premium-panel input::placeholder, .premium-panel textarea::placeholder,
-article input::placeholder, article textarea::placeholder,
-.auth-card input::placeholder, .auth-card textarea::placeholder,
-.profile-card input::placeholder, .profile-card textarea::placeholder {
-  color: rgba(255, 255, 255, 0.6) !important;
+/* Remove colored hover icons and transition gradients */
+.sc-nav-item:hover {
+  background: rgba(26, 26, 26, 0.05) !important;
 }
-
-.sc-card-animated input:focus, .premium-panel input:focus, article input:focus,
-.auth-card input:focus, .profile-card input:focus {
-  background: rgba(255, 255, 255, 0.15) !important;
-  border-color: #ffffff !important;
-  outline: none !important;
-}
-
-/* Dropdown selections, options and tags */
-.search-suggestion-item,
-.dropdown-menu,
-.dropdown-item,
-.custom-select-option {
-  color: #000000 !important;
-}
-
-/* Buttons inside the cards: keep danger/success/logout distinct, make others solid white with black text */
-.sc-card-animated button:not(.btn-primary):not(.btn-danger):not(.btn-logout):not(.btn-submit),
-.premium-panel button:not(.btn-primary):not(.btn-danger):not(.btn-logout):not(.btn-submit),
-.person-card button:not(.btn-primary):not(.btn-danger):not(.btn-logout):not(.btn-submit),
-.file-card-item button:not(.btn-primary):not(.btn-danger):not(.btn-logout):not(.btn-submit),
-.group-card button:not(.btn-primary):not(.btn-danger):not(.btn-logout):not(.btn-submit),
-article button:not(.btn-primary):not(.btn-danger):not(.btn-logout):not(.btn-submit),
-.navbar button:not(.btn-primary):not(.btn-danger):not(.btn-logout):not(.btn-submit),
-.profile-card button:not(.btn-primary):not(.btn-danger):not(.btn-logout):not(.btn-submit),
-[data-profilecard="true"] button:not(.btn-primary):not(.btn-danger):not(.btn-logout):not(.btn-submit) {
-  background: #ffffff !important;
-  color: #000000 !important;
-  border: 1px solid #ffffff !important;
-}
-
-.sc-card-animated button:hover,
-.premium-panel button:hover,
-.person-card button:hover,
-.file-card-item button:hover,
-.group-card button:hover,
-article button:hover,
-.navbar button:hover,
-.profile-card button:hover {
-  opacity: 0.95 !important;
+.sc-card-hover:hover {
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08) !important;
 }
 
 ===== D:\StudyConect\frontend\src\layouts\AppLayout.jsx =====
@@ -13085,8 +13001,8 @@ export default function AppLayout({ children, hideNavbar = false, hideSidebar = 
                 {NAV_ITEMS.map((item) => {
                   const isActive = item.to === '/' ? location.pathname === '/' : location.pathname.startsWith(item.to);
 
-                  const sidebarBg = isActive ? 'linear-gradient(135deg, #4A2530, #6B3744)' : 'none';
-                  const sidebarBorder = isActive ? '1px solid transparent' : '1px solid transparent';
+                  const sidebarBg = isActive ? '#1A1A1A' : 'none';
+                  const sidebarBorder = isActive ? '1px solid #1A1A1A' : '1px solid transparent';
                   const sidebarTextColor = isActive ? '#ffffff' : 'var(--text-secondary)';
                   const sidebarIconColor = isActive ? '#ffffff' : 'var(--text-primary)';
 
@@ -13121,7 +13037,7 @@ export default function AppLayout({ children, hideNavbar = false, hideSidebar = 
                           alignItems: 'center', 
                           justifyContent: 'center', 
                           flexShrink: 0, 
-                          filter: isActive ? 'drop-shadow(0 0 8px rgba(168, 124, 135, 0.5))' : 'none' 
+                          filter: 'none' 
                         }}>
                           {NAV_ICONS[item.icon] ? NAV_ICONS[item.icon](isActive, sidebarIconColor) : item.icon}
                         </span>
@@ -13180,10 +13096,10 @@ export default function AppLayout({ children, hideNavbar = false, hideSidebar = 
                 <aside className="desktop-only no-scrollbar" style={{ width: '300px', position: 'sticky', top: 0, alignSelf: 'start', display: 'flex', flexDirection: 'column', gap: '14px', maxHeight: 'calc(100vh - 100px)', overflowY: 'auto', paddingBottom: '24px', flexShrink: 0 }}>
                   
                   {/* Schedule and Deadline card */}
-                  <div className="sc-card-animated" style={{ background: 'linear-gradient(135deg, #4A2530, #6B3744)', border: '1.5px solid #ffffff', borderRadius: '18px', overflow: 'hidden', boxShadow: 'var(--shadow)', display: 'flex', flexDirection: 'column', maxHeight: '420px', animationDelay: '0.1s', color: '#ffffff' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '14px 16px 12px', borderBottom: '1px solid rgba(255, 255, 255, 0.15)' }}>
-                      <span style={{ fontWeight: 700, fontSize: '14px', display: 'flex', alignItems: 'center', gap: '8px', color: '#ffffff' }}>
-                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#ffffff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <div className="sc-card-animated" style={{ background: 'var(--bg-card)', border: '1px solid #1A1A1A', borderRadius: '18px', overflow: 'hidden', boxShadow: 'var(--shadow)', display: 'flex', flexDirection: 'column', maxHeight: '420px', animationDelay: '0.1s', color: 'var(--text-primary)' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '14px 16px 12px', borderBottom: '1px solid var(--border)' }}>
+                      <span style={{ fontWeight: 700, fontSize: '14px', display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--text-primary)' }}>
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--text-primary)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                           <rect width="18" height="18" x="3" y="4" rx="2" ry="2"/>
                           <line x1="16" x2="16" y1="2" y2="6"/>
                           <line x1="8" x2="8" y1="2" y2="6"/>
@@ -13192,39 +13108,39 @@ export default function AppLayout({ children, hideNavbar = false, hideSidebar = 
                         </svg>
                         Lịch và Deadline
                       </span>
-                      <Link to="/schedule" style={{ fontSize: '12px', color: '#ffffff', textDecoration: 'none', fontWeight: 700 }}>Tất cả</Link>
+                      <Link to="/schedule" style={{ fontSize: '12px', color: 'var(--text-primary)', textDecoration: 'none', fontWeight: 700 }}>Tất cả</Link>
                     </div>
 
                     <div className="no-scrollbar" style={{ overflowY: 'auto', flex: 1 }}>
                       <div style={{ padding: '10px 16px 6px' }}>
-                        <div style={{ fontSize: '11px', fontWeight: 700, color: '#ffffff', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '6px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                        <div style={{ fontSize: '11px', fontWeight: 700, color: 'var(--text-primary)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '6px', display: 'flex', alignItems: 'center', gap: '6px' }}>
                           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                             <rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/>
                           </svg>
                           Buổi học sắp tới
                         </div>
                         {schedules.length === 0 ? (
-                          <div style={{ padding: '10px 0 8px', textAlign: 'center', color: '#ffffff', fontSize: '12px' }}>
+                          <div style={{ padding: '10px 0 8px', textAlign: 'center', color: 'var(--text-muted)', fontSize: '12px' }}>
                             Chưa có lịch học nào
                           </div>
                         ) : (
                           schedules.map((s) => (
                             <Link key={s.id} to={`/groups/${s.groupId}?tab=schedule`} style={{ textDecoration: 'none', color: 'inherit', display: 'block' }}>
                               <div
-                                style={{ display: 'flex', gap: '10px', alignItems: 'flex-start', padding: '8px 0', borderBottom: '1px solid rgba(255, 255, 255, 0.1)', cursor: 'pointer', transition: 'all 0.2s ease' }}
-                                onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(255, 255, 255, 0.08)'}
+                                style={{ display: 'flex', gap: '10px', alignItems: 'flex-start', padding: '8px 0', borderBottom: '1px solid var(--border)', cursor: 'pointer', transition: 'all 0.2s ease' }}
+                                onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(26, 26, 26, 0.05)'}
                                 onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
                               >
-                                <div style={{ width: '30px', height: '30px', borderRadius: '7px', flexShrink: 0, background: 'rgba(255, 255, 255, 0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ffffff' }}>
+                                <div style={{ width: '30px', height: '30px', borderRadius: '7px', flexShrink: 0, background: 'rgba(26, 26, 26, 0.05)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-primary)' }}>
                                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                                     <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"/>
                                     <path d="M6 6h10"/><path d="M6 10h10"/>
                                   </svg>
                                 </div>
                                 <div style={{ flex: 1, minWidth: 0 }}>
-                                  <div style={{ fontWeight: 600, fontSize: '12.5px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', color: '#ffffff' }}>{s.topic}</div>
-                                  <div style={{ fontSize: '11px', color: '#ffffff', marginTop: '2px', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, color: '#ffffff' }}>
+                                  <div style={{ fontWeight: 600, fontSize: '12.5px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', color: 'var(--text-primary)' }}>{s.topic}</div>
+                                  <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '2px', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, color: 'var(--text-muted)' }}>
                                       <circle cx="12" cy="12" r="10" />
                                       <polyline points="12 6 12 12 16 14" />
                                     </svg>
@@ -13237,17 +13153,17 @@ export default function AppLayout({ children, hideNavbar = false, hideSidebar = 
                         )}
                       </div>
 
-                      <div style={{ height: '1px', background: 'linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent)', margin: '0 16px' }} />
+                      <div style={{ height: '1px', background: 'var(--border)', margin: '0 16px' }} />
 
                       <div style={{ padding: '10px 16px 14px' }}>
-                        <div style={{ fontSize: '10px', fontWeight: 800, color: '#ffffff', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '8px', display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                        <div style={{ fontSize: '10px', fontWeight: 800, color: 'var(--text-primary)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '8px', display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
                           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                             <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
                           </svg>
                           Deadline cần nộp
                         </div>
                         {deadlines.length === 0 ? (
-                          <div style={{ padding: '10px 0', textAlign: 'center', color: '#ffffff', fontSize: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>
+                          <div style={{ padding: '10px 0', textAlign: 'center', color: 'var(--text-muted)', fontSize: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>
                             Không còn deadline nào
                             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#2ecc71" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
                               <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
@@ -13265,25 +13181,25 @@ export default function AppLayout({ children, hideNavbar = false, hideSidebar = 
                                   padding: '8px 8px',
                                   margin: '2px 0',
                                   borderRadius: '8px',
-                                  borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
-                                  background: d.dueSoon ? 'rgba(255, 255, 255, 0.08)' : 'none',
+                                  borderBottom: '1px solid var(--border)',
+                                  background: d.dueSoon ? 'rgba(255, 77, 77, 0.05)' : 'none',
                                   transition: 'all 0.2s ease',
                                   cursor: 'pointer'
                                 }}
-                                onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(255, 255, 255, 0.12)'}
-                                onMouseLeave={(e) => e.currentTarget.style.background = d.dueSoon ? 'rgba(255, 255, 255, 0.08)' : 'transparent'}
+                                onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(26, 26, 26, 0.05)'}
+                                onMouseLeave={(e) => e.currentTarget.style.background = d.dueSoon ? 'rgba(255, 77, 77, 0.05)' : 'transparent'}
                               >
-                                <div style={{ width: '8px', height: '8px', borderRadius: '50%', flexShrink: 0, background: d.overdue ? 'rgba(255, 255, 255, 0.4)' : d.dueSoon ? '#ff4d4d' : '#2ecc71', boxShadow: d.overdue ? 'none' : d.dueSoon ? '0 0 8px #ff4d4d' : '0 0 8px #2ecc71' }} />
+                                <div style={{ width: '8px', height: '8px', borderRadius: '50%', flexShrink: 0, background: d.overdue ? 'var(--text-muted)' : d.dueSoon ? '#ff4d4d' : '#2ecc71' }} />
                                 <div style={{ flex: 1, minWidth: 0 }}>
-                                  <div style={{ fontSize: '12px', fontWeight: 600, color: '#ffffff', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{d.title}</div>
+                                  <div style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{d.title}</div>
                                   <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '2px', alignItems: 'center' }}>
-                                    <span style={{ fontSize: '11px', color: '#ffffff', display: 'inline-flex', alignItems: 'center', gap: '3px' }}>
+                                    <span style={{ fontSize: '11px', color: 'var(--text-muted)', display: 'inline-flex', alignItems: 'center', gap: '3px' }}>
                                       <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
                                         <path d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.93a2 2 0 0 1-1.66-.9l-.82-1.2A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z" />
                                       </svg>
                                       {d.groupName}
                                     </span>
-                                    <span style={{ fontSize: '11px', fontWeight: 700, color: '#ffffff', display: 'inline-flex', alignItems: 'center', gap: '2px' }}>
+                                    <span style={{ fontSize: '11px', fontWeight: 700, color: d.dueSoon ? '#ff4d4d' : 'var(--text-primary)', display: 'inline-flex', alignItems: 'center', gap: '2px' }}>
                                       {d.dueSoon ? (
                                         <>
                                           <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
@@ -13306,38 +13222,38 @@ export default function AppLayout({ children, hideNavbar = false, hideSidebar = 
                   </div>
 
                   {/* Online Friends card */}
-                  <div className="sc-card-animated" style={{ background: 'linear-gradient(135deg, #4A2530, #6B3744)', border: '1.5px solid #ffffff', borderRadius: '18px', overflow: 'hidden', boxShadow: 'var(--shadow)', animationDelay: '0.15s', color: '#ffffff' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '14px 16px 12px', borderBottom: '1px solid rgba(255, 255, 255, 0.15)' }}>
-                      <span style={{ fontWeight: 700, fontSize: '14px', display: 'flex', alignItems: 'center', gap: '8px', color: '#ffffff' }}>
-                        <span className="sc-online-dot" style={{ display: 'inline-block', width: '8px', height: '8px', borderRadius: '50%', background: '#2ecc71', boxShadow: '0 0 6px rgba(46, 204, 113, 0.6)' }} />
+                  <div className="sc-card-animated" style={{ background: 'var(--bg-card)', border: '1px solid #1A1A1A', borderRadius: '18px', overflow: 'hidden', boxShadow: 'var(--shadow)', animationDelay: '0.15s', color: 'var(--text-primary)' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '14px 16px 12px', borderBottom: '1px solid var(--border)' }}>
+                      <span style={{ fontWeight: 700, fontSize: '14px', display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--text-primary)' }}>
+                        <span className="sc-online-dot" style={{ display: 'inline-block', width: '8px', height: '8px', borderRadius: '50%', background: '#2ecc71' }} />
                         Bạn bè trực tuyến ({friends.filter(f => onlineUserIds.includes(f.userId.toString())).length})
                       </span>
-                      <Link to="/friends" style={{ fontSize: '12px', color: '#ffffff', textDecoration: 'none', fontWeight: 700 }}>Tất cả</Link>
+                      <Link to="/friends" style={{ fontSize: '12px', color: 'var(--text-primary)', textDecoration: 'none', fontWeight: 700 }}>Tất cả</Link>
                     </div>
 
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', maxHeight: '200px', overflowY: 'auto', overscrollBehavior: 'contain', padding: '10px 16px 16px 16px' }}>
                       {friends.length === 0 ? (
-                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '12px 0', textAlign: 'center', color: '#ffffff', fontSize: '12px' }}>
-                          <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="#ffffff" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" style={{ marginBottom: '10px', opacity: 0.55 }}>
+                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '12px 0', textAlign: 'center', color: 'var(--text-muted)', fontSize: '12px' }}>
+                          <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="var(--text-primary)" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" style={{ marginBottom: '10px', opacity: 0.55 }}>
                             <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
                             <circle cx="9" cy="7" r="4" />
                             <line x1="17" y1="8" x2="21" y2="12" />
                             <line x1="21" y1="8" x2="17" y2="12" />
                           </svg>
-                          <span style={{ color: '#ffffff' }}>Chưa có bạn bè nào. <Link to="/friends" style={{ color: '#ffffff', fontWeight: 600, textDecoration: 'underline' }}>Kết bạn ngay</Link></span>
+                          <span style={{ color: 'var(--text-muted)' }}>Chưa có bạn bè nào. <Link to="/friends" style={{ color: 'var(--text-primary)', fontWeight: 600, textDecoration: 'underline' }}>Kết bạn ngay</Link></span>
                         </div>
                       ) : (() => {
                         const onlineFriends = friends.filter(f => onlineUserIds.includes(f.userId.toString()));
                         if (onlineFriends.length === 0) {
                           return (
-                            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '12px 0', textAlign: 'center', color: '#ffffff', fontSize: '12px' }}>
-                              <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="#ffffff" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" style={{ marginBottom: '10px', opacity: 0.55 }}>
+                            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '12px 0', textAlign: 'center', color: 'var(--text-muted)', fontSize: '12px' }}>
+                              <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="var(--text-primary)" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" style={{ marginBottom: '10px', opacity: 0.55 }}>
                                 <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
                                 <circle cx="9" cy="7" r="4" />
                                 <line x1="17" y1="8" x2="21" y2="12" />
                                 <line x1="21" y1="8" x2="17" y2="12" />
                               </svg>
-                              <span style={{ color: '#ffffff' }}>Chưa có bạn bè nào trực tuyến.</span>
+                              <span style={{ color: 'var(--text-muted)' }}>Chưa có bạn bè nào trực tuyến.</span>
                             </div>
                           );
                         }
@@ -13345,7 +13261,7 @@ export default function AppLayout({ children, hideNavbar = false, hideSidebar = 
                           <Link key={f.userId} to={`/friends/${f.userId}`} style={{ textDecoration: 'none', color: 'inherit', display: 'block' }}>
                             <div
                               style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '8px', borderRadius: '10px', transition: 'all 0.2s ease', cursor: 'pointer', background: 'transparent' }}
-                              onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(255, 255, 255, 0.08)'}
+                              onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(26, 26, 26, 0.05)'}
                               onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
                             >
                               <div style={{ position: 'relative', flexShrink: 0 }}>
@@ -13354,15 +13270,14 @@ export default function AppLayout({ children, hideNavbar = false, hideSidebar = 
                                   position: 'absolute', bottom: -1, right: -1,
                                   width: '10px', height: '10px', borderRadius: '50%',
                                   background: '#2ecc71',
-                                  border: '2px solid #5A2C35',
-                                  boxShadow: '0 0 6px rgba(46, 204, 113, 0.6)'
+                                  border: '2px solid var(--bg-card)',
                                 }} />
                               </div>
                               <div style={{ flex: 1, minWidth: 0 }}>
-                                <div style={{ fontWeight: 600, fontSize: '13px', color: '#ffffff', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                                <div style={{ fontWeight: 600, fontSize: '13px', color: 'var(--text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                                   {f.fullName}
                                 </div>
-                                <div style={{ fontSize: '11px', color: '#ffffff', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                                <div style={{ fontSize: '11px', color: 'var(--text-muted)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                                   Đang hoạt động
                                 </div>
                               </div>
@@ -17597,6 +17512,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import {
   getFriends,
+  getPendingRequests,
   getSentRequests,
   getSuggestions,
   sendFriendRequest,
@@ -19640,11 +19556,11 @@ function CreateGroupModal({ formData, setFormData, meetingMode, setMeetingMode, 
         {step === 1 && (
           <div style={{ padding: '14px 18px 18px', display: 'flex', flexDirection: 'column', gap: 10 }}>
             {/* Online Card */}
-            <button onClick={() => handleModeSelect('online')} style={{ background: 'linear-gradient(135deg, rgba(99,102,241,0.08), rgba(139,92,246,0.05))', border: '2px solid rgba(99,102,241,0.3)', borderRadius: 12, padding: '14px 16px', cursor: 'pointer', textAlign: 'left', transition: 'all 0.25s', fontFamily: 'inherit', display: 'flex', alignItems: 'center', gap: 14 }}
-              onMouseEnter={e => { e.currentTarget.style.background = 'linear-gradient(135deg, rgba(99,102,241,0.18), rgba(139,92,246,0.12))'; e.currentTarget.style.borderColor = 'var(--primary)'; e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 6px 20px rgba(99,102,241,0.25)'; }}
-              onMouseLeave={e => { e.currentTarget.style.background = 'linear-gradient(135deg, rgba(99,102,241,0.08), rgba(139,92,246,0.05))'; e.currentTarget.style.borderColor = 'rgba(99,102,241,0.3)'; e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = 'none'; }}
+            <button onClick={() => handleModeSelect('online')} style={{ background: 'var(--bg-card)', border: '1.5px solid var(--border)', borderRadius: 12, padding: '14px 16px', cursor: 'pointer', textAlign: 'left', transition: 'all 0.2s ease', fontFamily: 'inherit', display: 'flex', alignItems: 'center', gap: 14 }}
+              onMouseEnter={e => { e.currentTarget.style.background = 'rgba(26, 26, 26, 0.05)'; e.currentTarget.style.borderColor = 'var(--border-hover)'; e.currentTarget.style.transform = 'translateY(-2px)'; }}
+              onMouseLeave={e => { e.currentTarget.style.background = 'var(--bg-card)'; e.currentTarget.style.borderColor = 'var(--border)'; e.currentTarget.style.transform = 'translateY(0)'; }}
             >
-              <div style={{ width: 44, height: 44, borderRadius: 12, background: 'linear-gradient(135deg, var(--primary), #8b5cf6)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, boxShadow: '0 4px 14px rgba(99,102,241,0.4)' }}>
+              <div style={{ width: 44, height: 44, borderRadius: 12, background: '#1A1A1A', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                   <circle cx="12" cy="12" r="10" />
                   <line x1="2" y1="12" x2="22" y2="12" />
@@ -19658,11 +19574,11 @@ function CreateGroupModal({ formData, setFormData, meetingMode, setMeetingMode, 
             </button>
 
             {/* Offline Card */}
-            <button onClick={() => handleModeSelect('offline')} style={{ background: 'linear-gradient(135deg, rgba(16,185,129,0.08), rgba(5,150,105,0.05))', border: '2px solid rgba(16,185,129,0.3)', borderRadius: 12, padding: '14px 16px', cursor: 'pointer', textAlign: 'left', transition: 'all 0.25s', fontFamily: 'inherit', display: 'flex', alignItems: 'center', gap: 14 }}
-              onMouseEnter={e => { e.currentTarget.style.background = 'linear-gradient(135deg, rgba(16,185,129,0.18), rgba(5,150,105,0.12))'; e.currentTarget.style.borderColor = '#10b981'; e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 6px 20px rgba(16,185,129,0.25)'; }}
-              onMouseLeave={e => { e.currentTarget.style.background = 'linear-gradient(135deg, rgba(16,185,129,0.08), rgba(5,150,105,0.05))'; e.currentTarget.style.borderColor = 'rgba(16,185,129,0.3)'; e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = 'none'; }}
+            <button onClick={() => handleModeSelect('offline')} style={{ background: 'var(--bg-card)', border: '1.5px solid var(--border)', borderRadius: 12, padding: '14px 16px', cursor: 'pointer', textAlign: 'left', transition: 'all 0.2s ease', fontFamily: 'inherit', display: 'flex', alignItems: 'center', gap: 14 }}
+              onMouseEnter={e => { e.currentTarget.style.background = 'rgba(26, 26, 26, 0.05)'; e.currentTarget.style.borderColor = 'var(--border-hover)'; e.currentTarget.style.transform = 'translateY(-2px)'; }}
+              onMouseLeave={e => { e.currentTarget.style.background = 'var(--bg-card)'; e.currentTarget.style.borderColor = 'var(--border)'; e.currentTarget.style.transform = 'translateY(0)'; }}
             >
-              <div style={{ width: 44, height: 44, borderRadius: 12, background: 'linear-gradient(135deg, #10b981, #059669)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, boxShadow: '0 4px 14px rgba(16,185,129,0.4)' }}>
+              <div style={{ width: 44, height: 44, borderRadius: 12, background: '#1A1A1A', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
                   <circle cx="12" cy="10" r="3" />
@@ -20579,25 +20495,22 @@ export default function Groups() {
                 alignItems: 'center',
                 justifyContent: 'center',
                 gap: '8px',
-                background: 'linear-gradient(135deg, rgba(16,185,129,0.08), rgba(5,150,105,0.05))',
-                border: '1px solid rgba(16,185,129,0.35)',
-                color: 'var(--text-primary)',
+                background: 'transparent',
+                border: '1.5px solid #1A1A1A',
+                color: '#1A1A1A',
                 fontWeight: 700,
-                borderRadius: '12px',
-                boxShadow: '0 4px 12px rgba(16, 185, 129, 0.1)',
+                borderRadius: '24px',
                 cursor: 'pointer',
-                transition: 'all 0.25s ease',
+                transition: 'all 0.2s ease',
                 fontFamily: 'inherit',
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.transform = 'translateY(-1px)';
-                e.currentTarget.style.background = 'linear-gradient(135deg, rgba(16,185,129,0.18), rgba(5,150,105,0.12))';
-                e.currentTarget.style.boxShadow = '0 6px 16px rgba(16, 185, 129, 0.2)';
+                e.currentTarget.style.background = '#FAFAFA';
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.transform = 'translateY(0)';
-                e.currentTarget.style.background = 'linear-gradient(135deg, rgba(16,185,129,0.08), rgba(5,150,105,0.05))';
-                e.currentTarget.style.boxShadow = '0 4px 12px rgba(16, 185, 129, 0.1)';
+                e.currentTarget.style.background = 'transparent';
               }}
             >
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
