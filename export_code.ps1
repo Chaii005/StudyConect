@@ -2,7 +2,8 @@
 $workDir = (Get-Item -Path ".").FullName
 
 # 1. Export Frontend files
-$frontendFile = Join-Path $workDir "frontend_code.txt"
+$frontendFile = Join-Path $workDir "frontend.txt"
+$frontendFileLegacy = Join-Path $workDir "frontend_code.txt"
 $frontendSrc = Join-Path $workDir "frontend\src"
 if (Test-Path $frontendSrc) {
     $writer = New-Object System.IO.StreamWriter($frontendFile, $false, [System.Text.Encoding]::UTF8)
@@ -22,12 +23,14 @@ if (Test-Path $frontendSrc) {
         $writer.WriteLine()
     }
     $writer.Close()
+    Copy-Item -Path $frontendFile -Destination $frontendFileLegacy -Force
 } else {
-    Write-Host "KHONG TIM THAY frontend/src - bo qua xuat frontend_code.txt" -ForegroundColor Red
+    Write-Host "KHONG TIM THAY frontend/src - bo qua xuat frontend.txt" -ForegroundColor Red
 }
 
 # 2. Export Backend files
-$backendFile = Join-Path $workDir "backend_code.txt"
+$backendFile = Join-Path $workDir "backend.txt"
+$backendFileLegacy = Join-Path $workDir "backend_code.txt"
 $backendSrc = Join-Path $workDir "backend\src"
 if (Test-Path $backendSrc) {
     $writer = New-Object System.IO.StreamWriter($backendFile, $false, [System.Text.Encoding]::UTF8)
@@ -46,4 +49,5 @@ if (Test-Path $backendSrc) {
         $writer.WriteLine()
     }
     $writer.Close()
+    Copy-Item -Path $backendFile -Destination $backendFileLegacy -Force
 }

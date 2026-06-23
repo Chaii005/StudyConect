@@ -776,22 +776,7 @@ export default function MeetRoom() {
   // Lấy thông tin trưởng nhóm (Trưởng phòng) thực sự từ study_groups
   const [groupCreatorId, setGroupCreatorId] = useState(null);
 
-  // Giữ trạng thái Online (Presence) khi đang trong phòng học
-  useEffect(() => {
-    if (!user?.id) return;
-    const channel = supabase.channel('online-users', {
-      config: { presence: { key: user.id.toString() } },
-    });
-    channel.subscribe(async (status) => {
-      if (status === 'SUBSCRIBED') {
-        await channel.track({
-          id: user.id.toString(),
-          onlineAt: new Date().toISOString(),
-        });
-      }
-    });
-    return () => { channel.unsubscribe(); };
-  }, [user?.id]);
+
 
   useEffect(() => {
     const fetchGroupCreator = async () => {
@@ -885,7 +870,7 @@ export default function MeetRoom() {
     if (!roomId) return;
 
     const formatMsg = (m) => {
-      const rawContent = m.content;
+      const rawContent = m.content || '';
       const prefix = `[meetroom:${roomId}] `;
       const text = rawContent.startsWith(prefix) ? rawContent.slice(prefix.length) : rawContent;
       return {
@@ -904,13 +889,13 @@ export default function MeetRoom() {
         const { data, error } = await supabase
           .from('messages')
           .select(`
-            id, sender_id, content, created_at,
+            id, sender_id, content, meetroom_id, created_at,
             users:users!sender_id (
               full_name,
               avatar
             )
           `)
-          .like('content', `[meetroom:${roomId}]%`)
+          .or(`meetroom_id.eq.${roomId},content.like.[meetroom:${roomId}]%`)
           .order('created_at', { ascending: true })
           .limit(100);
 
@@ -925,29 +910,38 @@ export default function MeetRoom() {
     fetchMeetMessages();
 
     // 2. Lắng nghe INSERT real-time — không cần polling
+    const channelUid = user?.id || 'guest';
     const channel = supabase
-      .channel(`meetroom-chat-${roomId}`)
-      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages' }, async (payload) => {
-        const m = payload.new;
-        if (!m.content?.startsWith(`[meetroom:${roomId}]`)) return;
-        // Fetch full row kèm user info
-        try {
-          const { data } = await supabase
-            .from('messages')
-            .select(`id, sender_id, content, created_at, users:users!sender_id (full_name, avatar)`)
-            .eq('id', m.id)
-            .single();
-          if (data) {
-            setMessages(prev => [...prev, formatMsg(data)]);
-          }
-        } catch { /* ignore */ }
-      })
+      .channel(`meetroom-chat-${roomId}-${channelUid}-${Date.now()}`)
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'messages',
+          filter: `meetroom_id=eq.${roomId}`
+        },
+        async (payload) => {
+          const m = payload.new;
+          // Fetch full row kèm user info
+          try {
+            const { data } = await supabase
+              .from('messages')
+              .select(`id, sender_id, content, meetroom_id, created_at, users:users!sender_id (full_name, avatar)`)
+              .eq('id', m.id)
+              .single();
+            if (data) {
+              setMessages(prev => [...prev, formatMsg(data)]);
+            }
+          } catch { /* ignore */ }
+        }
+      )
       .subscribe();
 
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [roomId]);
+  }, [roomId, user?.id]);
 
   // Screen share — thay track video trong tất cả peer connections để remote peers thấy màn hình
   const toggleScreen = async () => {
@@ -989,7 +983,8 @@ export default function MeetRoom() {
     try {
       const payload = {
         sender_id: parseInt(user.id, 10),
-        content: `[meetroom:${roomId}] ${text}`,
+        content: text,
+        meetroom_id: roomId,
       };
       if (groupId && !isNaN(parseInt(groupId, 10))) {
         payload.group_id = parseInt(groupId, 10);

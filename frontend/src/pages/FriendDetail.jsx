@@ -3,6 +3,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useCall } from '../context/CallContext';
+import { useOnlineUsers } from '../context/OnlineUsersContext';
 import { useToast } from '../components/Toast';
 import { supabase } from '../config/supabaseClient';
 import AppLayout from '../layouts/AppLayout';
@@ -33,7 +34,7 @@ export default function FriendDetail() {
   const [posts, setPosts] = useState([]);
   const [loadingPosts, setLoadingPosts] = useState(false);
   const [activeTab, setActiveTab] = useState('posts'); // 'about' | 'posts'
-  const [onlineUserIds, setOnlineUserIds] = useState([]);
+  const onlineUserIds = useOnlineUsers();
   const [particles, setParticles] = useState([]); // { id, x, y, char, delay, leftOffset }
 
   const spawnParticles = (emoji, clientX, clientY) => {
@@ -53,36 +54,7 @@ export default function FriendDetail() {
     }, 1500);
   };
 
-  // Subscribe to real-time presence channel
-  useEffect(() => {
-    if (!user?.id) return;
-    const channel = supabase.channel('online-users', {
-      config: {
-        presence: {
-          key: user.id.toString(),
-        },
-      },
-    });
 
-    channel
-      .on('presence', { event: 'sync' }, () => {
-        const state = channel.presenceState();
-        const onlineIds = Object.keys(state);
-        setOnlineUserIds(onlineIds);
-      })
-      .subscribe(async (status) => {
-        if (status === 'SUBSCRIBED') {
-          await channel.track({
-            id: user.id.toString(),
-            onlineAt: new Date().toISOString(),
-          });
-        }
-      });
-
-    return () => {
-      channel.unsubscribe();
-    };
-  }, [user?.id]);
 
   const isOnline = onlineUserIds.includes(id?.toString());
 

@@ -431,22 +431,7 @@ export default function PrivateCall() {
   const friendAvatar = (() => { try { return decodeURIComponent(searchParams.get('friendAvatar') || ''); } catch { return ''; } })() || '';
   const friendId = searchParams.get('friendId') || null;
 
-  // Giữ trạng thái Online (Presence) khi đang gọi điện
-  useEffect(() => {
-    if (!user?.id) return;
-    const channel = supabase.channel('online-users', {
-      config: { presence: { key: user.id.toString() } },
-    });
-    channel.subscribe(async (status) => {
-      if (status === 'SUBSCRIBED') {
-        await channel.track({
-          id: user.id.toString(),
-          onlineAt: new Date().toISOString(),
-        });
-      }
-    });
-    return () => { channel.unsubscribe(); };
-  }, [user?.id]);
+
 
   const [micOn, setMicOn] = useState(true);
   const [camOn, setCamOn] = useState(true);

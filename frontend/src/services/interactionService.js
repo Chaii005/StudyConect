@@ -265,12 +265,13 @@ export const createPost = async (groupIdOrDetails, detailsObject) => {
 export const toggleLikePost = async (postId, userId, emoji) => {
   const { data: post, error: fetchError } = await supabase
     .from('posts')
-    .select('likes')
+    .select('likes, user_id')
     .eq('id', parseInt(postId, 10))
     .single();
 
   if (fetchError) throw new Error(`Lỗi tải tương tác: ${fetchError.message}`);
 
+  const postOwnerId = post?.user_id || null;
   let likes = Array.isArray(post.likes) ? [...post.likes] : [];
   const idx = likes.findIndex(l => (typeof l === 'object' ? String(l.userId) : String(l)) === String(userId));
 
@@ -300,7 +301,7 @@ export const toggleLikePost = async (postId, userId, emoji) => {
       const { error: prError } = await supabase
         .from('post_reactions')
         .upsert(
-          { post_id: parseInt(postId, 10), user_id: parseInt(userId, 10), emoji },
+          { post_id: parseInt(postId, 10), user_id: parseInt(userId, 10), emoji, post_owner_id: postOwnerId },
           { onConflict: 'post_id,user_id' }
         );
       if (prError) {
@@ -417,6 +418,15 @@ export const getComments = async (postId) => {
 };
 
 export const createComment = async (postId, { content, userId, parentId }) => {
+  // Fetch post owner id first
+  const { data: postData } = await supabase
+    .from('posts')
+    .select('user_id')
+    .eq('id', parseInt(postId, 10))
+    .single();
+
+  const postOwnerId = postData?.user_id || null;
+
   const { data: comment, error } = await supabase
     .from('comments')
     .insert([
@@ -424,7 +434,8 @@ export const createComment = async (postId, { content, userId, parentId }) => {
         post_id: parseInt(postId, 10),
         user_id: userId,
         parent_id: parentId ? parseInt(parentId, 10) : null,
-        content
+        content,
+        post_owner_id: postOwnerId
       }
     ])
     .select(`
@@ -963,7 +974,7 @@ export const getUserSchedulesAndDeadlines = async (userId) => {
   const { data: schedulesData } = await supabase
     .from('schedules')
     .select(`
-      *,
+      id, group_id, topic, date_time, location, description,
       study_groups (
         name
       )
@@ -988,7 +999,7 @@ export const getUserSchedulesAndDeadlines = async (userId) => {
   const { data: deadlinesData } = await supabase
     .from('deadlines')
     .select(`
-      *,
+      id, title, due_date, group_id, completed, description, assignee_id,
       study_groups (
         name
       )
@@ -1028,7 +1039,7 @@ export const getChatMessages = async (groupId) => {
     .from('messages')
     .select(`
       id, group_id, sender_id, content, file_attachment,
-      reply_to, is_pinned, created_at,
+      reply_to, is_pinned, meetroom_id, created_at,
       users:users!sender_id (
         full_name,
         avatar
@@ -1042,7 +1053,7 @@ export const getChatMessages = async (groupId) => {
 
   const reversedData = (data || []).reverse();
   return reversedData
-    .filter(c => !c.content?.startsWith('[meetroom:'))
+    .filter(c => !c.meetroom_id && !c.content?.startsWith('[meetroom:'))
     .map(c => ({
       id: c.id.toString(),
       groupId: c.group_id.toString(),

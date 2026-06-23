@@ -304,6 +304,7 @@ export default function useNotifications(userId) {
             group_id,
             sender_id,
             content,
+            meetroom_id,
             created_at,
             users:users!sender_id (
               full_name
@@ -323,8 +324,9 @@ export default function useNotifications(userId) {
             .forEach(m => {
               const rawContent = m.content || '';
               const groupName = m.study_groups?.name || 'Nhóm';
-              if (rawContent.startsWith('[meetroom:')) {
-                const cleanText = rawContent.replace(/^\[meetroom:[^\]]+\]\s*/, '');
+              const isMeetroom = m.meetroom_id || rawContent.startsWith('[meetroom:');
+              if (isMeetroom) {
+                const cleanText = rawContent.startsWith('[meetroom:') ? rawContent.replace(/^\[meetroom:[^\]]+\]\s*/, '') : rawContent;
                 notifsList.push({
                   key: `groupcall:${m.id}`,
                   type: 'groupcall',
@@ -792,10 +794,11 @@ export default function useNotifications(userId) {
 
   useEffect(() => {
     if (!userId) return;
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     refresh();
 
     const notifChannel = supabase
-      .channel(`notif-${userId}-${Date.now()}`)
+      .channel(`notif-${userId}`)
       .on(
         'postgres_changes',
         { event: '*', schema: 'public', table: 'friendships', filter: `to_user_id=eq.${userId}` },
@@ -916,7 +919,11 @@ export default function useNotifications(userId) {
       )
       .subscribe();
 
-    const interval = setInterval(refresh, 300000); // fallback 5 phút
+    const interval = setInterval(() => {
+      if (document.visibilityState === 'visible') {
+        refresh();
+      }
+    }, 300000); // fallback 5 phút
     
     return () => {
       clearInterval(interval);

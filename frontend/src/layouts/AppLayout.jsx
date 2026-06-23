@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
+import { useOnlineUsers } from '@/context/OnlineUsersContext';
 import { getTotalUnread, refreshCache } from '@/services/chatServiceTEMP';
 import NotificationBell from '@/components/notifications/NotificationBell';
 import { supabase } from '@/config/supabaseClient';
@@ -100,7 +101,7 @@ export default function AppLayout({ children, hideNavbar = false, hideSidebar = 
   const [schedules, setSchedules] = useState([]);
   const [deadlines, setDeadlines] = useState([]);
   const [friends, setFriends] = useState([]);
-  const [onlineUserIds, setOnlineUserIds] = useState([]);
+  const onlineUserIds = useOnlineUsers();
 
   // Fetch sidebar data: friends, schedules & deadlines
   useEffect(() => {
@@ -152,8 +153,12 @@ export default function AppLayout({ children, hideNavbar = false, hideSidebar = 
     loadFriends();
     fetchSideData();
 
-    // Poll schedules/deadlines every 60s
-    const interval = setInterval(fetchSideData, 60000);
+    // Poll schedules/deadlines every 5 minutes
+    const interval = setInterval(() => {
+      if (document.visibilityState === 'visible') {
+        fetchSideData();
+      }
+    }, 300000);
 
     return () => {
       isMounted = false;
@@ -161,36 +166,7 @@ export default function AppLayout({ children, hideNavbar = false, hideSidebar = 
     };
   }, [user?.id]);
 
-  // Subscribe to presence for online user status
-  useEffect(() => {
-    if (!user?.id) return;
-    const channel = supabase.channel('online-users-layout', {
-      config: {
-        presence: {
-          key: user.id.toString(),
-        },
-      },
-    });
 
-    channel
-      .on('presence', { event: 'sync' }, () => {
-        const state = channel.presenceState();
-        const onlineIds = Object.keys(state);
-        setOnlineUserIds(onlineIds);
-      })
-      .subscribe(async (status) => {
-        if (status === 'SUBSCRIBED') {
-          await channel.track({
-            id: user.id.toString(),
-            onlineAt: new Date().toISOString(),
-          });
-        }
-      });
-
-    return () => {
-      channel.unsubscribe();
-    };
-  }, [user?.id]);
   
 
 
@@ -206,14 +182,18 @@ export default function AppLayout({ children, hideNavbar = false, hideSidebar = 
       }
     };
     updateUnread();
-    const interval = setInterval(updateUnread, 300000); // fallback 5 minutes
+    const interval = setInterval(() => {
+      if (document.visibilityState === 'visible') {
+        updateUnread();
+      }
+    }, 300000); // fallback 5 minutes
     return () => clearInterval(interval);
   }, [user]);
 
   useEffect(() => {
     if (!user?.id) return;
 
-    const channelName = `layout-unread-${user.id}-${Date.now()}`;
+    const channelName = `layout-unread-${user.id}`;
     const channel = supabase
       .channel(channelName)
       .on(
@@ -259,14 +239,18 @@ export default function AppLayout({ children, hideNavbar = false, hideSidebar = 
       }
     };
     fetchPendingCount();
-    const interval = setInterval(fetchPendingCount, 300000); // fallback 5 minutes
+    const interval = setInterval(() => {
+      if (document.visibilityState === 'visible') {
+        fetchPendingCount();
+      }
+    }, 300000); // fallback 5 minutes
     return () => clearInterval(interval);
   }, [user]);
 
   useEffect(() => {
     if (!user?.id) return;
 
-    const channelName = `layout-pending-friends-${user.id}-${Date.now()}`;
+    const channelName = `layout-pending-friends-${user.id}`;
     const channel = supabase
       .channel(channelName)
       .on(

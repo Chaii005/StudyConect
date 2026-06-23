@@ -3,6 +3,7 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useCall } from '../context/CallContext';
+import { useOnlineUsers } from '../context/OnlineUsersContext';
 import AppLayout from '../layouts/AppLayout';
 import { getFriends, acceptFriendRequest, removeFriend } from '../services/friendService.js';
 import {
@@ -731,15 +732,20 @@ function ConversationView({ user, friend, friends, onBack, onlineUserIds, onNick
   }, [user.id, friend.userId, nickname, friend.fullName, onNicknameChange]);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     load();
-    const interval = setInterval(load, 300000); // fallback 5 minutes
+    const interval = setInterval(() => {
+      if (document.visibilityState === 'visible') {
+        load();
+      }
+    }, 300000); // fallback 5 minutes
     return () => clearInterval(interval);
   }, [load]);
 
   useEffect(() => {
     if (!user?.id || !friend?.userId) return;
 
-    const channelName = `chat-msg-${user.id}-${friend.userId}-${Date.now()}`;
+    const channelName = `chat-msg-${user.id}-${friend.userId}`;
     const channel = supabase
       .channel(channelName)
       .on(
@@ -2478,38 +2484,9 @@ export default function Chat() {
   const { isAuth, user } = useAuth();
   const navigate = useNavigate();
   const [friends, setFriends] = useState([]);
-  const [onlineUserIds, setOnlineUserIds] = useState([]);
+  const onlineUserIds = useOnlineUsers();
 
-  // Subscribe to real-time presence channel
-  useEffect(() => {
-    if (!user?.id) return;
-    const channel = supabase.channel('online-users', {
-      config: {
-        presence: {
-          key: user.id.toString(),
-        },
-      },
-    });
 
-    channel
-      .on('presence', { event: 'sync' }, () => {
-        const state = channel.presenceState();
-        const onlineIds = Object.keys(state);
-        setOnlineUserIds(onlineIds);
-      })
-      .subscribe(async (status) => {
-        if (status === 'SUBSCRIBED') {
-          await channel.track({
-            id: user.id.toString(),
-            onlineAt: new Date().toISOString(),
-          });
-        }
-      });
-
-    return () => {
-      channel.unsubscribe();
-    };
-  }, [user?.id]);
 
   const [selectedFriend, setSelectedFriend] = useState(null);
 
@@ -2557,7 +2534,11 @@ export default function Chat() {
       }
     };
     refresh();
-    const timer = setInterval(refresh, 300000); // fallback 5 phút — Realtime handles real-time updates
+    const timer = setInterval(() => {
+      if (document.visibilityState === 'visible') {
+        refresh();
+      }
+    }, 300000); // fallback 5 phút — Realtime handles real-time updates
     return () => clearInterval(timer);
   }, [user]);
 

@@ -2,6 +2,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useOnlineUsers } from '../context/OnlineUsersContext';
 import {
   getFriends,
   getPendingRequests,
@@ -222,38 +223,9 @@ export default function Friends() {
   const { isAuth, user } = useAuth();
   const [tab, setTab] = useState('friends');
   const [friends, setFriends] = useState([]);
-  const [onlineUserIds, setOnlineUserIds] = useState([]);
+  const onlineUserIds = useOnlineUsers();
 
-  // Subscribe to real-time presence channel
-  useEffect(() => {
-    if (!user?.id) return;
-    const channel = supabase.channel('online-users', {
-      config: {
-        presence: {
-          key: user.id.toString(),
-        },
-      },
-    });
 
-    channel
-      .on('presence', { event: 'sync' }, () => {
-        const state = channel.presenceState();
-        const onlineIds = Object.keys(state);
-        setOnlineUserIds(onlineIds);
-      })
-      .subscribe(async (status) => {
-        if (status === 'SUBSCRIBED') {
-          await channel.track({
-            id: user.id.toString(),
-            onlineAt: new Date().toISOString(),
-          });
-        }
-      });
-
-    return () => {
-      channel.unsubscribe();
-    };
-  }, [user?.id]);
   const [pending, setPending] = useState([]);
   const [newPendingAlert, setNewPendingAlert] = useState(false);
   const [sent, setSent] = useState([]);
@@ -361,15 +333,20 @@ export default function Friends() {
 
   // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     loadAll();
-    const interval = setInterval(loadAll, 300000); // fallback 5 minutes
+    const interval = setInterval(() => {
+      if (document.visibilityState === 'visible') {
+        loadAll();
+      }
+    }, 300000); // fallback 5 minutes
     return () => clearInterval(interval);
   }, [loadAll]);
 
   useEffect(() => {
     if (!user?.id) return;
 
-    const channelName = `friend-realtime-${user.id}-${Date.now()}`;
+    const channelName = `friend-realtime-${user.id}`;
     const channel = supabase
       .channel(channelName)
       .on(

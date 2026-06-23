@@ -81,7 +81,7 @@ export default function Home() {
 
     // Chỉ refetch khi có post mới INSERT hoặc xóa/sửa post của mình
     const postsChannel = supabase
-      .channel(`posts-${user.id}-${Date.now()}`)
+      .channel(`posts-${user.id}`)
       .on(
         'postgres_changes',
         { event: '*', schema: 'public', table: 'posts' },

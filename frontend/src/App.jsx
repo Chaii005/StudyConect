@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, Navigate, Outlet } from 'react-router-dom
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { Suspense, useState, useEffect } from 'react';
 import { CallProvider } from './context/CallContext';
+import { OnlineUsersProvider } from './context/OnlineUsersContext';
 import CallNotification from './components/CallNotification';
 import { ToastProvider } from './context/ToastContext';
 import { NotificationProvider } from './context/NotificationContext';
@@ -134,9 +135,11 @@ const AdminRoute = ({ children }) => {
 const StudentCallWrapper = () => {
   return (
     <CallProvider>
-      <CallNotification />
-      <GlobalMessageListener />
-      <Outlet />
+      <OnlineUsersProvider>
+        <CallNotification />
+        <GlobalMessageListener />
+        <Outlet />
+      </OnlineUsersProvider>
     </CallProvider>
   );
 };

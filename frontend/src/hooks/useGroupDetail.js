@@ -7,6 +7,7 @@ import { compressImage } from '@/utils/imageCompress';
 import { getGroupById, assignDeputy, removeDeputy, kickMember } from '@/services/groupService';
 import { sendFriendRequest } from '@/services/friendService';
 import { supabase } from '@/config/supabaseClient';
+import { useOnlineUsers } from '@/context/OnlineUsersContext';
 import {
   getFiles,
   uploadFile,
@@ -63,7 +64,7 @@ export default function useGroupDetail(groupId, user, addToast) {
   const [kickingIds, setKickingIds] = useState({});
   const [membersDetails, setMembersDetails] = useState([]);
   const [friendships, setFriendships] = useState([]);
-  const [onlineUserIds, setOnlineUserIds] = useState([]);
+  const onlineUserIds = useOnlineUsers();
 
   // Documents state
   const [files, setFiles] = useState([]);
@@ -276,36 +277,7 @@ export default function useGroupDetail(groupId, user, addToast) {
     fetchGroupDetails();
   }, [fetchGroupDetails]);
 
-  // Subscribe to real-time presence channel
-  useEffect(() => {
-    if (!user?.id) return;
-    const channel = supabase.channel('online-users', {
-      config: {
-        presence: {
-          key: user.id.toString(),
-        },
-      },
-    });
 
-    channel
-      .on('presence', { event: 'sync' }, () => {
-        const state = channel.presenceState();
-        const onlineIds = Object.keys(state);
-        setOnlineUserIds(onlineIds);
-      })
-      .subscribe(async (status) => {
-        if (status === 'SUBSCRIBED') {
-          await channel.track({
-            id: user.id.toString(),
-            onlineAt: new Date().toISOString(),
-          });
-        }
-      });
-
-    return () => {
-      channel.unsubscribe();
-    };
-  }, [user?.id]);
 
   // Load appropriate data when tab changes
   useEffect(() => {
@@ -1023,12 +995,20 @@ export default function useGroupDetail(groupId, user, addToast) {
     try {
       let fileData = null, fileName = null;
       if (submitFile) {
-        fileName = submitFile.name;
-        const safeName = sanitizeForStorage(submitFile.name);
+        let fileToUpload = submitFile;
+        if (submitFile.type?.startsWith('image/')) {
+          try {
+            fileToUpload = await compressImage(submitFile, { maxWidth: 1280, maxHeight: 1280, quality: 0.78 });
+          } catch {
+            fileToUpload = submitFile;
+          }
+        }
+        fileName = fileToUpload.name || submitFile.name;
+        const safeName = sanitizeForStorage(fileName);
         const storageFileName = `submissions/${groupId}/${user.id}_${Date.now()}_${safeName}`;
         const { error: uploadError } = await supabase.storage
           .from('attachments')
-          .upload(storageFileName, submitFile, { cacheControl: '3600', upsert: true });
+          .upload(storageFileName, fileToUpload, { cacheControl: '3600', upsert: true });
 
         if (uploadError) {
           if (import.meta.env.DEV) {
