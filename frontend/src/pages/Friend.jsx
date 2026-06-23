@@ -360,9 +360,48 @@ export default function Friends() {
   }, [user]);
 
   // eslint-disable-next-line react-hooks/set-state-in-effect
-  useEffect(() => { loadAll(); }, [loadAll]);
+  useEffect(() => {
+    loadAll();
+    const interval = setInterval(loadAll, 300000); // fallback 5 minutes
+    return () => clearInterval(interval);
+  }, [loadAll]);
 
-  // [setInterval 30s poll getPendingRequests đã xóa — useNotifications Realtime subscribe friendships thay thế]
+  useEffect(() => {
+    if (!user?.id) return;
+
+    const channelName = `friend-realtime-${user.id}-${Date.now()}`;
+    const channel = supabase
+      .channel(channelName)
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'friendships',
+          filter: `to_user_id=eq.${user.id}`,
+        },
+        async () => {
+          await loadAll();
+        }
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'friendships',
+          filter: `from_user_id=eq.${user.id}`,
+        },
+        async () => {
+          await loadAll();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [user?.id, loadAll]);
 
 
 

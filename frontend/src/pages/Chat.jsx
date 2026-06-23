@@ -731,11 +731,38 @@ function ConversationView({ user, friend, friends, onBack, onlineUserIds, onNick
   }, [user.id, friend.userId, nickname, friend.fullName, onNicknameChange]);
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     load();
-    // Không cần interval — GlobalMessageListener đã subscribe Realtime messages INSERT
-    // Tin nhắn mới sẽ trigger qua chatServiceTEMP cache khi Realtime fired
+    const interval = setInterval(load, 300000); // fallback 5 minutes
+    return () => clearInterval(interval);
   }, [load]);
+
+  useEffect(() => {
+    if (!user?.id || !friend?.userId) return;
+
+    const channelName = `chat-msg-${user.id}-${friend.userId}-${Date.now()}`;
+    const channel = supabase
+      .channel(channelName)
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'messages',
+          filter: `receiver_id=eq.${user.id}`,
+        },
+        async (payload) => {
+          const msg = payload.new;
+          if (String(msg.sender_id) === String(friend.userId)) {
+            await load();
+          }
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [user?.id, friend?.userId, load]);
 
   // Only auto-scroll when NEW messages arrive (not on initial load or poll refresh without new msgs)
   useEffect(() => {

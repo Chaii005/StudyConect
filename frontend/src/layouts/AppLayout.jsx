@@ -206,9 +206,40 @@ export default function AppLayout({ children, hideNavbar = false, hideSidebar = 
       }
     };
     updateUnread();
-    const interval = setInterval(updateUnread, 300000); // fallback 5 phút — badge updates via Realtime GlobalMessageListener
+    const interval = setInterval(updateUnread, 300000); // fallback 5 minutes
     return () => clearInterval(interval);
   }, [user]);
+
+  useEffect(() => {
+    if (!user?.id) return;
+
+    const channelName = `layout-unread-${user.id}-${Date.now()}`;
+    const channel = supabase
+      .channel(channelName)
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'messages',
+          filter: `receiver_id=eq.${user.id}`,
+        },
+        async () => {
+          try {
+            await refreshCache(String(user.id));
+            const count = getTotalUnread(String(user.id));
+            setUnreadCount(count);
+          } catch {
+            // ignore
+          }
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [user?.id]);
 
   useEffect(() => {
     if (!user?.id) return;
@@ -228,9 +259,46 @@ export default function AppLayout({ children, hideNavbar = false, hideSidebar = 
       }
     };
     fetchPendingCount();
-    const interval = setInterval(fetchPendingCount, 300000); // fallback 5 phút — useNotifications Realtime subscribe friendships
+    const interval = setInterval(fetchPendingCount, 300000); // fallback 5 minutes
     return () => clearInterval(interval);
   }, [user]);
+
+  useEffect(() => {
+    if (!user?.id) return;
+
+    const channelName = `layout-pending-friends-${user.id}-${Date.now()}`;
+    const channel = supabase
+      .channel(channelName)
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'friendships',
+          filter: `to_user_id=eq.${user.id}`,
+        },
+        async () => {
+          try {
+            const { count } = await supabase
+              .from('friendships')
+              .select('*', { count: 'exact', head: true })
+              .eq('to_user_id', parseInt(user.id, 10))
+              .eq('status', 'pending');
+              
+            if (count !== null) {
+              setPendingFriendsCount(count);
+            }
+          } catch {
+            // ignore
+          }
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [user?.id]);
 
   // Close drawer when route changes
   useEffect(() => {
