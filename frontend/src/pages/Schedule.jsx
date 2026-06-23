@@ -249,14 +249,17 @@ export default function Schedule() {
               </div>
 
               {incompleteDeadlines.length === 0 ? (
-                <div style={{ background: 'rgba(34,197,94,0.05)', border: '1px solid rgba(34,197,94,0.2)', borderRadius: '16px', padding: '24px 16px', textAlign: 'center' }}>
-                  <div style={{ color: 'var(--success)', display: 'flex', justifyContent: 'center', marginBottom: '8px' }}>
-                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
-                      <polyline points="22 4 12 14.01 9 11.01" />
-                    </svg>
-                  </div>
-                  <p style={{ color: 'var(--text-primary)', fontSize: '14px', fontWeight: 600, margin: 0 }}>Tuyệt vời! Không còn deadline nào chưa làm.</p>
+                <div style={{ background: 'var(--bg-card)', border: '1px dashed var(--border)', borderRadius: '16px', padding: '24px 16px', textAlign: 'center' }}>
+                  <svg width="72" height="56" viewBox="0 0 72 56" style={{ marginBottom: '8px' }}>
+                    <rect x="18" y="12" width="36" height="38" rx="5" fill="var(--bg-input)" stroke="var(--primary)" strokeWidth="1.5" />
+                    <rect x="30" y="7" width="12" height="5" rx="1.5" fill="var(--border)" stroke="var(--primary)" strokeWidth="1.5" />
+                    <line x1="24" y1="20" x2="48" y2="20" stroke="var(--border)" strokeWidth="1.5" strokeLinecap="round" />
+                    <line x1="24" y1="28" x2="40" y2="28" stroke="var(--border)" strokeWidth="1.5" strokeLinecap="round" />
+                    <line x1="24" y1="36" x2="34" y2="36" stroke="var(--border)" strokeWidth="1.5" strokeLinecap="round" />
+                    <circle cx="48" cy="38" r="9" fill="var(--bg-card)" stroke="var(--primary)" strokeWidth="1.5" />
+                    <polyline points="44 38 47 41 52 35" stroke="var(--primary)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+                  </svg>
+                  <p style={{ color: 'var(--text-secondary)', fontSize: '13px', margin: 0 }}>Tuyệt vời! Không còn deadline nào chưa làm.</p>
                 </div>
               ) : (
                 incompleteDeadlines.map(d => {
