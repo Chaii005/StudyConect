@@ -266,7 +266,14 @@ export default function AppLayout({ children, hideNavbar = false, hideSidebar = 
                             location.pathname.startsWith('/reset-password') ||
                             location.pathname.startsWith('/forgot-password');
   const showRightSidebar = !hideRightSidebar && !isChatOrCallPath && user;
-  const layoutClass = (showRightSidebar && !rightSidebarCollapsed) ? 'layout-3col-custom' : 'layout-2col-custom';
+  let layoutClass = 'layout-2col-custom';
+  if (showRightSidebar) {
+    if (rightSidebarCollapsed) {
+      layoutClass = 'layout-collapsed-custom';
+    } else {
+      layoutClass = 'layout-3col-custom';
+    }
+  }
 
   return (
     <div className="app-layout-wrapper sc-animated-bg" style={{ height: '100%', overflow: 'hidden', overscrollBehavior: 'none', position: 'relative' }}>
@@ -858,13 +865,13 @@ export default function AppLayout({ children, hideNavbar = false, hideSidebar = 
                 </aside>
               )}
 
-              {/* Floating button to expand Right Sidebar when collapsed */}
+              {/* Expand Right Sidebar button placed in the 3rd column of the grid */}
               {showRightSidebar && rightSidebarCollapsed && (
-                <div className="flex-desktop-only" style={{ 
-                  position: 'fixed', 
-                  right: '24px', 
-                  top: '100px', 
-                  zIndex: 99
+                <div className="expand-button-col" style={{ 
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'start',
+                  gridColumn: 3
                 }}>
                   <button 
                     onClick={() => setRightSidebarCollapsed(false)} 
@@ -878,9 +885,11 @@ export default function AppLayout({ children, hideNavbar = false, hideSidebar = 
                       alignItems: 'center',
                       justifyContent: 'center',
                       cursor: 'pointer',
-                      boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+                      boxShadow: 'var(--shadow)',
                       transition: 'var(--transition)',
-                      color: 'var(--text-primary)'
+                      color: 'var(--text-primary)',
+                      position: 'sticky',
+                      top: '24px'
                     }}
                     title="Hiện thanh bên phải"
                     onMouseEnter={(e) => { e.currentTarget.style.background = 'var(--bg-input)'; }}
