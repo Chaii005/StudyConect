@@ -266,14 +266,7 @@ export default function AppLayout({ children, hideNavbar = false, hideSidebar = 
                             location.pathname.startsWith('/reset-password') ||
                             location.pathname.startsWith('/forgot-password');
   const showRightSidebar = !hideRightSidebar && !isChatOrCallPath && user;
-  let layoutClass = 'layout-2col-custom';
-  if (showRightSidebar) {
-    if (rightSidebarCollapsed) {
-      layoutClass = 'layout-collapsed-custom';
-    } else {
-      layoutClass = 'layout-3col-custom';
-    }
-  }
+  const layoutClass = (showRightSidebar && !rightSidebarCollapsed) ? 'layout-3col-custom' : 'layout-2col-custom';
 
   return (
     <div className="app-layout-wrapper sc-animated-bg" style={{ height: '100%', overflow: 'hidden', overscrollBehavior: 'none', position: 'relative' }}>
@@ -865,37 +858,15 @@ export default function AppLayout({ children, hideNavbar = false, hideSidebar = 
                 </aside>
               )}
 
-              {/* Expand Right Sidebar button placed in the 3rd column of the grid */}
+              {/* Hover trigger zone & slide-out expand button on the right edge of viewport */}
               {showRightSidebar && rightSidebarCollapsed && (
-                <div className="expand-button-col" style={{ 
-                  display: 'flex',
-                  justifyContent: 'center',
-                  alignItems: 'start',
-                  gridColumn: 3
-                }}>
+                <div className="right-sidebar-expand-trigger">
                   <button 
+                    className="right-sidebar-expand-btn"
                     onClick={() => setRightSidebarCollapsed(false)} 
-                    style={{
-                      background: 'var(--bg-card)',
-                      border: '1.5px solid var(--border)',
-                      borderRadius: '10px',
-                      width: '38px',
-                      height: '38px',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      cursor: 'pointer',
-                      boxShadow: 'var(--shadow)',
-                      transition: 'var(--transition)',
-                      color: 'var(--text-primary)',
-                      position: 'sticky',
-                      top: '24px'
-                    }}
                     title="Hiện thanh bên phải"
-                    onMouseEnter={(e) => { e.currentTarget.style.background = 'var(--bg-input)'; }}
-                    onMouseLeave={(e) => { e.currentTarget.style.background = 'var(--bg-card)'; }}
                   >
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                       <polyline points="15 18 9 12 15 6" />
                     </svg>
                   </button>

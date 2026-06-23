@@ -1391,15 +1391,13 @@ select.form-input option {
   align-items: stretch;
   gap: 24px;
 }
-.expand-button-col {
+.right-sidebar-expand-trigger {
   display: none !important;
 }
+
 @media (min-width: 1200px) {
   .layout-3col-custom {
     grid-template-columns: 260px 1fr 300px;
-  }
-  .layout-collapsed-custom {
-    grid-template-columns: 260px 1fr 38px;
   }
   .layout-2col-custom {
     grid-template-columns: 260px 1fr;
@@ -1410,8 +1408,57 @@ select.form-input option {
   .layout-1col-custom {
     grid-template-columns: 1fr;
   }
-  .expand-button-col {
+  
+  .right-sidebar-expand-trigger {
     display: flex !important;
+    position: fixed;
+    right: 0;
+    top: 130px; /* Aligned with middle of post creation box height */
+    height: 80px;
+    width: 32px;
+    align-items: center;
+    justify-content: flex-end;
+    z-index: 100;
+  }
+
+  .right-sidebar-expand-btn {
+    background: var(--bg-card);
+    border: 1.5px solid var(--border);
+    border-right: none;
+    border-radius: 10px 0 0 10px;
+    width: 26px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: -2px 4px 12px rgba(0, 0, 0, 0.08);
+    color: var(--text-primary);
+    transform: translateX(100%);
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.2s, border-color 0.2s;
+  }
+
+  .right-sidebar-expand-trigger:hover .right-sidebar-expand-btn,
+  .right-sidebar-expand-btn:hover {
+    transform: translateX(0);
+  }
+
+  .right-sidebar-expand-trigger::before {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 22px;
+    width: 3px;
+    height: 36px;
+    background: var(--text-muted);
+    opacity: 0.4;
+    border-radius: 3px 0 0 3px;
+    transition: opacity 0.2s;
+    pointer-events: none;
+  }
+
+  .right-sidebar-expand-trigger:hover::before {
+    opacity: 0;
   }
 }
 @media (min-width: 992px) and (max-width: 1199px) {
@@ -1419,9 +1466,6 @@ select.form-input option {
     display: none !important;
   }
   .layout-3col-custom {
-    grid-template-columns: 260px 1fr !important;
-  }
-  .layout-collapsed-custom {
     grid-template-columns: 260px 1fr !important;
   }
   .layout-2col-custom {

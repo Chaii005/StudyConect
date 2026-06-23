@@ -12373,15 +12373,13 @@ select.form-input option {
   align-items: stretch;
   gap: 24px;
 }
-.expand-button-col {
+.right-sidebar-expand-trigger {
   display: none !important;
 }
+
 @media (min-width: 1200px) {
   .layout-3col-custom {
     grid-template-columns: 260px 1fr 300px;
-  }
-  .layout-collapsed-custom {
-    grid-template-columns: 260px 1fr 38px;
   }
   .layout-2col-custom {
     grid-template-columns: 260px 1fr;
@@ -12392,8 +12390,57 @@ select.form-input option {
   .layout-1col-custom {
     grid-template-columns: 1fr;
   }
-  .expand-button-col {
+  
+  .right-sidebar-expand-trigger {
     display: flex !important;
+    position: fixed;
+    right: 0;
+    top: 130px; /* Aligned with middle of post creation box height */
+    height: 80px;
+    width: 32px;
+    align-items: center;
+    justify-content: flex-end;
+    z-index: 100;
+  }
+
+  .right-sidebar-expand-btn {
+    background: var(--bg-card);
+    border: 1.5px solid var(--border);
+    border-right: none;
+    border-radius: 10px 0 0 10px;
+    width: 26px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: -2px 4px 12px rgba(0, 0, 0, 0.08);
+    color: var(--text-primary);
+    transform: translateX(100%);
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.2s, border-color 0.2s;
+  }
+
+  .right-sidebar-expand-trigger:hover .right-sidebar-expand-btn,
+  .right-sidebar-expand-btn:hover {
+    transform: translateX(0);
+  }
+
+  .right-sidebar-expand-trigger::before {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 22px;
+    width: 3px;
+    height: 36px;
+    background: var(--text-muted);
+    opacity: 0.4;
+    border-radius: 3px 0 0 3px;
+    transition: opacity 0.2s;
+    pointer-events: none;
+  }
+
+  .right-sidebar-expand-trigger:hover::before {
+    opacity: 0;
   }
 }
 @media (min-width: 992px) and (max-width: 1199px) {
@@ -12401,9 +12448,6 @@ select.form-input option {
     display: none !important;
   }
   .layout-3col-custom {
-    grid-template-columns: 260px 1fr !important;
-  }
-  .layout-collapsed-custom {
     grid-template-columns: 260px 1fr !important;
   }
   .layout-2col-custom {
@@ -12785,14 +12829,7 @@ export default function AppLayout({ children, hideNavbar = false, hideSidebar = 
                             location.pathname.startsWith('/reset-password') ||
                             location.pathname.startsWith('/forgot-password');
   const showRightSidebar = !hideRightSidebar && !isChatOrCallPath && user;
-  let layoutClass = 'layout-2col-custom';
-  if (showRightSidebar) {
-    if (rightSidebarCollapsed) {
-      layoutClass = 'layout-collapsed-custom';
-    } else {
-      layoutClass = 'layout-3col-custom';
-    }
-  }
+  const layoutClass = (showRightSidebar && !rightSidebarCollapsed) ? 'layout-3col-custom' : 'layout-2col-custom';
 
   return (
     <div className="app-layout-wrapper sc-animated-bg" style={{ height: '100%', overflow: 'hidden', overscrollBehavior: 'none', position: 'relative' }}>
@@ -13384,37 +13421,15 @@ export default function AppLayout({ children, hideNavbar = false, hideSidebar = 
                 </aside>
               )}
 
-              {/* Expand Right Sidebar button placed in the 3rd column of the grid */}
+              {/* Hover trigger zone & slide-out expand button on the right edge of viewport */}
               {showRightSidebar && rightSidebarCollapsed && (
-                <div className="expand-button-col" style={{ 
-                  display: 'flex',
-                  justifyContent: 'center',
-                  alignItems: 'start',
-                  gridColumn: 3
-                }}>
+                <div className="right-sidebar-expand-trigger">
                   <button 
+                    className="right-sidebar-expand-btn"
                     onClick={() => setRightSidebarCollapsed(false)} 
-                    style={{
-                      background: 'var(--bg-card)',
-                      border: '1.5px solid var(--border)',
-                      borderRadius: '10px',
-                      width: '38px',
-                      height: '38px',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      cursor: 'pointer',
-                      boxShadow: 'var(--shadow)',
-                      transition: 'var(--transition)',
-                      color: 'var(--text-primary)',
-                      position: 'sticky',
-                      top: '24px'
-                    }}
                     title="Hiện thanh bên phải"
-                    onMouseEnter={(e) => { e.currentTarget.style.background = 'var(--bg-input)'; }}
-                    onMouseLeave={(e) => { e.currentTarget.style.background = 'var(--bg-card)'; }}
                   >
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                       <polyline points="15 18 9 12 15 6" />
                     </svg>
                   </button>
