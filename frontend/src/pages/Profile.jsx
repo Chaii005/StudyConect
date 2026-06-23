@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../components/Toast';
 import { updateProfile, changePassword } from '../services/authService';
@@ -136,6 +137,7 @@ function CustomSelect({ value, onChange, options, placeholder = "Chọn...", dis
 }
 
 export default function Profile() {
+  const navigate = useNavigate();
   const { user, setUser } = useAuth();
   const { addToast } = useToast();
   const fileRef = useRef();
@@ -249,6 +251,9 @@ export default function Profile() {
       setUser(updated);
       setAvatarFile(null);
       addToast('Cập nhật hồ sơ thành công!');
+      setTimeout(() => {
+        navigate('/');
+      }, 500);
     } catch (err) { addToast(err.message, 'error'); }
     finally { setSavingInfo(false); }
   };
@@ -417,9 +422,8 @@ export default function Profile() {
                   <div className="form-group">
                     <label className="form-label" htmlFor="p-name">Họ và tên *</label>
                     <div className="form-input-wrap">
-                      <input id="p-name" name="fullName" type="text" className="form-input"
+                      <input id="p-name" name="fullName" type="text" className="form-input no-icon"
                         placeholder="Họ và tên đầy đủ" value={info.fullName} onChange={handleInfoChange} />
-                      <span className="input-icon"></span>
                     </div>
                   </div>
 
@@ -437,9 +441,8 @@ export default function Profile() {
                     <div className="form-group" style={{ marginTop: '12px' }}>
                       <label className="form-label" htmlFor="p-uni-custom">Tên trường đại học khác</label>
                       <div className="form-input-wrap">
-                        <input id="p-uni-custom" name="customUniversity" type="text" className="form-input"
+                        <input id="p-uni-custom" name="customUniversity" type="text" className="form-input no-icon"
                           placeholder="Nhập tên trường đại học của bạn" value={info.customUniversity} onChange={handleInfoChange} />
-                        <span className="input-icon">️</span>
                       </div>
                     </div>
                   )}
@@ -458,9 +461,8 @@ export default function Profile() {
                     <div className="form-group" style={{ marginTop: '12px' }}>
                       <label className="form-label" htmlFor="p-major-custom">Tên ngành học khác</label>
                       <div className="form-input-wrap">
-                        <input id="p-major-custom" name="customMajor" type="text" className="form-input"
+                        <input id="p-major-custom" name="customMajor" type="text" className="form-input no-icon"
                           placeholder="Nhập ngành học của bạn" value={info.customMajor} onChange={handleInfoChange} />
-                        <span className="input-icon"></span>
                       </div>
                     </div>
                   )}

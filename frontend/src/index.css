@@ -884,9 +884,9 @@ select.form-input option {
 }
 
 .profile-tab.active {
-  background: rgba(17, 24, 39, 0.06);
-  border: 1.5px solid var(--border);
-  color: var(--text-primary);
+  background: #1A1A1A;
+  border: 1.5px solid #1A1A1A;
+  color: #ffffff;
   box-shadow: none;
 }
 
