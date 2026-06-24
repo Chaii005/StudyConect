@@ -341,7 +341,7 @@ export default function Friends() {
   useEffect(() => {
     if (!user?.id) return;
 
-    const channelName = `friend-realtime-${user.id}-${Date.now()}`;
+    const channelName = `friend-realtime-${user.id}`;
     const channel = supabase
       .channel(channelName)
       .on(

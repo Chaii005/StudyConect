@@ -5,7 +5,6 @@ import { getPosts, deletePost, createComment, toggleLikePost, togglePinPost } fr
 import { getFriends } from '@/services/friendService';
 import { supabase } from '@/config/supabaseClient';
 
-import AppLayout from '@/layouts/AppLayout';
 import Avatar from '@/components/common/Avatar';
 import PostList from '@/components/posts/PostList';
 import CreatePostModal from '@/components/posts/CreatePostModal';
@@ -183,7 +182,7 @@ export default function Home() {
 
 
   return (
-    <AppLayout>
+    <>
       <style>{`
         @keyframes floatEmojiUpFixed {
           0% {
@@ -313,6 +312,6 @@ export default function Home() {
         onConfirm={confirmConfig?.onConfirm}
         onCancel={confirmConfig?.onCancel || (() => setConfirmConfig(null))}
       />
-    </AppLayout>
+    </>
   );
 }

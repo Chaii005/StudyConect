@@ -27,6 +27,7 @@ import MeetRoom from './pages/Meetroom';
 import PrivateCall from './pages/PrivateCall';
 import FriendDetail from './pages/FriendDetail';
 import ResetPassword from './pages/ResetPassword';
+import AppLayoutRoute from './layouts/AppLayoutRoute';
 
 // Global error listener to auto-reload on any remaining chunk load failures
 if (typeof window !== 'undefined') {
@@ -157,14 +158,15 @@ function AppRoutes() {
 
         {/* Private Student Routes (enclosed in CallProvider/CallNotification/GlobalMessageListener) */}
         <Route element={<StudentCallWrapper />}>
-          <Route path="/"             element={<PrivateRoute><Home /></PrivateRoute>} />
+          <Route element={<PrivateRoute><AppLayoutRoute /></PrivateRoute>}>
+            <Route path="/"             element={<Home />} />
+            <Route path="/friends/:id"  element={<FriendDetail />} />
+          </Route>
           <Route path="/profile"      element={<PrivateRoute><Profile /></PrivateRoute>} />
           <Route path="/groups"       element={<PrivateRoute><Groups /></PrivateRoute>} />
           <Route path="/groups/:id"   element={<PrivateRoute><GroupDetail /></PrivateRoute>} />
           <Route path="/schedule"     element={<PrivateRoute><Schedule /></PrivateRoute>} />
           <Route path="/friends"      element={<PrivateRoute><Friend /></PrivateRoute>} />
-          <Route path="/friends/:id"  element={<PrivateRoute><FriendDetail /></PrivateRoute>} />
-
           <Route path="/my-documents" element={<PrivateRoute><MyDocument /></PrivateRoute>} />
           <Route path="/chat"         element={<PrivateRoute><Chat /></PrivateRoute>} />
           <Route path="/room/:roomId" element={<PrivateRoute><MeetRoom /></PrivateRoute>} />

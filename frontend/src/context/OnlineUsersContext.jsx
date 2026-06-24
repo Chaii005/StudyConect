@@ -16,7 +16,7 @@ export function OnlineUsersProvider({ children }) {
       return;
     }
 
-    const channelKey = `online-users-${user.id.toString()}-${Date.now()}`;
+    const channelKey = `online-users-${user.id.toString()}`;
     const channel = supabase.channel(channelKey, {
       config: {
         presence: {

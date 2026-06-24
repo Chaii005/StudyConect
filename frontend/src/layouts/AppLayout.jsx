@@ -198,7 +198,7 @@ export default function AppLayout({ children, hideNavbar = false, hideSidebar = 
     if (!user?.id) return;
 
     // Channel unique mỗi mount tránh duplicate
-    const channelName = `layout-unread-${user.id}-${Date.now()}`;
+    const channelName = `layout-unread-${user.id}`;
     const channel = supabase
       .channel(channelName)
       .on(
@@ -257,7 +257,7 @@ export default function AppLayout({ children, hideNavbar = false, hideSidebar = 
     if (!user?.id) return;
 
     // Channel unique mỗi mount
-    const channelName = `layout-pending-friends-${user.id}-${Date.now()}`;
+    const channelName = `layout-pending-friends-${user.id}`;
     const channel = supabase
       .channel(channelName)
       .on(

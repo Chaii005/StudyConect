@@ -740,7 +740,7 @@ function ConversationView({ user, friend, friends, onBack, onlineUserIds, onNick
   useEffect(() => {
     if (!user?.id || !friend?.userId) return;
 
-    const channelName = `chat-msg-${user.id}-${friend.userId}-${Date.now()}`;
+    const channelName = `chat-msg-${user.id}-${friend.userId}`;
     const channel = supabase
       .channel(channelName)
       .on(

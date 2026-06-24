@@ -323,7 +323,7 @@ export default function useGroupDetail(groupId, user, addToast) {
     }
 
     const chatChannel = supabase
-      .channel(`group-chat-${groupId}-${Date.now()}`)
+      .channel(`group-chat-${groupId}`)
       .on(
         'postgres_changes',
         {

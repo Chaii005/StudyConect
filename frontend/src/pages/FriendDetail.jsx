@@ -6,7 +6,6 @@ import { useCall } from '../context/CallContext';
 import { useOnlineUsers } from '../context/OnlineUsersContext';
 import { useToast } from '../components/Toast';
 import { supabase } from '../config/supabaseClient';
-import AppLayout from '../layouts/AppLayout';
 import PostList from '../components/posts/PostList';
 import {
   toggleLikePost,
@@ -234,18 +233,18 @@ export default function FriendDetail() {
   // Render Loader
   if (loadingFriend || checkingFriendship) {
     return (
-      <AppLayout>
+      <>
         <div style={{ textAlign: 'center', padding: '80px', color: 'var(--text-muted)' }}>
           Đang tải thông tin bạn bè...
         </div>
-      </AppLayout>
+      </>
     );
   }
 
   // Handle Unauthorized (Not Friends)
   if (!isFriend) {
     return (
-      <AppLayout>
+      <>
         <div style={{ textAlign: 'center', padding: '80px 24px', color: 'var(--text-muted)' }}>
           <div style={{ color: 'var(--text-muted)', display: 'flex', justifyContent: 'center', marginBottom: '20px' }}>
             <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: 'var(--text-muted)' }}>
@@ -261,7 +260,7 @@ export default function FriendDetail() {
             ← Quay lại trang Kết bạn
           </Link>
         </div>
-      </AppLayout>
+      </>
     );
   }
 
@@ -274,7 +273,7 @@ export default function FriendDetail() {
     .toUpperCase() || '?';
 
   return (
-    <AppLayout>
+    <>
       <style>{`
         @keyframes floatEmojiUpFixed {
           0% {
@@ -683,6 +682,6 @@ export default function FriendDetail() {
 
         </div>
       </div>
-    </AppLayout>
+    </>
   );
 }
