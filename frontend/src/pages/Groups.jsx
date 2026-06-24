@@ -551,7 +551,7 @@ function NearbyGroupsModal({ groups, user, onClose, addToast, joinRequestStatus,
         addToast('Đã định vị thành công vị trí của bạn!', 'success');
       },
       (err) => {
-        console.warn('GPS failed:', err);
+        if (import.meta.env.DEV) console.warn('GPS failed:', err);
         setGpsStatus('failed');
         addToast('Không thể định vị GPS. Vui lòng cho phép quyền định vị.', 'warning');
       },

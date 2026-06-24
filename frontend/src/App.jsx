@@ -37,7 +37,7 @@ if (typeof window !== 'undefined') {
       e.message.includes('Failed to fetch dynamically imported module')
     );
     if (isChunkError) {
-      console.warn('Chunk load error caught globally. Reloading page...');
+      if (import.meta.env.DEV) console.warn('Chunk load error caught globally. Reloading page...');
       window.location.reload();
     }
   }, true);
@@ -101,7 +101,7 @@ const AdminRoute = ({ children }) => {
             setIsValidAdmin(false);
             adminLogout();
           } else {
-            console.error('Transient error verifying admin:', error);
+            if (import.meta.env.DEV) console.error('Transient error verifying admin:', error);
             setIsValidAdmin(true);
           }
         } else if (data && data.role === 'admin') {
@@ -111,7 +111,7 @@ const AdminRoute = ({ children }) => {
           adminLogout();
         }
       } catch (err) {
-        console.error('Error verifying admin (transient):', err);
+        if (import.meta.env.DEV) console.error('Error verifying admin (transient):', err);
         setIsValidAdmin(true);
       } finally {
         setVerifying(false);

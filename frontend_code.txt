@@ -44,7 +44,7 @@ if (typeof window !== 'undefined') {
       e.message.includes('Failed to fetch dynamically imported module')
     );
     if (isChunkError) {
-      console.warn('Chunk load error caught globally. Reloading page...');
+      if (import.meta.env.DEV) console.warn('Chunk load error caught globally. Reloading page...');
       window.location.reload();
     }
   }, true);
@@ -108,7 +108,7 @@ const AdminRoute = ({ children }) => {
             setIsValidAdmin(false);
             adminLogout();
           } else {
-            console.error('Transient error verifying admin:', error);
+            if (import.meta.env.DEV) console.error('Transient error verifying admin:', error);
             setIsValidAdmin(true);
           }
         } else if (data && data.role === 'admin') {
@@ -118,7 +118,7 @@ const AdminRoute = ({ children }) => {
           adminLogout();
         }
       } catch (err) {
-        console.error('Error verifying admin (transient):', err);
+        if (import.meta.env.DEV) console.error('Error verifying admin (transient):', err);
         setIsValidAdmin(true);
       } finally {
         setVerifying(false);
@@ -1812,7 +1812,7 @@ export default function GlobalMessageListener() {
 
     // Listen to changes in group memberships for current user to keep group IDs updated in real-time
     const memberChannel = supabase
-      .channel(`user-memberships-${uid}`)
+      .channel(`user-memberships-${uid}-${Date.now()}`)
       .on('postgres_changes', { event: '*', schema: 'public', table: 'group_members', filter: `user_id=eq.${uid}` }, () => {
         fetchUserGroups();
       })
@@ -1834,7 +1834,7 @@ export default function GlobalMessageListener() {
 
     // 1. Private Channel
     const privateChannel = supabase
-      .channel(`notif-private-${uid}`)
+      .channel(`notif-private-${uid}-${Date.now()}`)
       // ① Tin nhắn cá nhân
       .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages', filter: `receiver_id=eq.${uid}` }, async (payload) => {
         const msg = payload.new;
@@ -1991,7 +1991,7 @@ export default function GlobalMessageListener() {
     const activeGroupChannels = [];
     userGroupIds.forEach((gId) => {
       const groupChannel = supabase
-        .channel(`group-realtime-${gId}`)
+        .channel(`group-realtime-${gId}-${Date.now()}`)
         // ① Tin nhắn nhóm
         .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages', filter: `group_id=eq.${gId}` }, async (payload) => {
           const msg = payload.new;
@@ -2136,7 +2136,7 @@ export default function GlobalMessageListener() {
     });
 
     // 3. Admin Broadcast Channel
-    const adminChannel = supabase.channel('admin-broadcasts');
+    const adminChannel = supabase.channel(`admin-broadcasts-${uid}-${Date.now()}`);
     adminChannel.on('broadcast', { event: 'file_approved' }, async ({ payload }) => {
       if (!payload) return;
       const { userId, fileName, groupId, groupName, userFullName } = payload;
@@ -2237,7 +2237,7 @@ const downloadBaseFile = async (dataUrl, fileName) => {
     // Delay revocation so the browser has time to start the download
     setTimeout(() => URL.revokeObjectURL(url), 2000);
   } catch (err) {
-    console.error('Lỗi download file:', err);
+    if (import.meta.env.DEV) console.error('Lỗi download file:', err);
     window.open(dataUrl, '_blank');
   }
 };
@@ -7535,15 +7535,30 @@ const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
 
 if (!supabaseUrl || !supabaseKey) {
-  console.error(
-    '[Supabase] VITE_SUPABASE_URL hoặc ' +
-    'VITE_SUPABASE_PUBLISHABLE_KEY chưa được cấu hình!'
-  );
+  if (import.meta.env.DEV) {
+    console.error(
+      '[Supabase] VITE_SUPABASE_URL hoặc ' +
+      'VITE_SUPABASE_PUBLISHABLE_KEY chưa được cấu hình!'
+    );
+  }
 }
 
 export const supabase = createClient(
   supabaseUrl || '',
-  supabaseKey || ''
+  supabaseKey || '',
+  {
+    auth: {
+      // Persist session trong localStorage để tránh re-authenticate liên tục (giảm Auth egress)
+      persistSession: true,
+      autoRefreshToken: true,
+    },
+    global: {
+      headers: {
+        // Gợi ý CDN cache responses (giảm egress từ Supabase Storage/API)
+        'x-client-info': 'studyconnect-web',
+      },
+    },
+  }
 );
 
 
@@ -8440,7 +8455,7 @@ export const NotificationProvider = ({ children }) => {
       try {
         localStorage.setItem('studyconect_toast_enabled', next ? 'true' : 'false');
       } catch (err) {
-        console.warn('Error setting toast enabled state:', err);
+        if (import.meta.env.DEV) console.warn('Error setting toast enabled state:', err);
       }
       return next;
     });
@@ -8474,7 +8489,8 @@ export function OnlineUsersProvider({ children }) {
       return;
     }
 
-    const channel = supabase.channel('online-users', {
+    const channelKey = `online-users-${user.id.toString()}-${Date.now()}`;
+    const channel = supabase.channel(channelKey, {
       config: {
         presence: {
           key: user.id.toString(),
@@ -8899,7 +8915,7 @@ export default function useGroupDetail(groupId, user, addToast) {
         setMembersDetails(mapped);
       }
     } catch (err) {
-      console.warn('Lỗi tải thông tin thành viên:', err);
+      if (import.meta.env.DEV) console.warn('Lỗi tải thông tin thành viên:', err);
     }
   }, []);
 
@@ -8915,7 +8931,7 @@ export default function useGroupDetail(groupId, user, addToast) {
         setFriendships(data);
       }
     } catch (err) {
-      console.warn('Lỗi tải quan hệ bạn bè:', err);
+      if (import.meta.env.DEV) console.warn('Lỗi tải quan hệ bạn bè:', err);
     }
   }, [user]);
 
@@ -8942,7 +8958,7 @@ export default function useGroupDetail(groupId, user, addToast) {
         fetchGroupFriendships(),
         fetchGroupDeadlines()
       ]).catch(err => {
-        console.warn('[useGroupDetail] Background fetches encountered errors:', err);
+        if (import.meta.env.DEV) console.warn('[useGroupDetail] Background fetches encountered errors:', err);
       });
     } catch (err) {
       addToast(err.message || 'Lỗi tải thông tin nhóm', 'error');
@@ -9439,7 +9455,7 @@ export default function useGroupDetail(groupId, user, addToast) {
         addToast(`Cảnh báo: Bạn đã cố gắng tải lên tài liệu chứa nội dung người lớn/khiêu dâm (${newWarnCount}/3 lần vi phạm). Vi phạm 3 lần tài khoản sẽ bị khóa vĩnh viễn khỏi hệ thống!`, 'error');
       }
     } catch (err) {
-      console.error('Lỗi cập nhật vi phạm NSFW:', err);
+      if (import.meta.env.DEV) console.error('Lỗi cập nhật vi phạm NSFW:', err);
     }
   };
 
@@ -9989,6 +10005,8 @@ export default function useNotifications(userId) {
       const uid = parseInt(userId, 10);
       const now = new Date();
       const ONE_DAY_MS = 24 * 60 * 60 * 1000;
+      // cutoff: chỉ lấy dữ liệu trong 24h qua để giảm egress
+      const cutoff = new Date(now.getTime() - ONE_DAY_MS).toISOString();
       const notifsList = [];
       const userGroupIds = new Set();
 
@@ -10136,7 +10154,7 @@ export default function useNotifications(userId) {
           }
         });
 
-        // Fetch other members who joined recently
+        // Fetch other members who joined recently (chỉ 24h qua)
         const { data: otherJoinedMembers } = await supabase
           .from('group_members')
           .select(`
@@ -10152,7 +10170,8 @@ export default function useNotifications(userId) {
           `)
           .in('group_id', joinedIds)
           .neq('user_id', uid)
-          .limit(50);
+          .gte('joined_at', cutoff)
+          .limit(20);
 
         if (otherJoinedMembers) {
           otherJoinedMembers
@@ -10264,7 +10283,7 @@ export default function useNotifications(userId) {
             });
         }
 
-        // Fetch group messages (excluding current user's messages)
+        // Fetch group messages (24h qua, giới hạn nhỏ để tiết kiệm egress)
         const { data: groupMsgs } = await supabase
           .from('messages')
           .select(`
@@ -10283,8 +10302,9 @@ export default function useNotifications(userId) {
           `)
           .in('group_id', joinedIds)
           .neq('sender_id', uid)
+          .gte('created_at', cutoff)
           .order('created_at', { ascending: false })
-          .limit(20);
+          .limit(10);
 
         if (groupMsgs) {
           groupMsgs
@@ -10318,7 +10338,7 @@ export default function useNotifications(userId) {
             });
         }
 
-        // Fetch shared documents/files in groups
+        // Fetch shared documents/files in groups (24h qua)
         const { data: recentFiles } = await supabase
           .from('files')
           .select(`
@@ -10335,7 +10355,8 @@ export default function useNotifications(userId) {
           `)
           .in('group_id', joinedIds)
           .neq('user_id', uid)
-          .limit(50);
+          .gte('created_at', cutoff)
+          .limit(20);
 
         if (recentFiles) {
           recentFiles
@@ -10357,17 +10378,19 @@ export default function useNotifications(userId) {
 
       // Custom deadline reminders from LocalStorage removed to comply with quota limits
 
-      // 5. Fetch user's posts to get comments & reactions on them
+      // 5. Fetch user's posts to get comments & reactions on them (giới hạn 20 post gần nhất)
       const { data: myPosts } = await supabase
         .from('posts')
         .select('id, content, likes, created_at')
-        .eq('user_id', uid);
+        .eq('user_id', uid)
+        .order('created_at', { ascending: false })
+        .limit(20);
 
       if (myPosts && myPosts.length > 0) {
         const myPostIds = myPosts.map(p => p.id);
         myPostIdsRef.current = myPostIds.map(Number);
 
-        // Fetch comments on user's posts
+        // Fetch comments on user's posts (24h qua)
         const { data: postComments } = await supabase
           .from('comments')
           .select(`
@@ -10382,8 +10405,9 @@ export default function useNotifications(userId) {
           `)
           .in('post_id', myPostIds)
           .neq('user_id', uid)
+          .gte('created_at', cutoff)
           .order('created_at', { ascending: false })
-          .limit(20);
+          .limit(10);
 
         if (postComments) {
           postComments
@@ -10401,11 +10425,13 @@ export default function useNotifications(userId) {
             });
         }
         
-        // Fetch all comments by this user to find replies to them
+        // Fetch comments by this user (24h qua) to find replies to them
         const { data: myComments } = await supabase
           .from('comments')
           .select('id')
-          .eq('user_id', uid);
+          .eq('user_id', uid)
+          .gte('created_at', cutoff)
+          .limit(50);
 
         if (myComments && myComments.length > 0) {
           const myCommentIds = myComments.map(c => c.id);
@@ -10424,8 +10450,9 @@ export default function useNotifications(userId) {
             `)
             .in('parent_id', myCommentIds)
             .neq('user_id', uid)
+            .gte('created_at', cutoff)
             .order('created_at', { ascending: false })
-            .limit(20);
+            .limit(10);
 
           if (replies) {
             replies
@@ -10496,7 +10523,7 @@ export default function useNotifications(userId) {
         }
       }
 
-      // 1c. Fetch recent private messages
+      // 1c. Fetch recent private messages (24h qua, giới hạn 10)
       const { data: privateMsgs } = await supabase
         .from('messages')
         .select(`
@@ -10511,8 +10538,9 @@ export default function useNotifications(userId) {
         .eq('receiver_id', uid)
         .neq('sender_id', uid)
         .is('group_id', null)
+        .gte('created_at', cutoff)
         .order('created_at', { ascending: false })
-        .limit(20);
+        .limit(10);
 
       if (privateMsgs) {
         privateMsgs
@@ -10613,7 +10641,7 @@ export default function useNotifications(userId) {
             });
           });
       } catch (err) {
-        console.warn('Error reading local kicks:', err);
+        if (import.meta.env.DEV) console.warn('Error reading local kicks:', err);
       }
 
       // 2d. Fetch local group demotions
@@ -10631,7 +10659,7 @@ export default function useNotifications(userId) {
             });
           });
       } catch (err) {
-        console.warn('Error reading local demotions:', err);
+        if (import.meta.env.DEV) console.warn('Error reading local demotions:', err);
       }
 
       // Post Tag Notifications (from Supabase post_tags)
@@ -10701,10 +10729,10 @@ export default function useNotifications(userId) {
             });
         }
       } catch (err) {
-        console.warn('Error fetching post tag notifications:', err);
+        if (import.meta.env.DEV) console.warn('Error fetching post tag notifications:', err);
       }
 
-      // Fetch outgoing missed call messages (📵) để caller cũng thấy trong bell
+      // Fetch outgoing missed call messages (24h qua)
       try {
         const { data: outgoingMissed, error: omError } = await supabase
           .from('messages')
@@ -10720,8 +10748,9 @@ export default function useNotifications(userId) {
           .eq('sender_id', uid)
           .is('group_id', null)
           .like('content', '📵%')
+          .gte('created_at', cutoff)
           .order('created_at', { ascending: false })
-          .limit(10);
+          .limit(5);
 
         if (!omError && outgoingMissed) {
           outgoingMissed
@@ -10756,7 +10785,7 @@ export default function useNotifications(userId) {
         setSeen(new Set());
       }
     } catch (e) {
-      console.error('Error fetching notifications:', e);
+      if (import.meta.env.DEV) console.error('Error fetching notifications:', e);
     }
   }, [userId]);
 
@@ -10774,6 +10803,7 @@ export default function useNotifications(userId) {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     refresh();
 
+    // Channel name unique mỗi mount để tránh duplicate subscription
     const notifChannel = supabase
       .channel(`notif-${userId}`)
       .on(
@@ -10793,7 +10823,6 @@ export default function useNotifications(userId) {
       )
       .on(
         'postgres_changes',
-        // Filter server-side theo user_id để tránh nhận event của toàn hệ thống
         { event: '*', schema: 'public', table: 'group_members', filter: `user_id=eq.${userId}` },
         () => refreshDebounced()
       )
@@ -10819,7 +10848,7 @@ export default function useNotifications(userId) {
     try {
       localStorage.setItem(STORAGE_KEYS.NOTIF_SEEN, JSON.stringify([...newSeen]));
     } catch (err) {
-      console.warn('Error saving seen notifications:', err);
+      if (import.meta.env.DEV) console.warn('Error saving seen notifications:', err);
     }
   }, [seen, notifs]);
 
@@ -10828,7 +10857,7 @@ export default function useNotifications(userId) {
     try {
       await acceptGroupInvite(inviteId);
     } catch (err) {
-      console.error('Error accepting group invite:', err);
+      if (import.meta.env.DEV) console.error('Error accepting group invite:', err);
     } finally {
       setProcessing(p => ({ ...p, [inviteId]: null }));
       refresh();
@@ -10840,7 +10869,7 @@ export default function useNotifications(userId) {
     try {
       await declineGroupInvite(inviteId);
     } catch (err) {
-      console.error('Error declining group invite:', err);
+      if (import.meta.env.DEV) console.error('Error declining group invite:', err);
     } finally {
       setProcessing(p => ({ ...p, [inviteId]: null }));
       refresh();
@@ -10852,7 +10881,7 @@ export default function useNotifications(userId) {
     try {
       await acceptRealFriend(requestId);
     } catch (err) {
-      console.error('Error accepting friend request:', err);
+      if (import.meta.env.DEV) console.error('Error accepting friend request:', err);
     } finally {
       setProcessing(p => ({ ...p, [requestId]: null }));
       refresh();
@@ -10864,7 +10893,7 @@ export default function useNotifications(userId) {
     try {
       await declineRealFriend(requestId);
     } catch (err) {
-      console.error('Error declining friend request:', err);
+      if (import.meta.env.DEV) console.error('Error declining friend request:', err);
     } finally {
       setProcessing(p => ({ ...p, [requestId]: null }));
       refresh();
@@ -10876,7 +10905,7 @@ export default function useNotifications(userId) {
     try {
       await approveJoinRequest(requestId, groupId, requesterId);
     } catch (err) {
-      console.error('Error approving join request:', err);
+      if (import.meta.env.DEV) console.error('Error approving join request:', err);
     } finally {
       setProcessing(p => ({ ...p, [requestId]: null }));
       refresh();
@@ -10888,7 +10917,7 @@ export default function useNotifications(userId) {
     try {
       await rejectJoinRequest(requestId);
     } catch (err) {
-      console.error('Error declining join request:', err);
+      if (import.meta.env.DEV) console.error('Error declining join request:', err);
     } finally {
       setProcessing(p => ({ ...p, [requestId]: null }));
       refresh();
@@ -12497,7 +12526,7 @@ input[type="datetime-local"].form-input::-webkit-datetime-edit {
 
 ===== D:\StudyConect\frontend\src\layouts\AppLayout.jsx =====
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 import { useOnlineUsers } from '@/context/OnlineUsersContext';
@@ -12600,6 +12629,7 @@ export default function AppLayout({ children, hideNavbar = false, hideSidebar = 
   const [schedules, setSchedules] = useState([]);
   const [deadlines, setDeadlines] = useState([]);
   const [friends, setFriends] = useState([]);
+  const friendsCacheRef = useRef({}); // { [userId]: friends[] } — cache in memory, reset on page reload only
   const onlineUserIds = useOnlineUsers();
 
   // Fetch sidebar data: friends, schedules & deadlines
@@ -12609,11 +12639,17 @@ export default function AppLayout({ children, hideNavbar = false, hideSidebar = 
     let isMounted = true;
 
     const loadFriends = async () => {
+      // Chỉ fetch nếu chưa có trong cache memory
+      if (friendsCacheRef.current[user.id]) {
+        setFriends(friendsCacheRef.current[user.id]);
+        return;
+      }
       try {
         const list = await getFriends(user.id);
+        friendsCacheRef.current[user.id] = list;
         if (isMounted) setFriends(list);
       } catch (err) {
-        console.warn('Error fetching friends in layout:', err);
+        if (import.meta.env.DEV) console.warn('Error fetching friends in layout:', err);
       }
     };
 
@@ -12645,19 +12681,19 @@ export default function AppLayout({ children, hideNavbar = false, hideSidebar = 
           setDeadlines(processedDeadlines);
         }
       } catch (err) {
-        console.warn('Error fetching schedules/deadlines in layout:', err);
+        if (import.meta.env.DEV) console.warn('Error fetching schedules/deadlines in layout:', err);
       }
     };
 
     loadFriends();
     fetchSideData();
 
-    // Poll schedules/deadlines every 5 minutes
+    // Poll schedules/deadlines mỗi 30 phút (tăng từ 15) — dữ liệu này không cần thời gian thực
     const interval = setInterval(() => {
       if (document.visibilityState === 'visible') {
         fetchSideData();
       }
-    }, 900000);
+    }, 1800000); // 30 phút
 
     return () => {
       isMounted = false;
@@ -12681,18 +12717,16 @@ export default function AppLayout({ children, hideNavbar = false, hideSidebar = 
       }
     };
     updateUnread();
-    const interval = setInterval(() => {
-      if (document.visibilityState === 'visible') {
-        updateUnread();
-      }
-    }, 900000); // fallback 15 minutes
-    return () => clearInterval(interval);
+    // Không dùng setInterval để poll unread — Realtime subscription (ở dưới) đã xử lý update
+    // nên xóa interval này để giảm egress từ refreshCache liên tục
+    return;
   }, [user]);
 
   useEffect(() => {
     if (!user?.id) return;
 
-    const channelName = `layout-unread-${user.id}`;
+    // Channel unique mỗi mount tránh duplicate
+    const channelName = `layout-unread-${user.id}-${Date.now()}`;
     const channel = supabase
       .channel(channelName)
       .on(
@@ -12726,7 +12760,7 @@ export default function AppLayout({ children, hideNavbar = false, hideSidebar = 
       try {
         const { count } = await supabase
           .from('friendships')
-          .select('*', { count: 'exact', head: true })
+          .select('id', { count: 'exact', head: true })
           .eq('to_user_id', parseInt(user.id, 10))
           .eq('status', 'pending');
           
@@ -12738,18 +12772,20 @@ export default function AppLayout({ children, hideNavbar = false, hideSidebar = 
       }
     };
     fetchPendingCount();
+    // Fallback poll 30 phút (tăng từ 15 phút) — Realtime xử lý cập nhật thời gian thực
     const interval = setInterval(() => {
       if (document.visibilityState === 'visible') {
         fetchPendingCount();
       }
-    }, 900000); // fallback 15 minutes
+    }, 1800000); // fallback 30 phút
     return () => clearInterval(interval);
   }, [user]);
 
   useEffect(() => {
     if (!user?.id) return;
 
-    const channelName = `layout-pending-friends-${user.id}`;
+    // Channel unique mỗi mount
+    const channelName = `layout-pending-friends-${user.id}-${Date.now()}`;
     const channel = supabase
       .channel(channelName)
       .on(
@@ -12764,7 +12800,7 @@ export default function AppLayout({ children, hideNavbar = false, hideSidebar = 
           try {
             const { count } = await supabase
               .from('friendships')
-              .select('*', { count: 'exact', head: true })
+              .select('id', { count: 'exact', head: true })
               .eq('to_user_id', parseInt(user.id, 10))
               .eq('status', 'pending');
               
@@ -14798,7 +14834,7 @@ const downloadBaseFile = (base64Data, filename) => {
       window.URL.revokeObjectURL(url);
     })
     .catch(err => {
-      console.error('File download failed:', err);
+      if (import.meta.env.DEV) console.error('File download failed:', err);
     });
 };
 
@@ -14876,7 +14912,7 @@ function CameraModal({ onCapture, onClose }) {
           stream = await navigator.mediaDevices.getUserMedia(constraints);
           if (stream) break;
         } catch (err) {
-          console.warn('Failed with constraints:', constraints, err);
+          if (import.meta.env.DEV) console.warn('Failed with constraints:', constraints, err);
         }
       }
 
@@ -15287,7 +15323,7 @@ function ConversationView({ user, friend, friends, onBack, onlineUserIds, onNick
       setShowRenameModal(false);
       if (onNicknameChange) onNicknameChange();
     } catch (err) {
-      console.error('Error saving nickname:', err);
+      if (import.meta.env.DEV) console.error('Error saving nickname:', err);
     }
   };
 
@@ -15311,7 +15347,7 @@ function ConversationView({ user, friend, friends, onBack, onlineUserIds, onNick
         .is('group_id', null);
 
       if (err1 || err2) {
-        console.error('Error clearing chat:', err1 || err2);
+        if (import.meta.env.DEV) console.error('Error clearing chat:', err1 || err2);
         return;
       }
 
@@ -15319,7 +15355,7 @@ function ConversationView({ user, friend, friends, onBack, onlineUserIds, onNick
       setShowClearConfirm(false);
       if (onNicknameChange) onNicknameChange();
     } catch (err) {
-      console.error('Exception clearing chat:', err);
+      if (import.meta.env.DEV) console.error('Exception clearing chat:', err);
     }
   };
 
@@ -15372,7 +15408,7 @@ function ConversationView({ user, friend, friends, onBack, onlineUserIds, onNick
       setChatBg(bgValue);
       setShowBgModal(false);
     } catch (err) {
-      console.error('Error saving background:', err);
+      if (import.meta.env.DEV) console.error('Error saving background:', err);
     }
   };
 
@@ -15404,7 +15440,7 @@ function ConversationView({ user, friend, friends, onBack, onlineUserIds, onNick
           try {
             localStorage.setItem(`sc_nickname_${user.id}_${friend.userId}`, val);
           } catch (err) {
-            console.warn('Error saving nickname:', err);
+            if (import.meta.env.DEV) console.warn('Error saving nickname:', err);
           }
           setNickname(val);
         } else {
@@ -15439,8 +15475,8 @@ function ConversationView({ user, friend, friends, onBack, onlineUserIds, onNick
         try {
           localStorage.setItem(`sc_nickname_${user.id}_${friend.userId}`, val);
         } catch (err) {
-          console.warn('Error saving nickname:', err);
-        }
+            if (import.meta.env.DEV) console.warn('Error saving nickname:', err);
+          }
         setNickname(val);
       } else {
         localStorage.removeItem(`sc_nickname_${user.id}_${friend.userId}`);
@@ -15678,7 +15714,7 @@ function ConversationView({ user, friend, friends, onBack, onlineUserIds, onNick
       await deleteMessage(id);
       await load();
     } catch (err) {
-      console.error('Error deleting message:', err);
+      if (import.meta.env.DEV) console.error('Error deleting message:', err);
     }
   };
 
@@ -17249,7 +17285,7 @@ export default function Chat() {
         const total = list.reduce((acc, f) => acc + getUnreadCount(user.id, f.userId), 0);
         setTotalUnread(total);
       } catch (err) {
-        console.warn('[Chat] Refresh failed:', err);
+        if (import.meta.env.DEV) console.warn('[Chat] Refresh failed:', err);
       } finally {
         setLoading(false);
       }
@@ -18542,7 +18578,7 @@ export default function FriendDetail() {
         if (error) throw error;
         setIsFriend(!!data);
       } catch (err) {
-        console.error('Error checking friendship:', err);
+        if (import.meta.env.DEV) console.error('Error checking friendship:', err);
       } finally {
         setCheckingFriendship(false);
       }
@@ -18565,7 +18601,7 @@ export default function FriendDetail() {
         if (error) throw error;
         setFriendData(data);
       } catch (err) {
-        console.error('Error fetching friend profile:', err);
+        if (import.meta.env.DEV) console.error('Error fetching friend profile:', err);
         addToast('Không thể tải thông tin bạn bè.', 'error');
       } finally {
         setLoadingFriend(false);
@@ -18582,7 +18618,7 @@ export default function FriendDetail() {
       const fetched = await getUserPosts(id);
       setPosts(fetched);
     } catch (err) {
-      console.error('Error loading user posts:', err);
+      if (import.meta.env.DEV) console.error('Error loading user posts:', err);
       addToast('Không thể tải danh sách bài viết.', 'error');
     } finally {
       setLoadingPosts(false);
@@ -18609,7 +18645,7 @@ export default function FriendDetail() {
         return { ...p, likes: updatedLikes };
       }));
     } catch (err) {
-      console.error('Error liking post:', err);
+      if (import.meta.env.DEV) console.error('Error liking post:', err);
     }
   };
 
@@ -18643,7 +18679,7 @@ export default function FriendDetail() {
         return { ...p, isPinned };
       }));
     } catch (err) {
-      console.error('Error toggling pin:', err);
+      if (import.meta.env.DEV) console.error('Error toggling pin:', err);
     }
   };
 
@@ -20097,7 +20133,7 @@ function NearbyGroupsModal({ groups, user, onClose, addToast, joinRequestStatus,
         addToast('Đã định vị thành công vị trí của bạn!', 'success');
       },
       (err) => {
-        console.warn('GPS failed:', err);
+        if (import.meta.env.DEV) console.warn('GPS failed:', err);
         setGpsStatus('failed');
         addToast('Không thể định vị GPS. Vui lòng cho phép quyền định vị.', 'warning');
       },
@@ -21294,8 +21330,8 @@ import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { getPosts, deletePost, createComment, toggleLikePost, togglePinPost } from '@/services/interactionService';
 import { getFriends } from '@/services/friendService';
-import { getAllGroups } from '@/services/groupService';
 import { supabase } from '@/config/supabaseClient';
+
 import AppLayout from '@/layouts/AppLayout';
 import Avatar from '@/components/common/Avatar';
 import PostList from '@/components/posts/PostList';
@@ -21334,20 +21370,32 @@ export default function Home() {
   // Fetch friends list
   useEffect(() => {
     if (!user?.id) return;
+    const uid = parseInt(user.id, 10);
     const loadFriendsAndGroups = async () => {
       try {
         const list = await getFriends(user.id);
         setFriends(list);
-        // Cache removed to comply with quota limits
       } catch (err) {
-        console.warn('Error fetching friends:', err);
+        if (import.meta.env.DEV) console.warn('Error fetching friends:', err);
       }
       try {
-        const allGroups = await getAllGroups();
-        const leaderGroups = allGroups.filter(g => String(g.creatorId) === String(user.id));
-        setMyLeaderGroups(leaderGroups);
+        // Query trực tiếp theo creator_id thay vì tải toàn bộ rồi filter client-side
+        const { data: leaderData } = await supabase
+          .from('study_groups')
+          .select('id, name, creator_id, group_members(user_id, role)')
+          .eq('creator_id', uid)
+          .limit(10);
+        if (leaderData) {
+          const mapped = leaderData.map(g => ({
+            id: g.id.toString(),
+            name: g.name,
+            creatorId: g.creator_id,
+            members: (g.group_members || []).map(m => m.user_id)
+          }));
+          setMyLeaderGroups(mapped);
+        }
       } catch (err) {
-        console.warn('Error fetching groups:', err);
+        if (import.meta.env.DEV) console.warn('Error fetching groups:', err);
       }
     };
     loadFriendsAndGroups();
@@ -21360,9 +21408,8 @@ export default function Home() {
     try {
       const data = await getPosts(user.id);
       setPosts(data);
-      // Cache removed to comply with quota limits
     } catch (err) {
-      console.warn('Error fetching posts:', err);
+      if (import.meta.env.DEV) console.warn('Error fetching posts:', err);
     }
   }, [user?.id]);
 
@@ -21370,29 +21417,16 @@ export default function Home() {
     if (!user?.id) return;
     fetchPosts();
 
-    // Chỉ refetch khi có post mới INSERT hoặc xóa/sửa post của mình
-    const postsChannel = supabase
-      .channel(`posts-${user.id}`)
-      .on(
-        'postgres_changes',
-        { event: '*', schema: 'public', table: 'posts' },
-        (payload) => {
-          if (payload.eventType === 'INSERT') {
-            // Post mới → luôn refetch (có thể là bạn bè đăng)
-            fetchPosts();
-          } else if (payload.eventType === 'DELETE' || payload.eventType === 'UPDATE') {
-            // Chỉ refetch nếu post đó thuộc về user hiện tại hoặc đang hiển thị trong feed
-            const postUserId = payload.old?.user_id || payload.new?.user_id;
-            if (postUserId && String(postUserId) === String(user.id)) {
-              fetchPosts();
-            }
-          }
-        }
-      )
-      .subscribe();
+    // Polling fallback 15 phút — Không dùng Realtime subscription vì bảng posts
+    // không thể filter theo friend IDs ở server-side, gây egress O(N²)
+    const interval = setInterval(() => {
+      if (document.visibilityState === 'visible') {
+        fetchPosts();
+      }
+    }, 900000); // 15 phút
 
     return () => {
-      supabase.removeChannel(postsChannel);
+      clearInterval(interval);
     };
   }, [fetchPosts, user?.id]);
 
@@ -21409,7 +21443,7 @@ export default function Home() {
         return { ...p, likes: updatedLikes };
       }));
     } catch (err) {
-      console.error('Error liking post:', err);
+      if (import.meta.env.DEV) console.error('Error liking post:', err);
     }
   };
 
@@ -21426,7 +21460,7 @@ export default function Home() {
           await deletePost(postId);
           setPosts(posts.filter((p) => p.id !== postId));
         } catch (err) {
-          console.error(`Xóa thất bại: ${err.message}`);
+          if (import.meta.env.DEV) console.error(`Xóa thất bại: ${err.message}`);
         }
       },
       onCancel: () => setConfirmConfig(null),
@@ -21463,7 +21497,7 @@ export default function Home() {
         return { ...p, isPinned };
       }));
     } catch (err) {
-      console.error('Error toggling pin on post:', err);
+      if (import.meta.env.DEV) console.error('Error toggling pin on post:', err);
     }
   };
 
@@ -22094,7 +22128,7 @@ function useWebRTC({ roomId, user, micOn, camOn, onForceMute }) {
       stream.getVideoTracks().forEach(t => { t.enabled = camOnRef.current; });
       return stream;
     } catch (err) {
-      console.warn('Full media request failed in Meetroom, trying audio only...', err);
+      if (import.meta.env.DEV) console.warn('Full media request failed in Meetroom, trying audio only...', err);
       try {
         const stream = await navigator.mediaDevices.getUserMedia({
           video: false,
@@ -22105,7 +22139,7 @@ function useWebRTC({ roomId, user, micOn, camOn, onForceMute }) {
         stream.getAudioTracks().forEach(t => { t.enabled = micOnRef.current; });
         return stream;
       } catch (err2) {
-        console.error('Audio-only media request failed too in Meetroom', err2);
+        if (import.meta.env.DEV) console.error('Audio-only media request failed too in Meetroom', err2);
         setError(err.name === 'NotAllowedError' || err2.name === 'NotAllowedError'
           ? 'Vui lòng cấp quyền camera/mic.'
           : 'Không thể truy cập camera/mic.');
@@ -22204,7 +22238,7 @@ function useWebRTC({ roomId, user, micOn, camOn, onForceMute }) {
                     || senders.find(s => s.track === null);
         if (sender) {
           try { await sender.replaceTrack(newTrack); }
-          catch (e) { console.warn('replaceTrack error:', e); }
+          catch (e) { if (import.meta.env.DEV) console.warn('replaceTrack error:', e); }
         } else if (newTrack) {
           // Trường hợp ban đầu không có camera (không có sender), ta thêm track mới và thương lượng lại
           try {
@@ -22221,7 +22255,7 @@ function useWebRTC({ roomId, user, micOn, camOn, onForceMute }) {
                 camOn: camOnRef.current, micOn: micOnRef.current,
               }
             });
-          } catch (e) { console.warn('addTrack renegotiation error:', e); }
+          } catch (e) { if (import.meta.env.DEV) console.warn('addTrack renegotiation error:', e); }
         }
       })
     );
@@ -22577,7 +22611,7 @@ export default function MeetRoom() {
           setGroupCreatorId(data.creator_id);
         }
       } catch (err) {
-        console.error('Error fetching group creator:', err);
+        if (import.meta.env.DEV) console.error('Error fetching group creator:', err);
       }
     };
     fetchGroupCreator();
@@ -22676,16 +22710,17 @@ export default function MeetRoom() {
           setMessages(data.map(formatMsg));
         }
       } catch (err) {
-        console.error('Error fetching meetroom messages:', err);
+        if (import.meta.env.DEV) console.error('Error fetching meetroom messages:', err);
       }
     };
 
     fetchMeetMessages();
 
     // 2. Lắng nghe INSERT real-time — không cần polling
+    // Tên channel tĩnh (không dùng Date.now() để tránh rò rỉ channel)
     const channelUid = user?.id || 'guest';
     const channel = supabase
-      .channel(`meetroom-chat-${roomId}-${channelUid}-${Date.now()}`)
+      .channel(`meetroom-chat-${roomId}-${channelUid}`)
       .on(
         'postgres_changes',
         {
@@ -22694,19 +22729,29 @@ export default function MeetRoom() {
           table: 'messages',
           filter: `meetroom_id=eq.${roomId}`
         },
-        async (payload) => {
+        (payload) => {
           const m = payload.new;
-          // Fetch full row kèm user info
-          try {
-            const { data } = await supabase
-              .from('messages')
-              .select(`id, sender_id, content, meetroom_id, created_at, users:users!sender_id (full_name, avatar)`)
-              .eq('id', m.id)
-              .single();
-            if (data) {
-              setMessages(prev => [...prev, formatMsg(data)]);
-            }
-          } catch { /* ignore */ }
+          if (!m) return;
+          // Dùng trực tiếp payload.new — không refetch để tránh N+1 query
+          // Tên người gửi: nếu là mình thì dùng user object, nếu là người khác thì dùng cache
+          const senderName = String(m.sender_id) === String(user?.id)
+            ? (user?.fullName || 'Bạn')
+            : 'Người dùng'; // Sẽ được cập nhật khi fetchMeetMessages() chạy lần đầu
+          const rawContent = m.content || '';
+          const prefix = `[meetroom:${roomId}] `;
+          const text = rawContent.startsWith(prefix) ? rawContent.slice(prefix.length) : rawContent;
+          const newMsg = {
+            id: m.id.toString(),
+            text,
+            sender: senderName,
+            senderId: m.sender_id,
+            avatar: String(m.sender_id) === String(user?.id) ? (user?.avatar || '') : '',
+            time: new Date(m.created_at).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })
+          };
+          setMessages(prev => {
+            if (prev.some(x => x.id === newMsg.id)) return prev;
+            return [...prev, newMsg];
+          });
         }
       )
       .subscribe();
@@ -22715,6 +22760,7 @@ export default function MeetRoom() {
       supabase.removeChannel(channel);
     };
   }, [roomId, user?.id]);
+
 
   // Screen share — thay track video trong tất cả peer connections để remote peers thấy màn hình
   const toggleScreen = async () => {
@@ -22775,7 +22821,7 @@ export default function MeetRoom() {
         `);
 
       if (error) {
-        console.error('Error sending meetroom message:', error);
+        if (import.meta.env.DEV) console.error('Error sending meetroom message:', error);
       } else if (data && data[0]) {
         const m = data[0];
         const newMsg = {
@@ -22792,7 +22838,7 @@ export default function MeetRoom() {
         });
       }
     } catch (err) {
-      console.error('Exception in sendMessage:', err);
+      if (import.meta.env.DEV) console.error('Exception in sendMessage:', err);
     }
   };
 
@@ -25068,7 +25114,7 @@ export default function PrivateCall() {
     try {
       await hangup();
     } catch (err) {
-      console.warn('Failed to send hangup signal:', err);
+      if (import.meta.env.DEV) console.warn('Failed to send hangup signal:', err);
     }
 
     // Gửi tin nhắn tổng kết thời gian cuộc gọi vào chat nếu có kết nối
@@ -26963,7 +27009,7 @@ const getSubmissionsCount = (groupId, deadlineId) => {
     const list = all[deadlineId] || [];
     return list.length;
   } catch (e) {
-    console.error('Error loading submissions count:', e);
+    if (import.meta.env.DEV) console.error('Error loading submissions count:', e);
     return 0;
   }
 };
@@ -27655,7 +27701,7 @@ export const adminCreateGroup = async ({ name, subject, description, creatorId }
         max_members: 10
       }
     ])
-    .select()
+    .select('id')
     .single();
 
   if (groupError) throw new Error(`Tạo nhóm thất bại: ${groupError.message}`);
@@ -27681,7 +27727,7 @@ export const adminCreateGroup = async ({ name, subject, description, creatorId }
   const { data: finalGroup } = await supabase
     .from('study_groups')
     .select(`
-      *,
+      id, name, subject, description, creator_id, created_at,
       group_members (
         user_id,
         role
@@ -27784,7 +27830,7 @@ export const adminUpdateGroup = async (groupId, { name, subject, description, cr
   const { data: finalGroup } = await supabase
     .from('study_groups')
     .select(`
-      *,
+      id, name, subject, description, creator_id, created_at,
       group_members (
         user_id,
         role
@@ -27828,7 +27874,7 @@ const saveSession = (user) => {
   try {
     localStorage.setItem(SESSION_KEY, JSON.stringify(user));
   } catch (err) {
-    console.warn('Error saving session:', err);
+    if (import.meta.env.DEV) console.warn('Error saving session:', err);
   }
 };
 
@@ -28029,7 +28075,7 @@ export const adminLogin = async ({ email, password }) => {
   try {
     localStorage.setItem(ADMIN_SESSION_KEY, JSON.stringify(safeAdmin));
   } catch (err) {
-    console.warn('Error saving admin session:', err);
+    if (import.meta.env.DEV) console.warn('Error saving admin session:', err);
   }
   return { admin: safeAdmin };
 };
@@ -28287,7 +28333,7 @@ export const refreshCache = async (userId) => {
       const lastMsg = cachedMessages[cachedMessages.length - 1];
       query = query.gt('created_at', lastMsg.createdAt).order('created_at', { ascending: true });
     } else {
-      query = query.order('created_at', { ascending: false }).limit(200); // giới hạn 200 tin đầu — đủ cho badge và preview
+      query = query.order('created_at', { ascending: false }).limit(50); // giới hạn 50 tin — đủ cho badge và preview
     }
 
     const { data, error } = await query;
@@ -28302,7 +28348,9 @@ export const refreshCache = async (userId) => {
       }
     }
   } catch (err) {
-    console.error('[chatService] Exception in refreshCache:', err);
+    if (import.meta.env.DEV) {
+      console.error('[chatService] Exception in refreshCache:', err);
+    }
   }
 };
 
@@ -28322,7 +28370,7 @@ export const sendMessage = async (fromUserId, toUserId, content, type = 'text', 
       file_attachment: fileAttachment,
       is_read: false
     }])
-    .select();
+    .select('id, sender_id, receiver_id, content, file_attachment, is_read, created_at');
 
   if (error) throw new Error(`Gửi tin nhắn thất bại: ${error.message}`);
 
@@ -28380,7 +28428,7 @@ export const getConversation = async (userId, friendId) => {
     return getConversationFromCache(userId, friendId);
   }
 
-  // Cache rỗng: lấy full từ DB
+  // Cache rỗng: lấy full từ DB (giới hạn 100 tin để tránh egress lớn)
   const uid = parseInt(userId, 10);
   const fid = parseInt(friendId, 10);
 
@@ -28389,15 +28437,18 @@ export const getConversation = async (userId, friendId) => {
     .select('id, sender_id, receiver_id, content, file_attachment, is_read, created_at')
     .is('group_id', null)
     .or(`and(sender_id.eq.${uid},receiver_id.eq.${fid}),and(sender_id.eq.${fid},receiver_id.eq.${uid})`)
-    .order('created_at', { ascending: true });
+    .order('created_at', { ascending: false })
+    .limit(100);
 
   if (error) {
-    console.error('Error fetching conversation:', error);
+    if (import.meta.env.DEV) {
+      console.error('Error fetching conversation:', error);
+    }
     return { messages: [], background: '' };
   }
 
-  // Đưa vào cache
-  const newMsgs = data.map(parseRaw);
+  // Đưa vào cache — data từ DESC order cần đảo lại về ASC
+  const newMsgs = [...data].reverse().map(parseRaw);
   const existingIds = new Set(cachedMessages.map(m => m.id));
   const unique = newMsgs.filter(m => !existingIds.has(m.id));
   if (unique.length > 0) cachedMessages = [...cachedMessages, ...unique];
@@ -28494,7 +28545,7 @@ export const sendFriendRequest = async (fromUserId, toUserId) => {
         status: 'pending'
       }
     ])
-    .select()
+    .select('id, from_user_id, to_user_id, status, created_at')
     .single();
 
   if (insertError) {
@@ -28519,7 +28570,7 @@ export const acceptFriendRequest = async (requestId) => {
       accepted_at: new Date().toISOString()
     })
     .eq('id', parseInt(requestId, 10))
-    .select()
+    .select('id, from_user_id, to_user_id, status, created_at, accepted_at')
     .single();
 
   if (updateError) {
@@ -28764,7 +28815,7 @@ export const sendGroupInvite = async ({ groupId, fromUserId, toUserId }) => {
         status: 'pending'
       }
     ])
-    .select()
+    .select('id, group_id, inviter_id, invitee_id, status, created_at')
     .single();
 
   if (insertError) {
@@ -28895,7 +28946,7 @@ export const declineGroupInvite = async (inviteId) => {
     .from('group_invites')
     .update({ status: 'declined' })
     .eq('id', invId)
-    .select()
+    .select('id, group_id, inviter_id, invitee_id, status')
     .single();
 
   if (updateError) throw new Error(`Từ chối lời mời thất bại: ${updateError.message}`);
@@ -29015,7 +29066,7 @@ export const createGroup = async (userId, { name, subject, description, meetingM
         location: location || null
       }
     ])
-    .select()
+    .select('id')
     .single();
 
   if (groupError) {
@@ -29110,7 +29161,7 @@ export const getJoinRequests = async (groupId) => {
   const { data, error } = await supabase
     .from('group_join_requests')
     .select(`
-      *,
+      id, group_id, user_id, status, created_at,
       users:users!user_id (
         id,
         full_name,
@@ -29383,7 +29434,7 @@ export const getGroupById = async (groupId) => {
       try {
         await supabase.from('study_groups').delete().eq('id', data.id);
       } catch (err) {
-        console.warn('Expired group cleanup error:', err);
+        if (import.meta.env.DEV) console.warn('Expired group cleanup error:', err);
       }
     })();
     return null;
@@ -29504,7 +29555,7 @@ export const getPosts = async (currentUserId) => {
   if (!currentUserId) return [];
   const uid = parseInt(currentUserId, 10);
   if (isNaN(uid)) {
-    console.error('[getPosts] userId không hợp lệ:', currentUserId);
+    if (import.meta.env.DEV) console.error('[getPosts] userId không hợp lệ:', currentUserId);
     return [];
   }
 
@@ -29517,7 +29568,7 @@ export const getPosts = async (currentUserId) => {
     .limit(50);
 
   if (friendError) {
-    console.error('Error fetching friendships for feed filtering:', friendError);
+    if (import.meta.env.DEV) console.error('Error fetching friendships for feed filtering:', friendError);
   }
 
   const friendIds = friendships 
@@ -29883,14 +29934,15 @@ export const getComments = async (postId) => {
   const { data, error } = await supabase
     .from('comments')
     .select(`
-      *,
+      id, post_id, user_id, parent_id, content, created_at,
       users (
         full_name,
         avatar
       )
     `)
     .eq('post_id', parseInt(postId, 10))
-    .order('created_at', { ascending: true });
+    .order('created_at', { ascending: true })
+    .limit(200);
 
   if (error) {
     throw new Error(`Lỗi tải bình luận: ${error.message}`);
@@ -29936,7 +29988,7 @@ export const createComment = async (postId, { content, userId, parentId }) => {
       }
     ])
     .select(`
-      *,
+      id, post_id, user_id, parent_id, content, created_at,
       users (
         full_name,
         avatar
@@ -29962,6 +30014,8 @@ export const createComment = async (postId, { content, userId, parentId }) => {
 };
 
 let cachedSuggestions = null;
+let cachedSuggestionsTime = 0;
+const SUGGESTIONS_TTL_MS = 10 * 60 * 1000; // 10 phút
 
 const getSearchSuggestionsBackground = async () => {
   try {
@@ -29992,6 +30046,7 @@ const getSearchSuggestionsBackground = async () => {
       }))
     };
     cachedSuggestions = result;
+    cachedSuggestionsTime = Date.now();
     return result;
   } catch (err) {
     if (import.meta.env.DEV) {
@@ -30002,9 +30057,14 @@ const getSearchSuggestionsBackground = async () => {
 };
 
 export const getSearchSuggestions = async () => {
+  const now = Date.now();
+  // Trả cache ngay nếu còn mới (chưa quá 10 phút)
+  if (cachedSuggestions && (now - cachedSuggestionsTime) < SUGGESTIONS_TTL_MS) {
+    return cachedSuggestions;
+  }
+  // Cache đã cũ hoặc chưa có: fetch mới, nhưng nếu có cache cũ thì trả luôn và refetch background
   if (cachedSuggestions) {
-    // Trả về cache ngay lập tức để render tức thì, đồng thời update ngầm
-    getSearchSuggestionsBackground();
+    getSearchSuggestionsBackground(); // refetch ngầm, không await
     return cachedSuggestions;
   }
   return await getSearchSuggestionsBackground();
@@ -30157,7 +30217,7 @@ export const uploadFile = async (groupId, { fileName, fileSize, fileType, fileDa
       }
     ])
     .select(`
-      *,
+      id, group_id, user_id, file_name, file_size, file_type, file_url, created_at,
       users (
         full_name
       )
@@ -30228,7 +30288,7 @@ export const createSchedule = async (groupId, { topic, dateTime, location, descr
         creator_id: creatorId
       }
     ])
-    .select()
+    .select('id, group_id, topic, date_time, location, description, creator_id, created_at')
     .single();
 
   if (error) {
@@ -30268,7 +30328,7 @@ export const updateSchedule = async (scheduleId, { topic, dateTime, location, de
       description: description || ''
     })
     .eq('id', parseInt(scheduleId, 10))
-    .select()
+    .select('id, group_id, topic, date_time, location, description, creator_id, created_at')
     .single();
 
   if (error) {
@@ -30347,7 +30407,7 @@ export const createDeadline = async (groupId, { title, dueDate, description, cre
       }
     ])
     .select(`
-      *,
+      id, group_id, title, due_date, description, creator_id, assignee_id, completed, created_at,
       users:users!assignee_id (
         full_name
       )
@@ -30386,7 +30446,7 @@ export const toggleDeadline = async (deadlineId) => {
     .from('deadlines')
     .update({ completed: !current.completed })
     .eq('id', parseInt(deadlineId, 10))
-    .select()
+    .select('id, group_id, title, due_date, description, creator_id, assignee_id, completed, created_at')
     .single();
 
   if (updateError) throw new Error('Lỗi cập nhật trạng thái deadline.');
@@ -30426,7 +30486,7 @@ export const updateDeadline = async (deadlineId, { title, dueDate, description, 
     })
     .eq('id', parseInt(deadlineId, 10))
     .select(`
-      *,
+      id, group_id, title, due_date, description, creator_id, assignee_id, completed, created_at,
       users:users!assignee_id (
         full_name
       )
@@ -30600,7 +30660,7 @@ export const sendChatMessage = async (groupId, { content, fileAttachment, userId
   };
 
   const selectClause = `
-    *,
+    id, group_id, sender_id, content, file_attachment, reply_to, is_pinned, created_at,
     users:users!sender_id (
       full_name,
       avatar

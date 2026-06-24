@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/set-state-in-effect */
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { STORAGE_KEYS } from '@/constants/storageKeys';
 import { formatBytes } from '@/utils';
@@ -132,6 +132,13 @@ export default function useGroupDetail(groupId, user, addToast) {
   });
   const [confirmConfig, setConfirmConfig] = useState(null);
 
+  // Tab data cache: { [tabKey]: { data, ts } } — ngăn re-fetch mỗi lần chuyển tab
+  const tabCacheRef = useRef({});
+  const TAB_CACHE_TTL = 5 * 60 * 1000; // 5 phút
+
+  // Cache membersDetails cho việc append realtime message (tránh fetch user trong callback)
+  const membersDetailsCacheRef = useRef({});
+
   // Reset/sync states from localStorage cache when groupId changes
   useEffect(() => {
     if (!groupId) return;
@@ -143,6 +150,9 @@ export default function useGroupDetail(groupId, user, addToast) {
     setSchedules([]);
     setDeadlines([]);
     setChatMessages([]);
+    // Xóa cache tab khi đổi nhóm
+    tabCacheRef.current = {};
+    membersDetailsCacheRef.current = {};
   }, [groupId]);
 
   const fetchGroupSchedules = useCallback(async () => {
@@ -219,9 +229,13 @@ export default function useGroupDetail(groupId, user, addToast) {
           avatar: u.avatar
         }));
         setMembersDetails(mapped);
+        // Cập nhật cache member để dùng trong realtime append
+        mapped.forEach(m => {
+          membersDetailsCacheRef.current[m.id] = m;
+        });
       }
     } catch (err) {
-      console.warn('Lỗi tải thông tin thành viên:', err);
+      if (import.meta.env.DEV) console.warn('Lỗi tải thông tin thành viên:', err);
     }
   }, []);
 
@@ -237,7 +251,7 @@ export default function useGroupDetail(groupId, user, addToast) {
         setFriendships(data);
       }
     } catch (err) {
-      console.warn('Lỗi tải quan hệ bạn bè:', err);
+      if (import.meta.env.DEV) console.warn('Lỗi tải quan hệ bạn bè:', err);
     }
   }, [user]);
 
@@ -264,7 +278,7 @@ export default function useGroupDetail(groupId, user, addToast) {
         fetchGroupFriendships(),
         fetchGroupDeadlines()
       ]).catch(err => {
-        console.warn('[useGroupDetail] Background fetches encountered errors:', err);
+        if (import.meta.env.DEV) console.warn('[useGroupDetail] Background fetches encountered errors:', err);
       });
     } catch (err) {
       addToast(err.message || 'Lỗi tải thông tin nhóm', 'error');
@@ -279,49 +293,95 @@ export default function useGroupDetail(groupId, user, addToast) {
 
 
 
-  // Load appropriate data when tab changes
+  // Load appropriate data when tab changes — có cache 5 phút
   useEffect(() => {
-    if (group) {
-      if (activeTab === 'documents') {
-        fetchGroupFiles();
-      } else if (activeTab === 'schedule') {
-        fetchGroupSchedules();
-      } else if (activeTab === 'deadlines') {
-        fetchGroupDeadlines();
-      } else if (activeTab === 'chat') {
-        fetchChatMessages();
-      }
+    if (!group) return;
+    const now = Date.now();
+    const isFresh = (key) => {
+      const c = tabCacheRef.current[key];
+      return c && (now - c.ts) < TAB_CACHE_TTL;
+    };
+    if (activeTab === 'documents') {
+      if (!isFresh('documents')) fetchGroupFiles().then(() => { tabCacheRef.current['documents'] = { ts: Date.now() }; });
+    } else if (activeTab === 'schedule') {
+      if (!isFresh('schedule')) fetchGroupSchedules().then(() => { tabCacheRef.current['schedule'] = { ts: Date.now() }; });
+    } else if (activeTab === 'deadlines') {
+      if (!isFresh('deadlines')) fetchGroupDeadlines().then(() => { tabCacheRef.current['deadlines'] = { ts: Date.now() }; });
+    } else if (activeTab === 'chat') {
+      if (!isFresh('chat')) fetchChatMessages().then(() => { tabCacheRef.current['chat'] = { ts: Date.now() }; });
     }
-  }, [group, activeTab, fetchGroupFiles, fetchGroupSchedules, fetchGroupDeadlines, fetchChatMessages]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [group, activeTab]);
 
-  // Chat messaging Realtime listener - ALWAYS active for unread count tracking!
+  // Chat messaging Realtime listener — append từ payload thay vì re-fetch toàn bộ
   useEffect(() => {
-    if (group && groupId) {
-      // Initial fetch
-      fetchChatMessages();
+    if (!group || !groupId) return;
 
-      // Listen for new messages in real-time
-      const chatChannel = supabase
-        .channel(`group-chat-${groupId}`)
-        .on(
-          'postgres_changes',
-          {
-            event: '*',
-            schema: 'public',
-            table: 'messages',
-            filter: `group_id=eq.${groupId}`
-          },
-          () => {
-            fetchChatMessages(); // Refetch messages in real-time!
-          }
-        )
-        .subscribe();
-
-      return () => {
-        supabase.removeChannel(chatChannel);
-      };
+    // Initial fetch (chỉ 1 lần khi mount)
+    if (!tabCacheRef.current['chat']) {
+      fetchChatMessages().then(() => { tabCacheRef.current['chat'] = { ts: Date.now() }; });
     }
-  }, [group, groupId, fetchChatMessages]);
+
+    const chatChannel = supabase
+      .channel(`group-chat-${groupId}-${Date.now()}`)
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'messages',
+          filter: `group_id=eq.${groupId}`
+        },
+        (payload) => {
+          // Bỏ qua meetroom messages
+          const msg = payload.new;
+          if (!msg || msg.meetroom_id || msg.content?.startsWith('[meetroom:')) return;
+
+          // Dùng cache member hoặc fallback
+          const senderId = msg.sender_id?.toString();
+          const cachedMember = membersDetailsCacheRef.current[senderId];
+          const newMsg = {
+            id: msg.id?.toString(),
+            groupId: msg.group_id?.toString(),
+            userId: msg.sender_id,
+            userFullName: cachedMember?.fullName || 'Thành viên',
+            userAvatar: cachedMember?.avatar || '',
+            content: msg.content,
+            fileAttachment: msg.file_attachment || null,
+            replyTo: msg.reply_to || null,
+            isPinned: msg.is_pinned || false,
+            createdAt: msg.created_at
+          };
+          setChatMessages(prev => {
+            // Tránh duplicate
+            if (prev.some(m => m.id === newMsg.id)) return prev;
+            // Giữ tối đa 50 messages trong memory
+            const updated = [...prev, newMsg];
+            return updated.length > 50 ? updated.slice(updated.length - 50) : updated;
+          });
+        }
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: 'DELETE',
+          schema: 'public',
+          table: 'messages',
+          filter: `group_id=eq.${groupId}`
+        },
+        (payload) => {
+          if (!payload.old?.id) return;
+          setChatMessages(prev => prev.filter(m => m.id !== payload.old.id?.toString()));
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(chatChannel);
+    };
+  // fetchChatMessages cố tình không có trong deps để tránh re-subscribe mỗi lần render
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [group, groupId]);
 
   // Sync last seen chat time when chat is active
   useEffect(() => {
@@ -761,7 +821,7 @@ export default function useGroupDetail(groupId, user, addToast) {
         addToast(`Cảnh báo: Bạn đã cố gắng tải lên tài liệu chứa nội dung người lớn/khiêu dâm (${newWarnCount}/3 lần vi phạm). Vi phạm 3 lần tài khoản sẽ bị khóa vĩnh viễn khỏi hệ thống!`, 'error');
       }
     } catch (err) {
-      console.error('Lỗi cập nhật vi phạm NSFW:', err);
+      if (import.meta.env.DEV) console.error('Lỗi cập nhật vi phạm NSFW:', err);
     }
   };
 
@@ -797,7 +857,7 @@ export default function useGroupDetail(groupId, user, addToast) {
       const fileName = `${groupId}/${Date.now()}_${safeName}`;
       const { error: uploadError } = await supabase.storage
         .from('attachments')
-        .upload(fileName, fileToUpload, { cacheControl: '86400', upsert: true });
+        .upload(fileName, fileToUpload, { cacheControl: '2592000', upsert: true });
 
       if (uploadError) {
         if (import.meta.env.DEV) {
@@ -1018,7 +1078,7 @@ export default function useGroupDetail(groupId, user, addToast) {
         const storageFileName = `submissions/${groupId}/${user.id}_${Date.now()}_${safeName}`;
         const { error: uploadError } = await supabase.storage
           .from('attachments')
-          .upload(storageFileName, fileToUpload, { cacheControl: '86400', upsert: true });
+          .upload(storageFileName, fileToUpload, { cacheControl: '2592000', upsert: true });
 
         if (uploadError) {
           if (import.meta.env.DEV) {
@@ -1090,8 +1150,11 @@ export default function useGroupDetail(groupId, user, addToast) {
 
   const handleMsgPin = async (msgId) => {
     try {
-      await togglePinChatMessage(msgId);
-      await fetchChatMessages();
+      const newPinned = await togglePinChatMessage(msgId);
+      // Cập nhật state trực tiếp, không re-fetch
+      setChatMessages(prev => prev.map(m =>
+        m.id === msgId ? { ...m, isPinned: newPinned } : m
+      ));
       addToast('Đã thay đổi trạng thái ghim tin nhắn!', 'success');
     } catch (err) {
       addToast(err.message || 'Lỗi khi ghim tin nhắn', 'error');
@@ -1125,7 +1188,7 @@ export default function useGroupDetail(groupId, user, addToast) {
         const chatFileName = `chat/${groupId}/${Date.now()}_${safeName}`;
         const { error: uploadError } = await supabase.storage
           .from('attachments')
-          .upload(chatFileName, fileToUpload, { cacheControl: '86400', upsert: true });
+          .upload(chatFileName, fileToUpload, { cacheControl: '2592000', upsert: true });
 
         if (uploadError) {
           if (import.meta.env.DEV) {
@@ -1165,7 +1228,7 @@ export default function useGroupDetail(groupId, user, addToast) {
       const fileInput = document.getElementById('chat-file-input');
       if (fileInput) fileInput.value = '';
       setReplyTo(null);
-      await fetchChatMessages();
+      // Không cần fetch lại — Realtime subscription sẽ append tin nhắn mới tự động
     } catch (err) {
       addToast(err.message || 'Lỗi gửi tin nhắn', 'error');
     } finally {

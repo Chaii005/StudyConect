@@ -17,7 +17,7 @@ const saveSession = (user) => {
   try {
     localStorage.setItem(SESSION_KEY, JSON.stringify(user));
   } catch (err) {
-    console.warn('Error saving session:', err);
+    if (import.meta.env.DEV) console.warn('Error saving session:', err);
   }
 };
 
@@ -218,7 +218,7 @@ export const adminLogin = async ({ email, password }) => {
   try {
     localStorage.setItem(ADMIN_SESSION_KEY, JSON.stringify(safeAdmin));
   } catch (err) {
-    console.warn('Error saving admin session:', err);
+    if (import.meta.env.DEV) console.warn('Error saving admin session:', err);
   }
   return { admin: safeAdmin };
 };

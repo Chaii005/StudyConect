@@ -104,7 +104,7 @@ export default function FriendDetail() {
         if (error) throw error;
         setIsFriend(!!data);
       } catch (err) {
-        console.error('Error checking friendship:', err);
+        if (import.meta.env.DEV) console.error('Error checking friendship:', err);
       } finally {
         setCheckingFriendship(false);
       }
@@ -127,7 +127,7 @@ export default function FriendDetail() {
         if (error) throw error;
         setFriendData(data);
       } catch (err) {
-        console.error('Error fetching friend profile:', err);
+        if (import.meta.env.DEV) console.error('Error fetching friend profile:', err);
         addToast('Không thể tải thông tin bạn bè.', 'error');
       } finally {
         setLoadingFriend(false);
@@ -144,7 +144,7 @@ export default function FriendDetail() {
       const fetched = await getUserPosts(id);
       setPosts(fetched);
     } catch (err) {
-      console.error('Error loading user posts:', err);
+      if (import.meta.env.DEV) console.error('Error loading user posts:', err);
       addToast('Không thể tải danh sách bài viết.', 'error');
     } finally {
       setLoadingPosts(false);
@@ -171,7 +171,7 @@ export default function FriendDetail() {
         return { ...p, likes: updatedLikes };
       }));
     } catch (err) {
-      console.error('Error liking post:', err);
+      if (import.meta.env.DEV) console.error('Error liking post:', err);
     }
   };
 
@@ -205,7 +205,7 @@ export default function FriendDetail() {
         return { ...p, isPinned };
       }));
     } catch (err) {
-      console.error('Error toggling pin:', err);
+      if (import.meta.env.DEV) console.error('Error toggling pin:', err);
     }
   };
 

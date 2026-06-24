@@ -102,7 +102,7 @@ export const createGroup = async (userId, { name, subject, description, meetingM
         location: location || null
       }
     ])
-    .select()
+    .select('id')
     .single();
 
   if (groupError) {
@@ -197,7 +197,7 @@ export const getJoinRequests = async (groupId) => {
   const { data, error } = await supabase
     .from('group_join_requests')
     .select(`
-      *,
+      id, group_id, user_id, status, created_at,
       users:users!user_id (
         id,
         full_name,
@@ -470,7 +470,7 @@ export const getGroupById = async (groupId) => {
       try {
         await supabase.from('study_groups').delete().eq('id', data.id);
       } catch (err) {
-        console.warn('Expired group cleanup error:', err);
+        if (import.meta.env.DEV) console.warn('Expired group cleanup error:', err);
       }
     })();
     return null;

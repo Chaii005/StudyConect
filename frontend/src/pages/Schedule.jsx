@@ -27,7 +27,7 @@ const getSubmissionsCount = (groupId, deadlineId) => {
     const list = all[deadlineId] || [];
     return list.length;
   } catch (e) {
-    console.error('Error loading submissions count:', e);
+    if (import.meta.env.DEV) console.error('Error loading submissions count:', e);
     return 0;
   }
 };

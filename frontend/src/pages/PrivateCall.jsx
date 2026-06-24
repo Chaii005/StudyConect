@@ -520,7 +520,7 @@ export default function PrivateCall() {
     try {
       await hangup();
     } catch (err) {
-      console.warn('Failed to send hangup signal:', err);
+      if (import.meta.env.DEV) console.warn('Failed to send hangup signal:', err);
     }
 
     // Gửi tin nhắn tổng kết thời gian cuộc gọi vào chat nếu có kết nối

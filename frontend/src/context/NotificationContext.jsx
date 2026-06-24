@@ -29,7 +29,7 @@ export const NotificationProvider = ({ children }) => {
       try {
         localStorage.setItem('studyconect_toast_enabled', next ? 'true' : 'false');
       } catch (err) {
-        console.warn('Error setting toast enabled state:', err);
+        if (import.meta.env.DEV) console.warn('Error setting toast enabled state:', err);
       }
       return next;
     });

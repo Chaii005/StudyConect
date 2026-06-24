@@ -232,7 +232,7 @@ export default function AppLayout({ children, hideNavbar = false, hideSidebar = 
       try {
         const { count } = await supabase
           .from('friendships')
-          .select('*', { count: 'exact', head: true })
+          .select('id', { count: 'exact', head: true })
           .eq('to_user_id', parseInt(user.id, 10))
           .eq('status', 'pending');
           
@@ -272,7 +272,7 @@ export default function AppLayout({ children, hideNavbar = false, hideSidebar = 
           try {
             const { count } = await supabase
               .from('friendships')
-              .select('*', { count: 'exact', head: true })
+              .select('id', { count: 'exact', head: true })
               .eq('to_user_id', parseInt(user.id, 10))
               .eq('status', 'pending');
               

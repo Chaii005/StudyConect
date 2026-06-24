@@ -221,7 +221,7 @@ export const adminCreateGroup = async ({ name, subject, description, creatorId }
         max_members: 10
       }
     ])
-    .select()
+    .select('id')
     .single();
 
   if (groupError) throw new Error(`Tạo nhóm thất bại: ${groupError.message}`);
@@ -247,7 +247,7 @@ export const adminCreateGroup = async ({ name, subject, description, creatorId }
   const { data: finalGroup } = await supabase
     .from('study_groups')
     .select(`
-      *,
+      id, name, subject, description, creator_id, created_at,
       group_members (
         user_id,
         role
@@ -350,7 +350,7 @@ export const adminUpdateGroup = async (groupId, { name, subject, description, cr
   const { data: finalGroup } = await supabase
     .from('study_groups')
     .select(`
-      *,
+      id, name, subject, description, creator_id, created_at,
       group_members (
         user_id,
         role

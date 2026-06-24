@@ -441,11 +441,13 @@ export default function useNotifications(userId) {
             });
         }
         
-        // Fetch all comments by this user to find replies to them
+        // Fetch comments by this user (24h qua) to find replies to them
         const { data: myComments } = await supabase
           .from('comments')
           .select('id')
-          .eq('user_id', uid);
+          .eq('user_id', uid)
+          .gte('created_at', cutoff)
+          .limit(50);
 
         if (myComments && myComments.length > 0) {
           const myCommentIds = myComments.map(c => c.id);
@@ -655,7 +657,7 @@ export default function useNotifications(userId) {
             });
           });
       } catch (err) {
-        console.warn('Error reading local kicks:', err);
+        if (import.meta.env.DEV) console.warn('Error reading local kicks:', err);
       }
 
       // 2d. Fetch local group demotions
@@ -673,7 +675,7 @@ export default function useNotifications(userId) {
             });
           });
       } catch (err) {
-        console.warn('Error reading local demotions:', err);
+        if (import.meta.env.DEV) console.warn('Error reading local demotions:', err);
       }
 
       // Post Tag Notifications (from Supabase post_tags)
@@ -743,7 +745,7 @@ export default function useNotifications(userId) {
             });
         }
       } catch (err) {
-        console.warn('Error fetching post tag notifications:', err);
+        if (import.meta.env.DEV) console.warn('Error fetching post tag notifications:', err);
       }
 
       // Fetch outgoing missed call messages (24h qua)
@@ -819,7 +821,7 @@ export default function useNotifications(userId) {
 
     // Channel name unique mỗi mount để tránh duplicate subscription
     const notifChannel = supabase
-      .channel(`notif-${userId}-${Date.now()}`)
+      .channel(`notif-${userId}`)
       .on(
         'postgres_changes',
         { event: '*', schema: 'public', table: 'friendships', filter: `to_user_id=eq.${userId}` },
@@ -846,7 +848,7 @@ export default function useNotifications(userId) {
       if (document.visibilityState === 'visible') {
         refresh();
       }
-    }, 900000); // fallback 15 phút
+    }, 1800000); // fallback 30 phút
     
     return () => {
       clearInterval(interval);
@@ -862,7 +864,7 @@ export default function useNotifications(userId) {
     try {
       localStorage.setItem(STORAGE_KEYS.NOTIF_SEEN, JSON.stringify([...newSeen]));
     } catch (err) {
-      console.warn('Error saving seen notifications:', err);
+      if (import.meta.env.DEV) console.warn('Error saving seen notifications:', err);
     }
   }, [seen, notifs]);
 

@@ -321,7 +321,7 @@ function useWebRTC({ roomId, user, micOn, camOn, onForceMute }) {
       stream.getVideoTracks().forEach(t => { t.enabled = camOnRef.current; });
       return stream;
     } catch (err) {
-      console.warn('Full media request failed in Meetroom, trying audio only...', err);
+      if (import.meta.env.DEV) console.warn('Full media request failed in Meetroom, trying audio only...', err);
       try {
         const stream = await navigator.mediaDevices.getUserMedia({
           video: false,
@@ -332,7 +332,7 @@ function useWebRTC({ roomId, user, micOn, camOn, onForceMute }) {
         stream.getAudioTracks().forEach(t => { t.enabled = micOnRef.current; });
         return stream;
       } catch (err2) {
-        console.error('Audio-only media request failed too in Meetroom', err2);
+        if (import.meta.env.DEV) console.error('Audio-only media request failed too in Meetroom', err2);
         setError(err.name === 'NotAllowedError' || err2.name === 'NotAllowedError'
           ? 'Vui lòng cấp quyền camera/mic.'
           : 'Không thể truy cập camera/mic.');
@@ -431,7 +431,7 @@ function useWebRTC({ roomId, user, micOn, camOn, onForceMute }) {
                     || senders.find(s => s.track === null);
         if (sender) {
           try { await sender.replaceTrack(newTrack); }
-          catch (e) { console.warn('replaceTrack error:', e); }
+          catch (e) { if (import.meta.env.DEV) console.warn('replaceTrack error:', e); }
         } else if (newTrack) {
           // Trường hợp ban đầu không có camera (không có sender), ta thêm track mới và thương lượng lại
           try {
@@ -448,7 +448,7 @@ function useWebRTC({ roomId, user, micOn, camOn, onForceMute }) {
                 camOn: camOnRef.current, micOn: micOnRef.current,
               }
             });
-          } catch (e) { console.warn('addTrack renegotiation error:', e); }
+          } catch (e) { if (import.meta.env.DEV) console.warn('addTrack renegotiation error:', e); }
         }
       })
     );
@@ -804,7 +804,7 @@ export default function MeetRoom() {
           setGroupCreatorId(data.creator_id);
         }
       } catch (err) {
-        console.error('Error fetching group creator:', err);
+        if (import.meta.env.DEV) console.error('Error fetching group creator:', err);
       }
     };
     fetchGroupCreator();
@@ -903,7 +903,7 @@ export default function MeetRoom() {
           setMessages(data.map(formatMsg));
         }
       } catch (err) {
-        console.error('Error fetching meetroom messages:', err);
+        if (import.meta.env.DEV) console.error('Error fetching meetroom messages:', err);
       }
     };
 
@@ -1014,7 +1014,7 @@ export default function MeetRoom() {
         `);
 
       if (error) {
-        console.error('Error sending meetroom message:', error);
+        if (import.meta.env.DEV) console.error('Error sending meetroom message:', error);
       } else if (data && data[0]) {
         const m = data[0];
         const newMsg = {
@@ -1031,7 +1031,7 @@ export default function MeetRoom() {
         });
       }
     } catch (err) {
-      console.error('Exception in sendMessage:', err);
+      if (import.meta.env.DEV) console.error('Exception in sendMessage:', err);
     }
   };
 

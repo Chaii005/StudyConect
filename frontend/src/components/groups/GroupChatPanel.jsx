@@ -37,7 +37,7 @@ const downloadBaseFile = async (dataUrl, fileName) => {
     // Delay revocation so the browser has time to start the download
     setTimeout(() => URL.revokeObjectURL(url), 2000);
   } catch (err) {
-    console.error('Lỗi download file:', err);
+    if (import.meta.env.DEV) console.error('Lỗi download file:', err);
     window.open(dataUrl, '_blank');
   }
 };

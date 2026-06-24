@@ -103,7 +103,7 @@ export const sendMessage = async (fromUserId, toUserId, content, type = 'text', 
       file_attachment: fileAttachment,
       is_read: false
     }])
-    .select();
+    .select('id, sender_id, receiver_id, content, file_attachment, is_read, created_at');
 
   if (error) throw new Error(`Gửi tin nhắn thất bại: ${error.message}`);
 

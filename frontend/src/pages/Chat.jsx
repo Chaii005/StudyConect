@@ -77,7 +77,7 @@ const downloadBaseFile = (base64Data, filename) => {
       window.URL.revokeObjectURL(url);
     })
     .catch(err => {
-      console.error('File download failed:', err);
+      if (import.meta.env.DEV) console.error('File download failed:', err);
     });
 };
 
@@ -155,7 +155,7 @@ function CameraModal({ onCapture, onClose }) {
           stream = await navigator.mediaDevices.getUserMedia(constraints);
           if (stream) break;
         } catch (err) {
-          console.warn('Failed with constraints:', constraints, err);
+          if (import.meta.env.DEV) console.warn('Failed with constraints:', constraints, err);
         }
       }
 
@@ -566,7 +566,7 @@ function ConversationView({ user, friend, friends, onBack, onlineUserIds, onNick
       setShowRenameModal(false);
       if (onNicknameChange) onNicknameChange();
     } catch (err) {
-      console.error('Error saving nickname:', err);
+      if (import.meta.env.DEV) console.error('Error saving nickname:', err);
     }
   };
 
@@ -590,7 +590,7 @@ function ConversationView({ user, friend, friends, onBack, onlineUserIds, onNick
         .is('group_id', null);
 
       if (err1 || err2) {
-        console.error('Error clearing chat:', err1 || err2);
+        if (import.meta.env.DEV) console.error('Error clearing chat:', err1 || err2);
         return;
       }
 
@@ -598,7 +598,7 @@ function ConversationView({ user, friend, friends, onBack, onlineUserIds, onNick
       setShowClearConfirm(false);
       if (onNicknameChange) onNicknameChange();
     } catch (err) {
-      console.error('Exception clearing chat:', err);
+      if (import.meta.env.DEV) console.error('Exception clearing chat:', err);
     }
   };
 
@@ -651,7 +651,7 @@ function ConversationView({ user, friend, friends, onBack, onlineUserIds, onNick
       setChatBg(bgValue);
       setShowBgModal(false);
     } catch (err) {
-      console.error('Error saving background:', err);
+      if (import.meta.env.DEV) console.error('Error saving background:', err);
     }
   };
 
@@ -683,7 +683,7 @@ function ConversationView({ user, friend, friends, onBack, onlineUserIds, onNick
           try {
             localStorage.setItem(`sc_nickname_${user.id}_${friend.userId}`, val);
           } catch (err) {
-            console.warn('Error saving nickname:', err);
+            if (import.meta.env.DEV) console.warn('Error saving nickname:', err);
           }
           setNickname(val);
         } else {
@@ -718,8 +718,8 @@ function ConversationView({ user, friend, friends, onBack, onlineUserIds, onNick
         try {
           localStorage.setItem(`sc_nickname_${user.id}_${friend.userId}`, val);
         } catch (err) {
-          console.warn('Error saving nickname:', err);
-        }
+            if (import.meta.env.DEV) console.warn('Error saving nickname:', err);
+          }
         setNickname(val);
       } else {
         localStorage.removeItem(`sc_nickname_${user.id}_${friend.userId}`);
@@ -734,18 +734,13 @@ function ConversationView({ user, friend, friends, onBack, onlineUserIds, onNick
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     load();
-    const interval = setInterval(() => {
-      if (document.visibilityState === 'visible') {
-        load();
-      }
-    }, 900000); // fallback 15 minutes
-    return () => clearInterval(interval);
+    // Không dùng setInterval — Realtime subscription bên dưới xử lý cập nhật thời gian thực
   }, [load]);
 
   useEffect(() => {
     if (!user?.id || !friend?.userId) return;
 
-    const channelName = `chat-msg-${user.id}-${friend.userId}`;
+    const channelName = `chat-msg-${user.id}-${friend.userId}-${Date.now()}`;
     const channel = supabase
       .channel(channelName)
       .on(
@@ -835,7 +830,7 @@ function ConversationView({ user, friend, friends, onBack, onlineUserIds, onNick
         const fileName = `private/${user.id}/${Date.now()}_${fileToUpload.name || attachedFile.name || 'clipboard.png'}`;
         const { error: uploadError } = await supabase.storage
           .from('attachments')
-          .upload(fileName, fileToUpload, { cacheControl: '86400', upsert: true });
+          .upload(fileName, fileToUpload, { cacheControl: '2592000', upsert: true });
 
         if (uploadError) {
           if (import.meta.env.DEV) {
@@ -957,7 +952,7 @@ function ConversationView({ user, friend, friends, onBack, onlineUserIds, onNick
       await deleteMessage(id);
       await load();
     } catch (err) {
-      console.error('Error deleting message:', err);
+      if (import.meta.env.DEV) console.error('Error deleting message:', err);
     }
   };
 
@@ -2528,7 +2523,7 @@ export default function Chat() {
         const total = list.reduce((acc, f) => acc + getUnreadCount(user.id, f.userId), 0);
         setTotalUnread(total);
       } catch (err) {
-        console.warn('[Chat] Refresh failed:', err);
+        if (import.meta.env.DEV) console.warn('[Chat] Refresh failed:', err);
       } finally {
         setLoading(false);
       }
@@ -2538,7 +2533,7 @@ export default function Chat() {
       if (document.visibilityState === 'visible') {
         refresh();
       }
-    }, 900000); // fallback 15 phút — Realtime handles real-time updates
+    }, 1800000); // fallback 30 phút — Realtime handles real-time message updates
     return () => clearInterval(timer);
   }, [user]);
 

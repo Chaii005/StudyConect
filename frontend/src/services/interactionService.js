@@ -7,7 +7,7 @@ export const getPosts = async (currentUserId) => {
   if (!currentUserId) return [];
   const uid = parseInt(currentUserId, 10);
   if (isNaN(uid)) {
-    console.error('[getPosts] userId không hợp lệ:', currentUserId);
+    if (import.meta.env.DEV) console.error('[getPosts] userId không hợp lệ:', currentUserId);
     return [];
   }
 
@@ -20,7 +20,7 @@ export const getPosts = async (currentUserId) => {
     .limit(50);
 
   if (friendError) {
-    console.error('Error fetching friendships for feed filtering:', friendError);
+    if (import.meta.env.DEV) console.error('Error fetching friendships for feed filtering:', friendError);
   }
 
   const friendIds = friendships 
@@ -386,14 +386,15 @@ export const getComments = async (postId) => {
   const { data, error } = await supabase
     .from('comments')
     .select(`
-      *,
+      id, post_id, user_id, parent_id, content, created_at,
       users (
         full_name,
         avatar
       )
     `)
     .eq('post_id', parseInt(postId, 10))
-    .order('created_at', { ascending: true });
+    .order('created_at', { ascending: true })
+    .limit(200);
 
   if (error) {
     throw new Error(`Lỗi tải bình luận: ${error.message}`);
@@ -439,7 +440,7 @@ export const createComment = async (postId, { content, userId, parentId }) => {
       }
     ])
     .select(`
-      *,
+      id, post_id, user_id, parent_id, content, created_at,
       users (
         full_name,
         avatar
@@ -668,7 +669,7 @@ export const uploadFile = async (groupId, { fileName, fileSize, fileType, fileDa
       }
     ])
     .select(`
-      *,
+      id, group_id, user_id, file_name, file_size, file_type, file_url, created_at,
       users (
         full_name
       )
@@ -739,7 +740,7 @@ export const createSchedule = async (groupId, { topic, dateTime, location, descr
         creator_id: creatorId
       }
     ])
-    .select()
+    .select('id, group_id, topic, date_time, location, description, creator_id, created_at')
     .single();
 
   if (error) {
@@ -779,7 +780,7 @@ export const updateSchedule = async (scheduleId, { topic, dateTime, location, de
       description: description || ''
     })
     .eq('id', parseInt(scheduleId, 10))
-    .select()
+    .select('id, group_id, topic, date_time, location, description, creator_id, created_at')
     .single();
 
   if (error) {
@@ -858,7 +859,7 @@ export const createDeadline = async (groupId, { title, dueDate, description, cre
       }
     ])
     .select(`
-      *,
+      id, group_id, title, due_date, description, creator_id, assignee_id, completed, created_at,
       users:users!assignee_id (
         full_name
       )
@@ -897,7 +898,7 @@ export const toggleDeadline = async (deadlineId) => {
     .from('deadlines')
     .update({ completed: !current.completed })
     .eq('id', parseInt(deadlineId, 10))
-    .select()
+    .select('id, group_id, title, due_date, description, creator_id, assignee_id, completed, created_at')
     .single();
 
   if (updateError) throw new Error('Lỗi cập nhật trạng thái deadline.');
@@ -937,7 +938,7 @@ export const updateDeadline = async (deadlineId, { title, dueDate, description, 
     })
     .eq('id', parseInt(deadlineId, 10))
     .select(`
-      *,
+      id, group_id, title, due_date, description, creator_id, assignee_id, completed, created_at,
       users:users!assignee_id (
         full_name
       )
@@ -1111,7 +1112,7 @@ export const sendChatMessage = async (groupId, { content, fileAttachment, userId
   };
 
   const selectClause = `
-    *,
+    id, group_id, sender_id, content, file_attachment, reply_to, is_pinned, created_at,
     users:users!sender_id (
       full_name,
       avatar

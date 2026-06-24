@@ -335,18 +335,13 @@ export default function Friends() {
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     loadAll();
-    const interval = setInterval(() => {
-      if (document.visibilityState === 'visible') {
-        loadAll();
-      }
-    }, 900000); // fallback 15 minutes
-    return () => clearInterval(interval);
+    // Không dùng setInterval — Realtime subscription bên dưới xử lý cập nhật thời gian thực
   }, [loadAll]);
 
   useEffect(() => {
     if (!user?.id) return;
 
-    const channelName = `friend-realtime-${user.id}`;
+    const channelName = `friend-realtime-${user.id}-${Date.now()}`;
     const channel = supabase
       .channel(channelName)
       .on(

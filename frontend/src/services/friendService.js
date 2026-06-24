@@ -25,7 +25,7 @@ export const sendFriendRequest = async (fromUserId, toUserId) => {
         status: 'pending'
       }
     ])
-    .select()
+    .select('id, from_user_id, to_user_id, status, created_at')
     .single();
 
   if (insertError) {
@@ -50,7 +50,7 @@ export const acceptFriendRequest = async (requestId) => {
       accepted_at: new Date().toISOString()
     })
     .eq('id', parseInt(requestId, 10))
-    .select()
+    .select('id, from_user_id, to_user_id, status, created_at, accepted_at')
     .single();
 
   if (updateError) {

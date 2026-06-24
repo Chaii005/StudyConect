@@ -28,7 +28,7 @@ export const sendGroupInvite = async ({ groupId, fromUserId, toUserId }) => {
         status: 'pending'
       }
     ])
-    .select()
+    .select('id, group_id, inviter_id, invitee_id, status, created_at')
     .single();
 
   if (insertError) {
@@ -159,7 +159,7 @@ export const declineGroupInvite = async (inviteId) => {
     .from('group_invites')
     .update({ status: 'declined' })
     .eq('id', invId)
-    .select()
+    .select('id, group_id, inviter_id, invitee_id, status')
     .single();
 
   if (updateError) throw new Error(`Từ chối lời mời thất bại: ${updateError.message}`);
