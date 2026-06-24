@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 import { useOnlineUsers } from '@/context/OnlineUsersContext';
@@ -101,6 +101,7 @@ export default function AppLayout({ children, hideNavbar = false, hideSidebar = 
   const [schedules, setSchedules] = useState([]);
   const [deadlines, setDeadlines] = useState([]);
   const [friends, setFriends] = useState([]);
+  const friendsCacheRef = useRef({}); // { [userId]: friends[] } — cache in memory, reset on page reload only
   const onlineUserIds = useOnlineUsers();
 
   // Fetch sidebar data: friends, schedules & deadlines
@@ -110,11 +111,17 @@ export default function AppLayout({ children, hideNavbar = false, hideSidebar = 
     let isMounted = true;
 
     const loadFriends = async () => {
+      // Chỉ fetch nếu chưa có trong cache memory
+      if (friendsCacheRef.current[user.id]) {
+        setFriends(friendsCacheRef.current[user.id]);
+        return;
+      }
       try {
         const list = await getFriends(user.id);
+        friendsCacheRef.current[user.id] = list;
         if (isMounted) setFriends(list);
       } catch (err) {
-        console.warn('Error fetching friends in layout:', err);
+        if (import.meta.env.DEV) console.warn('Error fetching friends in layout:', err);
       }
     };
 
@@ -146,7 +153,7 @@ export default function AppLayout({ children, hideNavbar = false, hideSidebar = 
           setDeadlines(processedDeadlines);
         }
       } catch (err) {
-        console.warn('Error fetching schedules/deadlines in layout:', err);
+        if (import.meta.env.DEV) console.warn('Error fetching schedules/deadlines in layout:', err);
       }
     };
 

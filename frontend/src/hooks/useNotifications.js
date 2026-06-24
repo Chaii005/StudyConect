@@ -788,7 +788,7 @@ export default function useNotifications(userId) {
         setSeen(new Set());
       }
     } catch (e) {
-      console.error('Error fetching notifications:', e);
+      if (import.meta.env.DEV) console.error('Error fetching notifications:', e);
     }
   }, [userId]);
 
@@ -860,7 +860,7 @@ export default function useNotifications(userId) {
     try {
       await acceptGroupInvite(inviteId);
     } catch (err) {
-      console.error('Error accepting group invite:', err);
+      if (import.meta.env.DEV) console.error('Error accepting group invite:', err);
     } finally {
       setProcessing(p => ({ ...p, [inviteId]: null }));
       refresh();
@@ -872,7 +872,7 @@ export default function useNotifications(userId) {
     try {
       await declineGroupInvite(inviteId);
     } catch (err) {
-      console.error('Error declining group invite:', err);
+      if (import.meta.env.DEV) console.error('Error declining group invite:', err);
     } finally {
       setProcessing(p => ({ ...p, [inviteId]: null }));
       refresh();
@@ -884,7 +884,7 @@ export default function useNotifications(userId) {
     try {
       await acceptRealFriend(requestId);
     } catch (err) {
-      console.error('Error accepting friend request:', err);
+      if (import.meta.env.DEV) console.error('Error accepting friend request:', err);
     } finally {
       setProcessing(p => ({ ...p, [requestId]: null }));
       refresh();
@@ -896,7 +896,7 @@ export default function useNotifications(userId) {
     try {
       await declineRealFriend(requestId);
     } catch (err) {
-      console.error('Error declining friend request:', err);
+      if (import.meta.env.DEV) console.error('Error declining friend request:', err);
     } finally {
       setProcessing(p => ({ ...p, [requestId]: null }));
       refresh();
@@ -908,7 +908,7 @@ export default function useNotifications(userId) {
     try {
       await approveJoinRequest(requestId, groupId, requesterId);
     } catch (err) {
-      console.error('Error approving join request:', err);
+      if (import.meta.env.DEV) console.error('Error approving join request:', err);
     } finally {
       setProcessing(p => ({ ...p, [requestId]: null }));
       refresh();
@@ -920,7 +920,7 @@ export default function useNotifications(userId) {
     try {
       await rejectJoinRequest(requestId);
     } catch (err) {
-      console.error('Error declining join request:', err);
+      if (import.meta.env.DEV) console.error('Error declining join request:', err);
     } finally {
       setProcessing(p => ({ ...p, [requestId]: null }));
       refresh();

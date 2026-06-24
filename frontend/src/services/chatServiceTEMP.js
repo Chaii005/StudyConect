@@ -66,7 +66,7 @@ export const refreshCache = async (userId) => {
       const lastMsg = cachedMessages[cachedMessages.length - 1];
       query = query.gt('created_at', lastMsg.createdAt).order('created_at', { ascending: true });
     } else {
-      query = query.order('created_at', { ascending: false }).limit(200); // giới hạn 200 tin đầu — đủ cho badge và preview
+      query = query.order('created_at', { ascending: false }).limit(50); // giới hạn 50 tin — đủ cho badge và preview
     }
 
     const { data, error } = await query;
@@ -81,7 +81,9 @@ export const refreshCache = async (userId) => {
       }
     }
   } catch (err) {
-    console.error('[chatService] Exception in refreshCache:', err);
+    if (import.meta.env.DEV) {
+      console.error('[chatService] Exception in refreshCache:', err);
+    }
   }
 };
 
@@ -159,7 +161,7 @@ export const getConversation = async (userId, friendId) => {
     return getConversationFromCache(userId, friendId);
   }
 
-  // Cache rỗng: lấy full từ DB
+  // Cache rỗng: lấy full từ DB (giới hạn 100 tin để tránh egress lớn)
   const uid = parseInt(userId, 10);
   const fid = parseInt(friendId, 10);
 
@@ -168,15 +170,18 @@ export const getConversation = async (userId, friendId) => {
     .select('id, sender_id, receiver_id, content, file_attachment, is_read, created_at')
     .is('group_id', null)
     .or(`and(sender_id.eq.${uid},receiver_id.eq.${fid}),and(sender_id.eq.${fid},receiver_id.eq.${uid})`)
-    .order('created_at', { ascending: true });
+    .order('created_at', { ascending: false })
+    .limit(100);
 
   if (error) {
-    console.error('Error fetching conversation:', error);
+    if (import.meta.env.DEV) {
+      console.error('Error fetching conversation:', error);
+    }
     return { messages: [], background: '' };
   }
 
-  // Đưa vào cache
-  const newMsgs = data.map(parseRaw);
+  // Đưa vào cache — data từ DESC order cần đảo lại về ASC
+  const newMsgs = [...data].reverse().map(parseRaw);
   const existingIds = new Set(cachedMessages.map(m => m.id));
   const unique = newMsgs.filter(m => !existingIds.has(m.id));
   if (unique.length > 0) cachedMessages = [...cachedMessages, ...unique];

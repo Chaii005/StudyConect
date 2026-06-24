@@ -3,7 +3,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { getPosts, deletePost, createComment, toggleLikePost, togglePinPost } from '@/services/interactionService';
 import { getFriends } from '@/services/friendService';
-import { getAllGroups } from '@/services/groupService';
+import { supabase } from '@/config/supabaseClient';
 
 import AppLayout from '@/layouts/AppLayout';
 import Avatar from '@/components/common/Avatar';
@@ -43,20 +43,32 @@ export default function Home() {
   // Fetch friends list
   useEffect(() => {
     if (!user?.id) return;
+    const uid = parseInt(user.id, 10);
     const loadFriendsAndGroups = async () => {
       try {
         const list = await getFriends(user.id);
         setFriends(list);
-        // Cache removed to comply with quota limits
       } catch (err) {
-        console.warn('Error fetching friends:', err);
+        if (import.meta.env.DEV) console.warn('Error fetching friends:', err);
       }
       try {
-        const allGroups = await getAllGroups();
-        const leaderGroups = allGroups.filter(g => String(g.creatorId) === String(user.id));
-        setMyLeaderGroups(leaderGroups);
+        // Query trực tiếp theo creator_id thay vì tải toàn bộ rồi filter client-side
+        const { data: leaderData } = await supabase
+          .from('study_groups')
+          .select('id, name, creator_id, group_members(user_id, role)')
+          .eq('creator_id', uid)
+          .limit(10);
+        if (leaderData) {
+          const mapped = leaderData.map(g => ({
+            id: g.id.toString(),
+            name: g.name,
+            creatorId: g.creator_id,
+            members: (g.group_members || []).map(m => m.user_id)
+          }));
+          setMyLeaderGroups(mapped);
+        }
       } catch (err) {
-        console.warn('Error fetching groups:', err);
+        if (import.meta.env.DEV) console.warn('Error fetching groups:', err);
       }
     };
     loadFriendsAndGroups();
@@ -69,9 +81,8 @@ export default function Home() {
     try {
       const data = await getPosts(user.id);
       setPosts(data);
-      // Cache removed to comply with quota limits
     } catch (err) {
-      console.warn('Error fetching posts:', err);
+      if (import.meta.env.DEV) console.warn('Error fetching posts:', err);
     }
   }, [user?.id]);
 
@@ -105,7 +116,7 @@ export default function Home() {
         return { ...p, likes: updatedLikes };
       }));
     } catch (err) {
-      console.error('Error liking post:', err);
+      if (import.meta.env.DEV) console.error('Error liking post:', err);
     }
   };
 
@@ -122,7 +133,7 @@ export default function Home() {
           await deletePost(postId);
           setPosts(posts.filter((p) => p.id !== postId));
         } catch (err) {
-          console.error(`Xóa thất bại: ${err.message}`);
+          if (import.meta.env.DEV) console.error(`Xóa thất bại: ${err.message}`);
         }
       },
       onCancel: () => setConfirmConfig(null),
@@ -159,7 +170,7 @@ export default function Home() {
         return { ...p, isPinned };
       }));
     } catch (err) {
-      console.error('Error toggling pin on post:', err);
+      if (import.meta.env.DEV) console.error('Error toggling pin on post:', err);
     }
   };
 
