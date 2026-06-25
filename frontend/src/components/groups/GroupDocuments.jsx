@@ -156,7 +156,15 @@ export default function GroupDocuments({
           <button
             type="submit"
             className="btn btn-primary responsive-btn-full"
-            style={{ width: 'max-content', alignSelf: 'flex-end', padding: '10px 24px' }}
+            style={{
+              width: 'max-content',
+              alignSelf: 'flex-end',
+              padding: '10px 24px',
+              background: '#1A1A1A',
+              color: '#FFFFFF',
+              border: '1.5px solid #1A1A1A',
+              borderRadius: '24px'
+            }}
             disabled={isUploadingFile || !selectedFile}
           >
             {isUploadingFile ? 'Đang tải lên...' : 'Upload tài liệu'}
@@ -292,8 +300,15 @@ export default function GroupDocuments({
                   <div style={{ display: 'flex', gap: '8px', flexShrink: 0 }}>
                     <button
                       onClick={() => handleFileDownload(file)}
-                      className="btn btn-secondary"
-                      style={{ padding: '8px 16px', fontSize: '13px' }}
+                      className="btn"
+                      style={{
+                        padding: '8px 16px',
+                        fontSize: '13px',
+                        background: '#1A1A1A',
+                        color: '#FFFFFF',
+                        border: '1.5px solid #1A1A1A',
+                        borderRadius: '24px'
+                      }}
                     >
                       Tải xuống
                     </button>
@@ -301,12 +316,12 @@ export default function GroupDocuments({
                       <button
                         onClick={() => handleFileDelete(file.id)}
                         style={{
-                          background: 'rgba(239, 68, 68, 0.1)',
-                          border: '1.5px solid rgba(239, 68, 68, 0.2)',
-                          color: 'var(--error)',
+                          background: '#1A1A1A',
+                          border: '1.5px solid #1A1A1A',
+                          color: '#FFFFFF',
                           cursor: 'pointer',
-                          borderRadius: '8px',
-                          padding: '8px 12px',
+                          borderRadius: '24px',
+                          padding: '8px 16px',
                           fontSize: '13px',
                           fontWeight: 600,
                         }}

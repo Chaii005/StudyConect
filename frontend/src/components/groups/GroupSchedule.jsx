@@ -267,7 +267,7 @@ export default function GroupSchedule({
                           href={activeGeoPreview.mapsUrl}
                           target="_blank"
                           rel="noopener noreferrer"
-                          style={{ flexShrink: 0, display: 'inline-flex', alignItems: 'center', gap: 5, fontSize: 12, fontWeight: 700, color: '#fff', background: 'linear-gradient(135deg,#10b981,#059669)', padding: '6px 12px', borderRadius: 8, textDecoration: 'none', whiteSpace: 'nowrap', boxShadow: '0 2px 8px rgba(16,185,129,0.35)' }}
+                          style={{ flexShrink: 0, display: 'inline-flex', alignItems: 'center', gap: 5, fontSize: 12, fontWeight: 700, color: '#fff', background: '#1A1A1A', border: '1.5px solid #1A1A1A', padding: '6px 12px', borderRadius: '24px', textDecoration: 'none', whiteSpace: 'nowrap', boxShadow: 'none' }}
                         >
                           Mở Maps
                         </a>
@@ -297,10 +297,10 @@ export default function GroupSchedule({
                       alignItems: 'center',
                       gap: '8px',
                       padding: '0 18px',
-                      background: 'linear-gradient(135deg, rgba(62,207,207,0.15), rgba(108,99,255,0.15))',
-                      border: '1.5px solid rgba(62,207,207,0.4)',
-                      borderRadius: 'var(--radius-sm)',
-                      color: 'var(--text-primary)',
+                      background: '#1A1A1A',
+                      border: '1.5px solid #1A1A1A',
+                      borderRadius: '24px',
+                      color: '#FFFFFF',
                       fontSize: '13px',
                       fontWeight: 700,
                       cursor: 'pointer',
@@ -411,26 +411,16 @@ export default function GroupSchedule({
                 padding: '8px 20px',
                 fontSize: '13px',
                 fontWeight: 700,
-                borderRadius: '8px',
-                background: 'linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%)',
+                borderRadius: '24px',
+                background: '#1A1A1A',
                 color: '#fff',
-                border: 'none',
-                boxShadow: '0 4px 12px rgba(108, 99, 255, 0.25)',
+                border: '1.5px solid #1A1A1A',
+                boxShadow: 'none',
                 cursor: 'pointer',
                 transition: 'all 0.2s ease',
                 display: 'flex',
                 alignItems: 'center',
                 gap: '6px'
-              }}
-              onMouseEnter={(e) => {
-                if (!isSubmittingSchedule) {
-                  e.currentTarget.style.transform = 'translateY(-1px)';
-                  e.currentTarget.style.boxShadow = '0 6px 16px rgba(108, 99, 255, 0.4)';
-                }
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = 'translateY(0)';
-                e.currentTarget.style.boxShadow = '0 4px 12px rgba(108, 99, 255, 0.25)';
               }}
             >
               {isSubmittingSchedule ? (
@@ -455,7 +445,7 @@ export default function GroupSchedule({
       )}
 
       <div id="group-schedule-list" style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-        <h3 style={{ fontSize: '13px', fontWeight: 700, marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '6px' }}>
+        <h3 style={{ fontSize: '13px', fontWeight: 700, marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '6px' }}>
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
             <line x1="8" y1="6" x2="21" y2="6" />
             <line x1="8" y1="12" x2="21" y2="12" />
@@ -533,12 +523,12 @@ export default function GroupSchedule({
                         <button
                           onClick={() => openEditSchedule(sched)}
                           style={{
-                            background: 'rgba(108, 99, 255, 0.1)',
-                            border: '1.5px solid rgba(108, 99, 255, 0.2)',
-                            color: 'var(--text-primary)',
+                            background: '#1A1A1A',
+                            border: '1.5px solid #1A1A1A',
+                            color: '#FFFFFF',
                             cursor: 'pointer',
-                            borderRadius: '6px',
-                            padding: '4px 10px',
+                            borderRadius: '24px',
+                            padding: '4px 12px',
                             fontSize: '11px',
                             fontWeight: 600,
                           }}
@@ -548,12 +538,12 @@ export default function GroupSchedule({
                         <button
                           onClick={() => handleScheduleDelete(sched.id)}
                           style={{
-                            background: 'rgba(239, 68, 68, 0.1)',
-                            border: '1.5px solid rgba(239, 68, 68, 0.2)',
-                            color: 'var(--error)',
+                            background: '#1A1A1A',
+                            border: '1.5px solid #1A1A1A',
+                            color: '#FFFFFF',
                             cursor: 'pointer',
-                            borderRadius: '6px',
-                            padding: '4px 10px',
+                            borderRadius: '24px',
+                            padding: '4px 12px',
                             fontSize: '11px',
                             fontWeight: 600,
                           }}
@@ -602,14 +592,15 @@ export default function GroupSchedule({
                                 display: 'inline-flex',
                                 alignItems: 'center',
                                 gap: '4px',
-                                background: 'linear-gradient(135deg, var(--primary), var(--secondary))',
+                                background: '#1A1A1A',
+                                border: '1.5px solid #1A1A1A',
                                 color: '#fff',
                                 textDecoration: 'none',
                                 padding: '4px 10px',
-                                borderRadius: '6px',
+                                borderRadius: '24px',
                                 fontSize: '11px',
                                 fontWeight: 700,
-                                boxShadow: '0 2px 6px rgba(108,99,255,0.3)',
+                                boxShadow: 'none',
                               }}
                             >
                               Vào phòng học
@@ -621,13 +612,13 @@ export default function GroupSchedule({
                                 if (addToast) addToast('Đã sao chép link phòng học!', 'success');
                               }}
                               style={{
-                                background: 'none',
-                                border: '1px solid var(--border)',
-                                color: 'var(--text-muted)',
+                                background: '#1A1A1A',
+                                border: '1.5px solid #1A1A1A',
+                                color: '#FFFFFF',
                                 fontSize: '11px',
                                 fontWeight: 600,
                                 padding: '3px 8px',
-                                borderRadius: '6px',
+                                borderRadius: '24px',
                                 cursor: 'pointer',
                                 fontFamily: 'inherit',
                               }}
@@ -659,7 +650,7 @@ export default function GroupSchedule({
                             href={googleMapsSearchUrl(sched.location)}
                             target="_blank"
                             rel="noopener noreferrer"
-                            style={{ display: 'inline-flex', alignItems: 'center', gap: 4, marginTop: 6, fontSize: 11, fontWeight: 700, color: '#fff', background: 'linear-gradient(135deg,#10b981,#059669)', padding: '4px 10px', borderRadius: 7, textDecoration: 'none', boxShadow: '0 2px 6px rgba(16,185,129,0.3)' }}
+                            style={{ display: 'inline-flex', alignItems: 'center', gap: 4, marginTop: 6, fontSize: 11, fontWeight: 700, color: '#fff', background: '#1A1A1A', border: '1.5px solid #1A1A1A', padding: '4px 12px', borderRadius: '24px', textDecoration: 'none', boxShadow: 'none' }}
                           >
                             Xem trên Google Maps
                           </a>
@@ -833,10 +824,10 @@ export default function GroupSchedule({
                   onClick={() => setEditingSchedule(null)}
                   style={{
                     padding: '10px 20px',
-                    background: 'var(--bg-input)',
-                    border: '1px solid var(--border)',
-                    borderRadius: 'var(--radius-sm)',
-                    color: 'var(--text-secondary)',
+                    background: '#1A1A1A',
+                    border: '1.5px solid #1A1A1A',
+                    borderRadius: '24px',
+                    color: '#FFFFFF',
                     fontFamily: 'inherit',
                     cursor: 'pointer',
                     fontSize: '14px',
@@ -850,9 +841,9 @@ export default function GroupSchedule({
                   disabled={isSubmittingSchedule}
                   style={{
                     padding: '10px 24px',
-                    background: 'linear-gradient(135deg, var(--primary), var(--secondary))',
-                    border: 'none',
-                    borderRadius: 'var(--radius-sm)',
+                    background: '#1A1A1A',
+                    border: '1.5px solid #1A1A1A',
+                    borderRadius: '24px',
                     color: 'white',
                     fontFamily: 'inherit',
                     cursor: 'pointer',

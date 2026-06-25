@@ -164,26 +164,16 @@ export default function GroupDeadlines({
                 padding: '8px 20px',
                 fontSize: '13px',
                 fontWeight: 700,
-                borderRadius: '8px',
-                background: 'linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%)',
+                borderRadius: '24px',
+                background: '#1A1A1A',
                 color: '#fff',
-                border: 'none',
-                boxShadow: '0 4px 12px rgba(108, 99, 255, 0.25)',
+                border: '1.5px solid #1A1A1A',
+                boxShadow: 'none',
                 cursor: 'pointer',
                 transition: 'all 0.2s ease',
                 display: 'flex',
                 alignItems: 'center',
                 gap: '6px'
-              }}
-              onMouseEnter={(e) => {
-                if (!isSubmittingDeadline) {
-                  e.currentTarget.style.transform = 'translateY(-1px)';
-                  e.currentTarget.style.boxShadow = '0 6px 16px rgba(108, 99, 255, 0.4)';
-                }
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = 'translateY(0)';
-                e.currentTarget.style.boxShadow = '0 4px 12px rgba(108, 99, 255, 0.25)';
               }}
             >
               {isSubmittingDeadline ? (
@@ -206,7 +196,7 @@ export default function GroupDeadlines({
       )}
 
       <div id="group-deadline-list" ref={deadlineListRef} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-        <h3 style={{ fontSize: '13px', fontWeight: 700, marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '6px' }}>
+        <h3 style={{ fontSize: '13px', fontWeight: 700, marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '6px' }}>
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
             <circle cx="12" cy="12" r="10" />
             <polyline points="12 6 12 12 16 14" />
@@ -362,30 +352,16 @@ export default function GroupDeadlines({
                         onClick={() => handleRemindDeadline(d)}
                         disabled={remindingIds[d.id]}
                         style={{
-                          background: remindingIds[d.id] ? 'rgba(255,255,255,0.05)' : 'rgba(17, 24, 39, 0.04)',
-                          border: remindingIds[d.id] ? '1px solid rgba(255,255,255,0.1)' : '1px solid var(--border)',
-                          color: remindingIds[d.id] ? 'var(--text-muted)' : 'var(--text-primary)',
+                          background: remindingIds[d.id] ? 'rgba(255,255,255,0.05)' : '#1A1A1A',
+                          border: remindingIds[d.id] ? '1px solid rgba(255,255,255,0.1)' : '1.5px solid #1A1A1A',
+                          color: remindingIds[d.id] ? 'var(--text-muted)' : '#FFFFFF',
                           cursor: remindingIds[d.id] ? 'default' : 'pointer',
-                          borderRadius: '6px',
+                          borderRadius: '24px',
                           padding: '5px 12px',
                           fontSize: '12px',
                           fontWeight: 600,
                           whiteSpace: 'nowrap',
                           transition: 'all 0.2s ease',
-                        }}
-                        onMouseEnter={(e) => {
-                          if (!remindingIds[d.id]) {
-                            e.currentTarget.style.transform = 'translateY(-1px)';
-                            e.currentTarget.style.background = 'rgba(17, 24, 39, 0.08)';
-                            e.currentTarget.style.borderColor = 'var(--text-primary)';
-                          }
-                        }}
-                        onMouseLeave={(e) => {
-                          e.currentTarget.style.transform = 'translateY(0)';
-                          if (!remindingIds[d.id]) {
-                            e.currentTarget.style.background = 'rgba(17, 24, 39, 0.04)';
-                            e.currentTarget.style.borderColor = 'var(--border)';
-                          }
                         }}
                       >
                         {remindingIds[d.id] ? (
@@ -407,23 +383,15 @@ export default function GroupDeadlines({
                         <button
                           onClick={() => openEditDeadline(d)}
                           style={{
-                            background: 'rgba(108, 99, 255, 0.08)',
-                            border: '1px solid rgba(108, 99, 255, 0.2)',
-                            color: 'var(--text-primary)',
+                            background: '#1A1A1A',
+                            border: '1.5px solid #1A1A1A',
+                            color: '#FFFFFF',
                             cursor: 'pointer',
-                            borderRadius: '6px',
+                            borderRadius: '24px',
                             padding: '5px 12px',
                             fontSize: '12px',
                             fontWeight: 600,
                             transition: 'all 0.2s ease',
-                          }}
-                          onMouseEnter={(e) => {
-                            e.currentTarget.style.transform = 'translateY(-1px)';
-                            e.currentTarget.style.background = 'rgba(108, 99, 255, 0.15)';
-                          }}
-                          onMouseLeave={(e) => {
-                            e.currentTarget.style.transform = 'translateY(0)';
-                            e.currentTarget.style.background = 'rgba(108, 99, 255, 0.08)';
                           }}
                         >
                           Sửa
@@ -431,23 +399,15 @@ export default function GroupDeadlines({
                         <button
                           onClick={() => handleDeadlineDelete(d.id)}
                           style={{
-                            background: 'rgba(239, 68, 68, 0.08)',
-                            border: '1px solid rgba(239, 68, 68, 0.2)',
-                            color: 'var(--error)',
+                            background: '#1A1A1A',
+                            border: '1.5px solid #1A1A1A',
+                            color: '#FFFFFF',
                             cursor: 'pointer',
-                            borderRadius: '6px',
+                            borderRadius: '24px',
                             padding: '5px 12px',
                             fontSize: '12px',
                             fontWeight: 600,
                             transition: 'all 0.2s ease',
-                          }}
-                          onMouseEnter={(e) => {
-                            e.currentTarget.style.transform = 'translateY(-1px)';
-                            e.currentTarget.style.background = 'rgba(239, 68, 68, 0.15)';
-                          }}
-                          onMouseLeave={(e) => {
-                            e.currentTarget.style.transform = 'translateY(0)';
-                            e.currentTarget.style.background = 'rgba(239, 68, 68, 0.08)';
                           }}
                         >
                           Xóa
@@ -461,24 +421,16 @@ export default function GroupDeadlines({
                           <button
                             onClick={() => setShowSubmissionsFor(d.id)}
                             style={{
-                              background: 'rgba(62,207,207,0.08)',
-                              border: '1px solid rgba(62,207,207,0.25)',
-                              color: 'var(--text-primary)',
+                              background: '#1A1A1A',
+                              border: '1.5px solid #1A1A1A',
+                              color: '#FFFFFF',
                               cursor: 'pointer',
-                              borderRadius: '6px',
+                              borderRadius: '24px',
                               padding: '5px 12px',
                               fontSize: '12px',
                               fontWeight: 600,
                               whiteSpace: 'nowrap',
                               transition: 'all 0.2s ease',
-                            }}
-                            onMouseEnter={(e) => {
-                              e.currentTarget.style.transform = 'translateY(-1px)';
-                              e.currentTarget.style.boxShadow = '0 4px 10px rgba(62,207,207,0.2)';
-                            }}
-                            onMouseLeave={(e) => {
-                              e.currentTarget.style.transform = 'translateY(0)';
-                              e.currentTarget.style.boxShadow = 'none';
                             }}
                           >
                             <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
@@ -509,36 +461,22 @@ export default function GroupDeadlines({
                               ? 'rgba(34,197,94,0.08)'
                               : overdue
                               ? 'rgba(255,255,255,0.03)'
-                              : 'linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%)',
+                              : '#1A1A1A',
                             border: mySubmission
                               ? '1px solid rgba(34,197,94,0.2)'
                               : overdue
                               ? '1px solid rgba(255,255,255,0.1)'
-                              : 'none',
+                              : '1.5px solid #1A1A1A',
                             color: mySubmission ? '#22c55e' : overdue ? 'var(--text-muted)' : '#ffffff',
                             cursor: overdue && !mySubmission ? 'not-allowed' : 'pointer',
-                            borderRadius: '6px',
+                            borderRadius: '24px',
                             padding: mySubmission ? '5px 12px' : '6px 14px',
                             fontSize: '12px',
                             fontWeight: 700,
                             whiteSpace: 'nowrap',
                             opacity: overdue && !mySubmission ? 0.5 : 1,
-                            boxShadow: mySubmission ? 'none' : overdue ? 'none' : '0 2px 8px rgba(108, 99, 255, 0.35)',
+                            boxShadow: 'none',
                             transition: 'all 0.2s ease',
-                          }}
-                          onMouseEnter={(e) => {
-                            if (!overdue || mySubmission) {
-                              e.currentTarget.style.transform = 'translateY(-1px)';
-                              if (!mySubmission) {
-                                e.currentTarget.style.boxShadow = '0 4px 12px rgba(108, 99, 255, 0.45)';
-                              }
-                            }
-                          }}
-                          onMouseLeave={(e) => {
-                            e.currentTarget.style.transform = 'translateY(0)';
-                            if (!mySubmission) {
-                              e.currentTarget.style.boxShadow = '0 2px 8px rgba(108, 99, 255, 0.35)';
-                            }
                           }}
                         >
                           {mySubmission ? (
@@ -718,10 +656,10 @@ export default function GroupDeadlines({
                   onClick={() => setEditingDeadline(null)}
                   style={{
                     padding: '10px 20px',
-                    background: 'var(--bg-input)',
-                    border: '1px solid var(--border)',
-                    borderRadius: 'var(--radius-sm)',
-                    color: 'var(--text-secondary)',
+                    background: '#1A1A1A',
+                    border: '1.5px solid #1A1A1A',
+                    borderRadius: '24px',
+                    color: '#FFFFFF',
                     fontFamily: 'inherit',
                     cursor: 'pointer',
                     fontSize: '14px',
@@ -735,9 +673,9 @@ export default function GroupDeadlines({
                   disabled={isSubmittingDeadline}
                   style={{
                     padding: '10px 24px',
-                    background: 'linear-gradient(135deg, var(--primary), var(--secondary))',
-                    border: 'none',
-                    borderRadius: 'var(--radius-sm)',
+                    background: '#1A1A1A',
+                    border: '1.5px solid #1A1A1A',
+                    borderRadius: '24px',
                     color: 'white',
                     fontFamily: 'inherit',
                     cursor: 'pointer',
@@ -898,10 +836,10 @@ export default function GroupDeadlines({
                 style={{
                   flex: 1,
                   padding: '11px',
-                  background: 'var(--bg-input)',
-                  border: '1px solid var(--border)',
-                  borderRadius: '10px',
-                  color: 'var(--text-secondary)',
+                  background: '#1A1A1A',
+                  border: '1.5px solid #1A1A1A',
+                  borderRadius: '24px',
+                  color: '#FFFFFF',
                   fontWeight: 600,
                   cursor: 'pointer',
                   fontFamily: 'inherit',
@@ -916,9 +854,9 @@ export default function GroupDeadlines({
                 style={{
                   flex: 2,
                   padding: '11px',
-                  background: !submitFile && !submitNote.trim() ? 'var(--bg-input)' : 'linear-gradient(135deg, var(--primary), #5b53e0)',
-                  border: 'none',
-                  borderRadius: '10px',
+                  background: !submitFile && !submitNote.trim() ? 'var(--bg-input)' : '#1A1A1A',
+                  border: !submitFile && !submitNote.trim() ? '1px solid var(--border)' : '1.5px solid #1A1A1A',
+                  borderRadius: '24px',
                   color: !submitFile && !submitNote.trim() ? 'var(--text-muted)' : 'white',
                   fontWeight: 700,
                   cursor: !submitFile && !submitNote.trim() ? 'not-allowed' : 'pointer',
