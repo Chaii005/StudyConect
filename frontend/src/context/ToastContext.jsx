@@ -1,3 +1,5 @@
+// TODO: App hiện có 2 hệ thống toast (Toast.jsx và ToastContext.jsx) làm việc tương tự nhau.
+// Nên hợp nhất thành 1 trong lần refactor sau để tránh nhầm lẫn — không làm trong task này.
 import { createContext, useContext, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -62,14 +64,9 @@ export const ToastProvider = ({ children }) => {
             key={toast.id}
             style={{
               pointerEvents: 'auto',
-              background: toast.type === 'error'
-                ? 'var(--danger-gradient, linear-gradient(135deg, #ff416c, #ff4b2b))'
-                : toast.type === 'message'
-                ? 'var(--primary-gradient, linear-gradient(135deg, #6c63ff, #3ecfcf))'
-                : toast.type === 'notification'
-                ? 'linear-gradient(135deg, #3a7bd5, #3a6073)' // Elegant dark blue/grey gradient for notifications
-                : 'var(--primary-gradient, linear-gradient(135deg, #6c63ff, #3ecfcf))',
-              color: '#fff',
+              background: toast.type === 'error' ? 'var(--error)' : 'var(--bg-card)',
+              color: toast.type === 'error' ? '#FFFFFF' : 'var(--text-primary)',
+              border: toast.type === 'error' ? 'none' : '1px solid var(--border)',
               padding: '12px 20px',
               borderRadius: '12px',
               boxShadow: '0 8px 30px rgba(0,0,0,0.15)',
@@ -125,7 +122,7 @@ export const ToastProvider = ({ children }) => {
               style={{
                 background: 'none',
                 border: 'none',
-                color: 'rgba(255, 255, 255, 0.7)',
+                color: toast.type === 'error' ? 'rgba(255, 255, 255, 0.8)' : 'var(--text-secondary)',
                 cursor: 'pointer',
                 fontSize: '16px',
                 padding: '0 4px',

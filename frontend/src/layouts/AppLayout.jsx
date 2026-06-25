@@ -219,6 +219,24 @@ export default function AppLayout({ children, hideNavbar = false, hideSidebar = 
           }
         }
       )
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'messages',
+          filter: `receiver_id=eq.${user.id}`,
+        },
+        async () => {
+          try {
+            await refreshCache(String(user.id));
+            const count = getTotalUnread(String(user.id));
+            setUnreadCount(count);
+          } catch {
+            // ignore
+          }
+        }
+      )
       .subscribe();
 
     return () => {
