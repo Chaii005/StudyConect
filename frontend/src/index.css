@@ -340,12 +340,20 @@ select.form-input option {
   color: #f0f2ff;
 }
 
+/* Hide Edge native password reveal and clear buttons */
+input::-ms-reveal,
+input::-ms-clear {
+  display: none !important;
+  width: 0;
+  height: 0;
+}
+
 /* Password toggle */
 .password-toggle {
   position: absolute;
   right: 14px;
   top: 50%;
-  transform: translateY(-50%);
+  transform: translateY(-50%) !important;
   background: none;
   border: none;
   color: var(--text-muted);
@@ -355,8 +363,17 @@ select.form-input option {
   align-items: center;
   transition: var(--transition);
   padding: 2px;
+  box-shadow: none !important;
 }
-.password-toggle:hover { color: var(--primary-light); }
+.password-toggle:hover {
+  color: var(--primary-light);
+  transform: translateY(-50%) !important;
+  box-shadow: none !important;
+}
+.password-toggle:active {
+  transform: translateY(-50%) scale(0.95) !important;
+  box-shadow: none !important;
+}
 
 /* Textarea */
 .form-textarea {
