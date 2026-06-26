@@ -6,7 +6,7 @@ import AppLayout from '../layouts/AppLayout';
 import { supabase } from '../config/supabaseClient';
 
 // ── Avatar ───────────────────────────────────────────────────
-const COLORS = ['#6c63ff','#ff6b9d','#3ecfcf','#f59e0b','#22c55e','#ef4444','#8b5cf6'];
+const COLORS = ['#1A1A1A','#3A3A3A','#2E2E2E','#4A4A4A','#222222','#383838','#2A2A2A'];
 const colorOf = s => COLORS[(s||'').split('').reduce((a,c)=>a+c.charCodeAt(0),0) % COLORS.length];
 
 function Avatar({ src, name = '', size = 36 }) {
@@ -2028,7 +2028,7 @@ export default function MeetRoom() {
 // ── SVG Icon Helpers ─────────────────────────────────────────
 function MicSvg({ active, size = 20 }) {
   return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       {active ? (
         <>
           <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z" />
@@ -2050,7 +2050,7 @@ function MicSvg({ active, size = 20 }) {
 
 function VideoSvg({ active, size = 20 }) {
   return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       {active ? (
         <>
           <path d="m22 8-6 4 6 4V8Z" />
@@ -2112,7 +2112,7 @@ function UsersSvg({ size = 20 }) {
 
 function PhoneOffSvg({ size = 20 }) {
   return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <path d="M10.68 13.31a16 16 0 0 0 3.41 2.6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7 2 2 0 0 1 1.72 2v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.42 19.42 0 0 1-3.33-2.67m-2.67-3.34a19.79 19.79 0 0 1-3.07-8.63A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91" />
       <line x1="2" x2="22" y1="2" y2="22" />
     </svg>
@@ -2135,7 +2135,7 @@ function CtrlBtn({ active, onClick, danger, highlight, icon, label, badge = null
   const bg = danger
     ? (hover ? 'rgba(239, 68, 68, 0.35)' : 'rgba(239, 68, 68, 0.2)')
     : active || highlight
-      ? (hover ? 'rgba(139, 92, 246, 0.45)' : 'rgba(139, 92, 246, 0.3)')
+      ? (hover ? 'rgba(255, 255, 255, 0.22)' : 'rgba(255, 255, 255, 0.14)')
       : hover
         ? 'rgba(255, 255, 255, 0.12)'
         : 'rgba(255, 255, 255, 0.06)';
@@ -2143,10 +2143,10 @@ function CtrlBtn({ active, onClick, danger, highlight, icon, label, badge = null
   const border = danger
     ? '1px solid rgba(239, 68, 68, 0.45)'
     : active || highlight
-      ? '1px solid rgba(139, 92, 246, 0.5)'
+      ? '1px solid rgba(255, 255, 255, 0.35)'
       : '1px solid rgba(255, 255, 255, 0.1)';
 
-  const color = danger ? '#ff6b6b' : active || highlight ? '#c7d2fe' : 'rgba(255, 255, 255, 0.85)';
+  const color = danger ? '#ff6b6b' : active || highlight ? '#ffffff' : 'rgba(255, 255, 255, 0.85)';
 
   return (
     <button
@@ -2167,7 +2167,7 @@ function CtrlBtn({ active, onClick, danger, highlight, icon, label, badge = null
         justifyContent: 'center',
         transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
         position: 'relative',
-        boxShadow: active || highlight ? '0 0 14px rgba(139, 92, 246, 0.35)' : 'none',
+        boxShadow: active || highlight ? '0 0 14px rgba(255, 255, 255, 0.18)' : 'none',
         transform: hover ? 'scale(1.08)' : 'scale(1)',
       }}
     >

@@ -59,9 +59,9 @@ export const FILE_LIMITS = {
 
 // ─── AVATAR COLORS ─────────────────────────────────────────────────
 export const AVATAR_COLORS = [
-  'linear-gradient(135deg, #E8A87C, #FFCBB0)',
-  'linear-gradient(135deg, #B5495B, #D17A89)',
-  'linear-gradient(135deg, #6B9E91, #8FC4B7)',
-  'linear-gradient(135deg, #3D2C2E, #5A4548)',
-  'linear-gradient(135deg, #E8A87C, #B5495B)',
+  'linear-gradient(135deg, #1A1A1A, #3A3A3A)',
+  'linear-gradient(135deg, #3A3A3A, #5A5A5A)',
+  'linear-gradient(135deg, #2E2E2E, #4E4E4E)',
+  'linear-gradient(135deg, #484848, #686868)',
+  'linear-gradient(135deg, #1E1E1E, #3E3E3E)',
 ];

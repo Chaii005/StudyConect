@@ -9,7 +9,7 @@ import { sendMessage } from '../services/chatServiceTEMP.js';
 import { useCall } from '../context/CallContext';
 
 /* ─── Màu avatar ──────────────────────────────────────────── */
-const COLORS = ['#6c63ff','#ff6b9d','#3ecfcf','#f59e0b','#22c55e','#ef4444','#8b5cf6'];
+const COLORS = ['#1A1A1A','#3A3A3A','#2E2E2E','#4A4A4A','#222222','#383838','#2A2A2A'];
 const colorOf = s => COLORS[(s||'').split('').reduce((a,c)=>a+c.charCodeAt(0),0) % COLORS.length];
 
 /* ─── Avatar ─────────────────────────────────────────────── */

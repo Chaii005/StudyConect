@@ -35,7 +35,7 @@ function Avatar({ src, initial, color = '#6c63ff', size = 40 }) {
   );
 }
 
-const AVATAR_COLORS = ['#E8A87C', '#B5495B', '#6B9E91', '#3D2C2E', '#FAF7F4'];
+const AVATAR_COLORS = ['#1A1A1A', '#3A3A3A', '#2E2E2E', '#4A4A4A', '#222222'];
 const colorOf = (str) => AVATAR_COLORS[(str || '').split('').reduce((a, c) => a + c.charCodeAt(0), 0) % AVATAR_COLORS.length];
 
 function fmtTime(iso) {
@@ -1404,12 +1404,12 @@ function ConversationView({ user, friend, friends, onBack, onlineUserIds, onNick
                 <span style={{
                   display: 'inline-flex', alignItems: 'center', gap: '10px',
                   padding: '8px 18px', borderRadius: '20px',
-                  background: isMissed ? 'rgba(239,68,68,0.10)' : 'rgba(108,99,255,0.10)',
-                  border: `1px solid ${isMissed ? 'rgba(239,68,68,0.22)' : 'rgba(108,99,255,0.22)'}`,
+                  background: isMissed ? 'rgba(239,68,68,0.10)' : 'rgba(255,255,255,0.06)',
+                  border: `1px solid ${isMissed ? 'rgba(239,68,68,0.22)' : 'rgba(255,255,255,0.15)'}`,
                   backdropFilter: 'blur(8px)',
                   fontSize: '12px', fontWeight: 600,
-                  color: isMissed ? '#fca5a5' : 'rgba(200,200,255,0.85)',
-                  boxShadow: isMissed ? '0 2px 12px rgba(239,68,68,0.10)' : '0 2px 12px rgba(108,99,255,0.10)',
+                  color: isMissed ? '#fca5a5' : 'rgba(220,220,220,0.9)',
+                  boxShadow: isMissed ? '0 2px 12px rgba(239,68,68,0.10)' : 'none',
                 }}>
                   {/* Icon container — circular premium style */}
                   <span style={{
@@ -1417,12 +1417,12 @@ function ConversationView({ user, friend, friends, onBack, onlineUserIds, onNick
                     width: '32px', height: '32px', borderRadius: '50%', flexShrink: 0,
                     background: isMissed
                       ? 'radial-gradient(circle at 35% 35%, rgba(239,68,68,0.45), rgba(239,68,68,0.12))'
-                      : 'radial-gradient(circle at 35% 35%, rgba(108,99,255,0.45), rgba(108,99,255,0.12))',
+                      : 'radial-gradient(circle at 35% 35%, rgba(255,255,255,0.18), rgba(255,255,255,0.06))',
                     display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-                    border: `1.5px solid ${isMissed ? 'rgba(252,165,165,0.45)' : 'rgba(165,180,252,0.45)'}`,
+                    border: `1.5px solid ${isMissed ? 'rgba(252,165,165,0.45)' : 'rgba(255,255,255,0.25)'}`,
                     boxShadow: isMissed
                       ? '0 0 12px rgba(239,68,68,0.35), 0 0 24px rgba(239,68,68,0.15), inset 0 1px 0 rgba(255,255,255,0.12)'
-                      : '0 0 12px rgba(108,99,255,0.35), 0 0 24px rgba(108,99,255,0.15), inset 0 1px 0 rgba(255,255,255,0.12)',
+                      : 'inset 0 1px 0 rgba(255,255,255,0.12)',
                   }}>
                     {isMissed ? (
                       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" strokeLinecap="round" strokeLinejoin="round" style={{ filter: 'drop-shadow(0 0 3px rgba(252,165,165,0.7))' }}>
@@ -1437,19 +1437,19 @@ function ConversationView({ user, friend, friends, onBack, onlineUserIds, onNick
                         <line x1="16" y1="6" x2="6" y2="16" stroke="#fca5a5" strokeWidth="2.2" />
                       </svg>
                     ) : (
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" strokeLinecap="round" strokeLinejoin="round" style={{ filter: 'drop-shadow(0 0 3px rgba(165,180,252,0.7))' }}>
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" strokeLinecap="round" strokeLinejoin="round" style={{ filter: 'drop-shadow(0 0 2px rgba(255,255,255,0.3))' }}>
                         {/* Thân camera có fill mờ */}
                         <rect
                           width="14" height="12" x="2" y="6" rx="2" ry="2"
-                          fill="rgba(165,180,252,0.15)"
-                          stroke="#a5b4fc"
+                          fill="rgba(255,255,255,0.08)"
+                          stroke="#d4d4d4"
                           strokeWidth="1.8"
                         />
                         {/* Tam giác play có fill */}
                         <path
                           d="m22 8-6 4 6 4V8Z"
-                          fill="rgba(165,180,252,0.25)"
-                          stroke="#a5b4fc"
+                          fill="rgba(255,255,255,0.12)"
+                          stroke="#d4d4d4"
                           strokeWidth="1.8"
                         />
                       </svg>

@@ -32,7 +32,7 @@ function Avatar({ src, initial, color = '#6c63ff', size = 40 }) {
   );
 }
 
-const AVATAR_COLORS = ['#E8A87C', '#B5495B', '#6B9E91', '#3D2C2E', '#FAF7F4'];
+const AVATAR_COLORS = ['#1A1A1A', '#3A3A3A', '#2E2E2E', '#4A4A4A', '#222222'];
 const colorOf = (str) => AVATAR_COLORS[(str || '').split('').reduce((a, c) => a + c.charCodeAt(0), 0) % AVATAR_COLORS.length];
 
 
