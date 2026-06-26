@@ -415,7 +415,7 @@ export default function useNotifications(userId) {
             user_id,
             content,
             created_at,
-            users:users (
+            users:users!user_id (
               full_name
             )
           `)
@@ -460,7 +460,7 @@ export default function useNotifications(userId) {
               user_id,
               content,
               created_at,
-              users:users (
+              users:users!user_id (
                 full_name
               )
             `)

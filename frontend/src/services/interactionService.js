@@ -66,7 +66,7 @@ export const getPosts = async (currentUserId) => {
       .from('comments')
       .select(`
         *,
-        users (
+        users!user_id (
           full_name,
           avatar
         )
@@ -387,7 +387,7 @@ export const getComments = async (postId) => {
     .from('comments')
     .select(`
       id, post_id, user_id, parent_id, content, created_at,
-      users (
+      users!user_id (
         full_name,
         avatar
       )
@@ -441,7 +441,7 @@ export const createComment = async (postId, { content, userId, parentId }) => {
     ])
     .select(`
       id, post_id, user_id, parent_id, content, created_at,
-      users (
+      users!user_id (
         full_name,
         avatar
       )
