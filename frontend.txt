@@ -23528,7 +23528,7 @@ export default function MeetRoom() {
           {/* ── Sidebar (Frosted Drawer) ── */}
           {!isFullscreen && sidebarOpen && (
             <div className="meet-sidebar" style={{
-              width: '350px', flexShrink: 0,
+              width: '375px', flexShrink: 0,
               background: 'rgba(255,255,255,0.95)', borderLeft: '1px solid rgba(0,0,0,0.08)',
               display: 'flex', flexDirection: 'column', height: '100%',
               backdropFilter: 'blur(20px)',
@@ -23537,7 +23537,7 @@ export default function MeetRoom() {
             }}>
               {/* Header với Segmented Control cực kỳ cao cấp chứa 3 tab kéo giãn */}
               <div style={{
-                padding: '16px 16px 14px',
+                padding: '16px 10px 14px',
                 display: 'flex',
                 flexDirection: 'column',
                 flexShrink: 0,
@@ -23549,8 +23549,8 @@ export default function MeetRoom() {
                   display: 'flex',
                   background: '#f4f4f5',
                   borderRadius: '12px',
-                  padding: '6px',
-                  gap: '4px',
+                  padding: '5px',
+                  gap: '3px',
                   border: '1.5px solid #171717',
                   boxShadow: 'inset 0 1px 2px rgba(0,0,0,0.02)'
                 }}>
@@ -23560,19 +23560,20 @@ export default function MeetRoom() {
                       onClick={() => setTab(t.key)}
                       style={{
                         flex: 1,
-                        padding: '12px 12px',
+                        padding: '12px 4px',
                         border: 'none',
                         cursor: 'pointer',
                         background: tab === t.key ? '#ffffff' : 'transparent',
                         borderRadius: '8px',
                         color: tab === t.key ? '#171717' : '#71717a',
                         fontFamily: 'inherit',
-                        fontSize: '13px',
+                        fontSize: '12.5px',
                         fontWeight: tab === t.key ? 750 : 600,
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        gap: '6px',
+                        gap: '4px',
+                        whiteSpace: 'nowrap',
                         transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
                         boxShadow: tab === t.key ? '0 2px 6px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04)' : 'none',
                       }}
