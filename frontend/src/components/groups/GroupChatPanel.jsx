@@ -745,17 +745,7 @@ export default function GroupChatPanel({
         )}
 
         {/* Input row */}
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px',
-            background: 'rgba(255,255,255,0.04)',
-            border: '1px solid var(--border)',
-            borderRadius: '14px',
-            padding: '6px 8px 6px 12px',
-          }}
-        >
+        <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
           {/* Emoji picker */}
           <div style={{ position: 'relative', flexShrink: 0 }}>
             <button
@@ -765,28 +755,36 @@ export default function GroupChatPanel({
                 if (picker) picker.style.display = picker.style.display === 'none' ? 'flex' : 'none';
               }}
               style={{
-                background: 'none',
-                border: 'none',
+                background: 'var(--bg-input)',
+                border: '1px solid var(--border)',
+                borderRadius: '12px',
+                width: '40px',
+                height: '40px',
                 cursor: 'pointer',
-                fontSize: '20px',
-                padding: '4px 6px',
-                borderRadius: '8px',
-                lineHeight: 1,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                transition: 'all 0.2s',
+                flexShrink: 0,
                 color: 'var(--text-muted)',
-                transition: '0.15s',
               }}
               title="Chèn emoji"
-              onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(255,255,255,0.08)')}
-              onMouseLeave={(e) => (e.currentTarget.style.background = 'none')}
+              onMouseEnter={(e) => (e.currentTarget.style.borderColor = 'var(--primary)')}
+              onMouseLeave={(e) => (e.currentTarget.style.borderColor = 'var(--border)')}
             >
-              😊
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.25" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="12" cy="12" r="10"/>
+                <path d="M8 13s1.5 2 4 2 4-2 4-2"/>
+                <line x1="9" y1="9" x2="9.01" y2="9"/>
+                <line x1="15" y1="9" x2="15.01" y2="9"/>
+              </svg>
             </button>
             <div
               id="emoji-picker-popup"
               style={{
                 display: 'none',
                 position: 'absolute',
-                bottom: '44px',
+                bottom: '48px',
                 left: 0,
                 background: 'var(--bg-card)',
                 border: '1px solid var(--border)',
@@ -848,18 +846,22 @@ export default function GroupChatPanel({
             style={{
               flexShrink: 0,
               cursor: 'pointer',
-              fontSize: '18px',
-              padding: '4px 6px',
-              borderRadius: '8px',
+              background: 'var(--bg-input)',
+              border: '1px solid var(--border)',
+              borderRadius: '12px',
+              width: '40px',
+              height: '40px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              transition: 'all 0.2s',
               color: 'var(--text-muted)',
-              lineHeight: 1,
-              transition: '0.15s',
             }}
             title="Đính kèm file"
-            onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(255,255,255,0.08)')}
-            onMouseLeave={(e) => (e.currentTarget.style.background = 'none')}
+            onMouseEnter={(e) => (e.currentTarget.style.borderColor = 'var(--primary)')}
+            onMouseLeave={(e) => (e.currentTarget.style.borderColor = 'var(--border)')}
           >
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.25" strokeLinecap="round" strokeLinejoin="round">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.25" strokeLinecap="round" strokeLinejoin="round">
               <path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48" />
             </svg>
             <input type="file" id="chat-file-input" onChange={handleChatFileChange} style={{ display: 'none' }} />
@@ -947,12 +949,14 @@ export default function GroupChatPanel({
             }}
             style={{
               flex: 1,
-              background: 'none',
-              border: 'none',
+              background: 'var(--bg-input)',
+              border: '1px solid var(--border)',
+              borderRadius: '20px',
+              padding: '10px 16px',
               color: 'var(--text-primary)',
               fontSize: '14px',
               outline: 'none',
-              padding: '6px 4px',
+              transition: 'border-color 0.2s',
               minWidth: 0,
             }}
             disabled={isSendingChatMessage}
@@ -960,6 +964,8 @@ export default function GroupChatPanel({
               const picker = document.getElementById('emoji-picker-popup');
               if (picker) picker.style.display = 'none';
             }}
+            onFocus={(e) => (e.currentTarget.style.borderColor = 'var(--primary)')}
+            onBlur={(e) => (e.currentTarget.style.borderColor = 'var(--border)')}
           />
 
           {/* Send button */}
@@ -968,21 +974,22 @@ export default function GroupChatPanel({
             disabled={isSendingChatMessage || (!chatInput.trim() && !chatAttachedFile)}
             style={{
               flexShrink: 0,
-              width: '38px',
-              height: '38px',
-              borderRadius: '10px',
+              width: '40px',
+              height: '40px',
+              borderRadius: '50%',
               border: 'none',
               background:
                 chatInput.trim() || chatAttachedFile
-                  ? 'linear-gradient(135deg, var(--primary), var(--primary-dark))'
-                  : 'rgba(255,255,255,0.06)',
+                  ? 'linear-gradient(135deg, var(--primary), #5b53e0)'
+                  : 'var(--bg-input)',
               color: chatInput.trim() || chatAttachedFile ? 'white' : 'var(--text-muted)',
               cursor: chatInput.trim() || chatAttachedFile ? 'pointer' : 'default',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              transition: '0.2s',
-              boxShadow: chatInput.trim() || chatAttachedFile ? '0 4px 12px rgba(0,0,0,0.25)' : 'none',
+              transition: 'all 0.2s',
+              opacity: chatInput.trim() || chatAttachedFile ? 1 : 0.4,
+              boxShadow: chatInput.trim() || chatAttachedFile ? '0 4px 12px rgba(0,0,0,0.15)' : 'none',
             }}
             title="Gửi"
           >
@@ -1002,8 +1009,8 @@ export default function GroupChatPanel({
               </svg>
             ) : (
               <svg
-                width="16"
-                height="16"
+                width="18"
+                height="18"
                 viewBox="0 0 24 24"
                 fill="none"
                 stroke="currentColor"
