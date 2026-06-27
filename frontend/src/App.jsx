@@ -58,7 +58,7 @@ function PageLoader() {
     }}>
       <div style={{
         width: '44px', height: '44px',
-        border: '3px solid rgba(108,99,255,0.2)',
+        border: '3px solid rgba(0,0,0,0.1)',
         borderTopColor: 'var(--primary)',
         borderRadius: '50%',
         animation: 'spin 0.8s linear infinite',

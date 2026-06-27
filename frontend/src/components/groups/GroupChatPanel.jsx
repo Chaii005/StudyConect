@@ -231,7 +231,7 @@ export default function GroupChatPanel({
         return (
           <div
             style={{
-              background: 'rgba(108, 99, 255, 0.08)',
+              background: 'rgba(0, 0, 0, 0.04)',
               borderBottom: '1px solid var(--border)',
               padding: '10px 20px',
               display: 'flex',
@@ -262,7 +262,7 @@ export default function GroupChatPanel({
                     if (bubble) {
                       const origBg = bubble.style.background;
                       const origBorder = bubble.style.border;
-                      bubble.style.background = 'rgba(108, 99, 255, 0.25)';
+                      bubble.style.background = 'rgba(0, 0, 0, 0.12)';
                       bubble.style.border = '1px solid var(--primary)';
                       setTimeout(() => {
                         bubble.style.background = origBg;
@@ -445,8 +445,8 @@ export default function GroupChatPanel({
                     {msg.replyTo && (
                       <div
                         style={{
-                          background: isMe ? 'rgba(0,0,0,0.2)' : 'rgba(108,99,255,0.15)',
-                          borderLeft: '3px solid rgba(108,99,255,0.6)',
+                          background: isMe ? 'rgba(0,0,0,0.2)' : 'rgba(0,0,0,0.06)',
+                          borderLeft: '3px solid rgba(0,0,0,0.25)',
                           borderRadius: '6px',
                           padding: '6px 10px',
                           marginBottom: '8px',
@@ -607,7 +607,7 @@ export default function GroupChatPanel({
                             fontFamily: 'inherit',
                             transition: '0.15s',
                           }}
-                          onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(108,99,255,0.15)')}
+                          onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(0,0,0,0.08)')}
                           onMouseLeave={(e) => (e.currentTarget.style.background = 'rgba(255,255,255,0.07)')}
                         >
                           <span>{emoji}</span>
@@ -668,8 +668,8 @@ export default function GroupChatPanel({
         {replyTo && (
           <div
             style={{
-              background: 'rgba(108,99,255,0.1)',
-              border: '1.5px dashed rgba(108,99,255,0.4)',
+              background: 'rgba(0,0,0,0.04)',
+              border: '1.5px dashed rgba(0,0,0,0.2)',
               padding: '8px 14px',
               borderRadius: '10px',
               display: 'flex',
@@ -712,8 +712,8 @@ export default function GroupChatPanel({
         {chatAttachedFile && (
           <div
             style={{
-              background: 'rgba(108,99,255,0.1)',
-              border: '1.5px dashed var(--text-primary)',
+              background: 'rgba(0,0,0,0.04)',
+              border: '1.5px dashed var(--border)',
               padding: '8px 14px',
               borderRadius: '10px',
               display: 'flex',
@@ -833,7 +833,7 @@ export default function GroupChatPanel({
                     lineHeight: 1,
                     transition: '0.1s',
                   }}
-                  onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(108,99,255,0.15)')}
+                  onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(0,0,0,0.06)')}
                   onMouseLeave={(e) => (e.currentTarget.style.background = 'none')}
                 >
                   {emoji}
@@ -894,7 +894,7 @@ export default function GroupChatPanel({
                     key={m.id}
                     type="button"
                     onClick={() => insertMention(m)}
-                    onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(108,99,255,0.12)')}
+                    onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(0,0,0,0.06)')}
                     onMouseLeave={(e) => (e.currentTarget.style.background = 'none')}
                     style={{
                       width: '100%',
@@ -982,7 +982,7 @@ export default function GroupChatPanel({
               alignItems: 'center',
               justifyContent: 'center',
               transition: '0.2s',
-              boxShadow: chatInput.trim() || chatAttachedFile ? '0 4px 12px rgba(108,99,255,0.35)' : 'none',
+              boxShadow: chatInput.trim() || chatAttachedFile ? '0 4px 12px rgba(0,0,0,0.25)' : 'none',
             }}
             title="Gửi"
           >

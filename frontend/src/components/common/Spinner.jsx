@@ -24,7 +24,7 @@ export default function Spinner({ size = 'md', color = 'var(--primary-light)', l
           width: px,
           height: px,
           borderRadius: '50%',
-          border: `${Math.max(2, px * 0.12)}px solid rgba(108, 99, 255, 0.2)`,
+          border: `${Math.max(2, px * 0.12)}px solid rgba(0, 0, 0, 0.1)`,
           borderTopColor: color,
           animation: 'spin 0.7s linear infinite',
           flexShrink: 0,

@@ -7,7 +7,7 @@ import { useToast } from '@/context/ToastContext';
 function SuggestAvatar({ src, initial }) {
   if (src) return <img src={src} alt="" style={{ width: 28, height: 28, borderRadius: '50%', objectFit: 'cover', flexShrink: 0 }} />;
   const firstChar = (initial || '?')[0];
-  const colors = ['#6c63ff', '#ff6b9d', '#3ecfcf', '#f59e0b', '#22c55e'];
+  const colors = ['#1a1a1a', '#ff6b9d', '#3ecfcf', '#f59e0b', '#22c55e'];
   const color = colors[(firstChar.charCodeAt(0) || 0) % colors.length];
   return (
     <div style={{ width: 28, height: 28, borderRadius: '50%', background: color, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px', fontWeight: 700, color: '#fff', flexShrink: 0 }}>
@@ -183,7 +183,7 @@ export default function CreatePostModal({ user, friends = [], myLeaderGroups = [
                 position: 'absolute',
                 left: '20px', right: '20px',
                 background: 'var(--bg-card)',
-                border: '1px solid rgba(108,99,255,0.35)',
+                border: '1px solid var(--border)',
                 borderRadius: '14px',
                 boxShadow: '0 12px 40px rgba(0,0,0,0.35)',
                 zIndex: 1000,
@@ -194,7 +194,7 @@ export default function CreatePostModal({ user, friends = [], myLeaderGroups = [
             >
               {/* Section header friends */}
               {sugs.some(s => s.type === 'friend') && (
-                <div style={{ padding: '6px 14px 4px', fontSize: '10px', fontWeight: 700, color: 'var(--text-primary)', textTransform: 'uppercase', letterSpacing: '0.05em', background: 'rgba(108,99,255,0.05)' }}>
+                <div style={{ padding: '6px 14px 4px', fontSize: '10px', fontWeight: 700, color: 'var(--text-primary)', textTransform: 'uppercase', letterSpacing: '0.05em', background: 'rgba(0,0,0,0.06)' }}>
                   👤 Bạn bè
                 </div>
               )}
@@ -207,7 +207,7 @@ export default function CreatePostModal({ user, friends = [], myLeaderGroups = [
                     style={{
                       display: 'flex', alignItems: 'center', gap: '10px',
                       padding: '8px 14px', cursor: 'pointer',
-                      background: realIdx === suggestIdx ? 'rgba(108,99,255,0.12)' : 'transparent',
+                      background: realIdx === suggestIdx ? 'rgba(0,0,0,0.06)' : 'transparent',
                       transition: 'background 0.15s',
                     }}
                     onMouseEnter={() => setSuggestIdx(realIdx)}

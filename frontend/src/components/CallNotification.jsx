@@ -88,8 +88,8 @@ export default function CallNotification() {
           50%       { box-shadow: 0 0 0 18px rgba(239, 68, 68, 0); }
         }
         @keyframes cn-avatar-glow {
-          0%, 100% { box-shadow: 0 0 0 4px rgba(108,99,255,0.3), 0 0 30px rgba(108,99,255,0.2); }
-          50%       { box-shadow: 0 0 0 8px rgba(108,99,255,0.5), 0 0 50px rgba(108,99,255,0.35); }
+          0%, 100% { box-shadow: 0 0 0 4px rgba(255,255,255,0.2), 0 0 30px rgba(255,255,255,0.1); }
+          50%       { box-shadow: 0 0 0 8px rgba(255,255,255,0.3), 0 0 50px rgba(255,255,255,0.2); }
         }
         @keyframes cn-wave {
           0%   { transform: scale(1); opacity: 0.8; }
@@ -121,7 +121,7 @@ export default function CallNotification() {
             border: '1px solid rgba(255,255,255,0.12)',
             borderRadius: '28px',
             padding: '36px 28px 28px',
-            boxShadow: '0 32px 80px rgba(0,0,0,0.7), 0 0 0 1px rgba(108,99,255,0.15)',
+            boxShadow: '0 32px 80px rgba(0,0,0,0.7), 0 0 0 1px rgba(255,255,255,0.08)',
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
@@ -133,7 +133,7 @@ export default function CallNotification() {
             {/* Decorative gradient top */}
             <div style={{
               position: 'absolute', top: 0, left: 0, right: 0, height: '3px',
-              background: 'linear-gradient(90deg, #6c63ff, #ff6b9d, #3ecfcf)',
+              background: 'linear-gradient(90deg, #FFFFFF, #D4D4D4, #AAAAAA)',
             }} />
 
             {/* Status label */}
@@ -145,11 +145,11 @@ export default function CallNotification() {
             }}>
               <span style={{
                 width: '22px', height: '22px', borderRadius: '6px', flexShrink: 0,
-                background: 'rgba(108,99,255,0.2)',
+                background: 'rgba(255,255,255,0.12)',
                 display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-                filter: 'drop-shadow(0 0 4px rgba(108,99,255,0.5))',
+                filter: 'drop-shadow(0 0 4px rgba(255,255,255,0.3))',
               }}>
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#a5b4fc" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#D4D4D4" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                   <path d="m22 8-6 4 6 4V8Z" />
                   <rect width="14" height="12" x="2" y="6" rx="2" ry="2" />
                 </svg>
@@ -163,7 +163,7 @@ export default function CallNotification() {
                 <div key={i} style={{
                   position: 'absolute', inset: '-12px',
                   borderRadius: '50%',
-                  border: '2px solid rgba(108,99,255,0.4)',
+                  border: '2px solid rgba(255,255,255,0.25)',
                   animation: `cn-wave 2s ease-out ${i * 0.6}s infinite`,
                 }} />
               ))}

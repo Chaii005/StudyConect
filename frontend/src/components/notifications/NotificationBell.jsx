@@ -134,7 +134,7 @@ export default function NotificationBell({ style }) {
         onClick={handleOpen}
         title="Thông báo"
         style={{
-          background: open ? 'rgba(99, 102, 241, 0.15)' : hovered ? 'rgba(99, 102, 241, 0.08)' : 'transparent',
+          background: open ? 'rgba(0, 0, 0, 0.08)' : hovered ? 'rgba(0, 0, 0, 0.04)' : 'transparent',
           border: 'none',
           borderRadius: '50%',
           width: '34px',

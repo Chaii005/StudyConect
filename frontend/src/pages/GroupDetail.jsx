@@ -144,14 +144,14 @@ export default function GroupDetail() {
           <div className="group-header-content" style={{ padding: '28px 32px' }}>
             {/* Role pills */}
             <div style={{ display: 'flex', gap: '8px', marginBottom: '16px', flexWrap: 'wrap' }}>
-              <span style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', padding: '4px 12px', borderRadius: '6px', background: 'rgba(108,99,255,0.12)', color: 'var(--text-primary)', border: '1px solid rgba(108,99,255,0.25)' }}>
+              <span style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', padding: '4px 12px', borderRadius: '6px', background: 'rgba(0,0,0,0.04)', color: 'var(--text-primary)', border: '1px solid var(--border)' }}>
                 {h.group.subject}
               </span>
               <span style={{ fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', padding: '4px 12px', borderRadius: '6px', background: h.group.meetingMode === 'offline' ? 'rgba(16,185,129,0.1)' : 'rgba(99,179,237,0.1)', color: h.group.meetingMode === 'offline' ? '#10b981' : '#63b3ed', border: h.group.meetingMode === 'offline' ? '1px solid rgba(16,185,129,0.3)' : '1px solid rgba(99,179,237,0.3)' }}>
                 {h.group.meetingMode === 'offline' ? 'Offline' : 'Online'}
               </span>
               {h.group.creatorId === user?.id && <span style={{ fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', padding: '4px 12px', borderRadius: '6px', background: 'rgba(17, 24, 39, 0.04)', color: 'var(--text-primary)', border: '1px solid var(--border)' }}>Trưởng nhóm</span>}
-              {h.group.deputyId === user?.id && <span style={{ fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', padding: '4px 12px', borderRadius: '6px', background: 'rgba(108,99,255,0.1)', color: 'var(--text-primary)', border: '1px solid rgba(108,99,255,0.25)' }}>Phó nhóm</span>}
+              {h.group.deputyId === user?.id && <span style={{ fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', padding: '4px 12px', borderRadius: '6px', background: 'rgba(0,0,0,0.04)', color: 'var(--text-primary)', border: '1px solid var(--border)' }}>Phó nhóm</span>}
               {h.group.creatorId !== user?.id && h.group.deputyId !== user?.id && <span style={{ fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', padding: '4px 12px', borderRadius: '6px', background: 'rgba(255,255,255,0.04)', color: 'var(--text-muted)', border: '1px solid var(--border)' }}>Thành viên</span>}
             </div>
 

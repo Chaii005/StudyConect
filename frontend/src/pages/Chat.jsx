@@ -19,7 +19,7 @@ import { supabase } from '../config/supabaseClient';
 import { compressImage as compressImageFile } from '../utils/imageCompress';
 
 // ── Avatar ──────────────────────────────────────────────────────────
-function Avatar({ src, initial, color = '#6c63ff', size = 40 }) {
+function Avatar({ src, initial, color = '#3A3A3A', size = 40 }) {
   if (src) return (
     <img src={src} alt="" style={{ width: size, height: size, borderRadius: '50%', objectFit: 'cover', flexShrink: 0 }} />
   );
@@ -395,7 +395,7 @@ function ShareModal({ message, friends, onSend, onClose }) {
             <button key={f.userId} onClick={() => toggle(String(f.userId))} style={{
               display: 'flex', alignItems: 'center', gap: '10px', padding: '10px 12px',
               borderRadius: '10px', border: `1px solid ${selected.includes(String(f.userId)) ? 'var(--primary)' : 'var(--border)'}`,
-              background: selected.includes(String(f.userId)) ? 'rgba(108,99,255,0.1)' : 'none',
+              background: selected.includes(String(f.userId)) ? 'rgba(0,0,0,0.06)' : 'none',
               cursor: 'pointer', textAlign: 'left', transition: 'all 0.15s',
             }}>
               <Avatar src={f.avatar} initial={f.initial} color={colorOf(f.fullName)} size={36} />
@@ -1090,7 +1090,7 @@ function ConversationView({ user, friend, friends, onBack, onlineUserIds, onNick
       {bgToast && (
         <div style={{
           position: 'absolute', top: '16px', right: '16px', zIndex: 9999,
-          background: 'rgba(20,20,40,0.95)', border: '1px solid rgba(108,99,255,0.4)',
+          background: 'rgba(20,20,40,0.95)', border: '1px solid rgba(255,255,255,0.15)',
           borderRadius: '14px', padding: '12px 16px',
           display: 'flex', alignItems: 'center', gap: '10px',
           boxShadow: '0 8px 32px rgba(0,0,0,0.5)',
@@ -1149,9 +1149,9 @@ function ConversationView({ user, friend, friends, onBack, onlineUserIds, onNick
               title="Gọi video"
               style={{
                 width: 40, height: 40, borderRadius: '50%', border: 'none', cursor: 'pointer',
-                background: 'linear-gradient(135deg, #6c63ff, #5b53e0)',
+                background: 'linear-gradient(135deg, #1A1A1A, #3A3A3A)',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
-                boxShadow: '0 2px 10px rgba(108,99,255,0.4)', transition: 'all 0.2s', flexShrink: 0,
+                boxShadow: '0 2px 10px rgba(0,0,0,0.4)', transition: 'all 0.2s', flexShrink: 0,
               }}
               onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.1)'}
               onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}
@@ -1546,7 +1546,7 @@ function ConversationView({ user, friend, friends, onBack, onlineUserIds, onNick
           background: 'linear-gradient(135deg, var(--primary), #5b53e0)',
           border: 'none', cursor: 'pointer',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
-          boxShadow: '0 4px 16px rgba(108,99,255,0.5)',
+          boxShadow: '0 4px 16px rgba(0,0,0,0.3)',
           color: 'white', fontSize: '18px',
           zIndex: 10, transition: 'transform 0.15s',
           animation: 'fadeIn 0.2s ease',
@@ -1726,7 +1726,7 @@ function ConversationView({ user, friend, friends, onBack, onlineUserIds, onNick
           {showEmoji && <EmojiPicker onSelect={addEmoji} onClose={() => setShowEmoji(false)} />}
           <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
             <button onClick={() => setShowEmoji(v => !v)} title="Biểu cảm" style={{
-              background: showEmoji ? 'rgba(108,99,255,0.15)' : 'var(--bg-input)',
+              background: showEmoji ? 'rgba(0,0,0,0.08)' : 'var(--bg-input)',
               border: '1px solid var(--border)', borderRadius: '12px',
               width: '40px', height: '40px', cursor: 'pointer', fontSize: '18px',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -1926,7 +1926,7 @@ function ConversationView({ user, friend, friends, onBack, onlineUserIds, onNick
             marginTop: 24, padding: '12px 24px', background: 'var(--primary)',
             color: 'white', textDecoration: 'none', borderRadius: '12px',
             fontWeight: 600, fontSize: '15px', display: 'flex', alignItems: 'center', gap: '8px',
-            boxShadow: '0 4px 15px rgba(108,99,255,0.4)', transition: 'transform 0.2s'
+            boxShadow: '0 4px 15px rgba(0,0,0,0.35)', transition: 'transform 0.2s'
           }} 
           onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.05)'}
           onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}
@@ -2430,8 +2430,8 @@ function FriendList({ user, friends, onSelect, lastMessages, onlineUserIds }) {
                   {f.status === 'pending' ? (
                     <span style={{
                       fontSize: '9px',
-                      background: f.fromUserId === String(user.id) ? 'rgba(17, 24, 39, 0.04)' : 'rgba(99,102,241,0.15)',
-                      color: f.fromUserId === String(user.id) ? 'var(--text-primary)' : '#818cf8',
+                      background: f.fromUserId === String(user.id) ? 'rgba(17, 24, 39, 0.04)' : 'rgba(0,0,0,0.06)',
+                      color: f.fromUserId === String(user.id) ? 'var(--text-primary)' : 'var(--text-primary)',
                       padding: '2px 6px',
                       borderRadius: '8px',
                       fontWeight: 700,
@@ -2597,7 +2597,7 @@ export default function Chat() {
                   fontWeight: 800,
                   padding: '4px 12px',
                   borderRadius: '20px',
-                  boxShadow: '0 2px 8px rgba(108,99,255,0.45)',
+                  boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
                   letterSpacing: '0.3px',
                   display: 'flex',
                   alignItems: 'center',

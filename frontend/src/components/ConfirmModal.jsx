@@ -63,17 +63,17 @@ export default function ConfirmModal({
     },
     info:    { 
       icon: (
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6366f1" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--text-primary)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
           <circle cx="12" cy="12" r="10" />
           <line x1="12" y1="16" x2="12" y2="12" />
           <line x1="12" y1="8" x2="12.01" y2="8" />
         </svg>
       ), 
-      color: '#6366f1', 
-      bg: 'rgba(99,102,241,0.12)',  
-      border: 'rgba(99,102,241,0.3)', 
-      btnBg: 'linear-gradient(135deg,#6366f1,#4f46e5)', 
-      btnShadow: '0 4px 14px rgba(99,102,241,0.4)' 
+      color: 'var(--text-primary)', 
+      bg: 'rgba(0,0,0,0.06)',  
+      border: 'var(--border)', 
+      btnBg: 'var(--primary)', 
+      btnShadow: 'none' 
     },
   };
   const v = variantMap[variant] || variantMap.danger;

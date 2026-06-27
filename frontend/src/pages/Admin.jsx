@@ -70,7 +70,7 @@ function MembersModal({ group, users, onClose }) {
                   </td>
                   <td style={{ padding: '12px 14px', color: 'var(--text-secondary)', fontSize: '12.5px' }}>{m.email}</td>
                   <td style={{ padding: '12px 14px' }}>
-                    <span style={{ fontSize: '11px', fontWeight: 650, padding: '2px 8px', borderRadius: '4px', background: m.role === 'admin' ? 'rgba(239,68,68,0.1)' : 'rgba(108,99,255,0.1)', color: m.role === 'admin' ? 'var(--error)' : 'var(--text-primary)' }}>
+                    <span style={{ fontSize: '11px', fontWeight: 650, padding: '2px 8px', borderRadius: '4px', background: m.role === 'admin' ? 'rgba(239,68,68,0.1)' : 'rgba(0,0,0,0.06)', color: m.role === 'admin' ? 'var(--error)' : 'var(--text-primary)' }}>
                       {m.role === 'admin' ? 'Admin' : 'Học sinh'}
                     </span>
                   </td>
@@ -575,7 +575,7 @@ export default function Admin() {
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              boxShadow: '0 8px 24px rgba(99, 102, 241, 0.4)',
+              boxShadow: '0 8px 24px rgba(0, 0, 0, 0.15)',
               marginBottom: '16px'
             }}>
               <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.25" strokeLinecap="round" strokeLinejoin="round">
@@ -645,7 +645,7 @@ export default function Admin() {
         }
         .admin-pill-tab:hover {
           color: var(--primary-light) !important;
-          background: rgba(99, 102, 241, 0.06) !important;
+          background: rgba(0, 0, 0, 0.06) !important;
           transform: translateY(-1px);
         }
         .admin-pill-tab:active {
@@ -676,12 +676,12 @@ export default function Admin() {
               width: '54px',
               height: '54px',
               borderRadius: '14px',
-              background: 'rgba(99, 102, 241, 0.12)',
-              border: '1px solid rgba(99, 102, 241, 0.25)',
+              background: 'rgba(0,0,0,0.06)',
+              border: '1px solid var(--border)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              boxShadow: '0 0 20px rgba(99, 102, 241, 0.2)'
+              boxShadow: 'none'
             }}>
               <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="var(--primary-light)" strokeWidth="2.25" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
@@ -799,8 +799,8 @@ export default function Admin() {
                   className="admin-pill-tab"
                   style={{
                     padding: '10px 18px',
-                    background: isActive ? 'rgba(99, 102, 241, 0.12)' : 'transparent',
-                    border: isActive ? '1px solid rgba(99, 102, 241, 0.25)' : '1px solid transparent',
+                    background: isActive ? 'rgba(0,0,0,0.06)' : 'transparent',
+                    border: isActive ? '1px solid var(--border)' : '1px solid transparent',
                     borderRadius: '12px',
                     cursor: 'pointer',
                     fontFamily: 'inherit',
@@ -811,7 +811,7 @@ export default function Admin() {
                     alignItems: 'center',
                     gap: '8px',
                     whiteSpace: 'nowrap',
-                    boxShadow: isActive ? '0 0 15px rgba(99, 102, 241, 0.1)' : 'none',
+                    boxShadow: 'none',
                   }}
                 >
                   <span style={{ display: 'inline-flex', alignItems: 'center' }}>{tab.icon}</span>
@@ -820,7 +820,7 @@ export default function Admin() {
                     <span style={{
                       background: tab.key === 'pendingFiles' && tab.count > 0
                         ? 'rgba(239,68,68,0.2)'
-                        : (isActive ? 'rgba(99, 102, 241, 0.2)' : 'rgba(255,255,255,0.06)'),
+                        : (isActive ? 'rgba(0,0,0,0.1)' : 'rgba(255,255,255,0.06)'),
                       color: tab.key === 'pendingFiles' && tab.count > 0
                         ? '#f87171'
                         : (isActive ? 'var(--text-primary)' : 'var(--text-muted)'),
@@ -928,7 +928,7 @@ export default function Admin() {
                                     <td style={{ padding: '16px', color: 'var(--text-muted)', whiteSpace: 'nowrap' }}>{new Date(p.createdAt).toLocaleString('vi-VN')}</td>
                                     <td style={{ padding: '16px', width: '1%', whiteSpace: 'nowrap' }}>
                                       <div style={{ display: 'flex', gap: '6px' }}>
-                                        <button onClick={() => setPreviewingPost(p)} style={{ padding: '5px 10px', background: 'rgba(108,99,255,0.1)', border: '1px solid rgba(108,99,255,0.2)', color: 'var(--text-primary)', borderRadius: '6px', cursor: 'pointer', fontWeight: 600, fontSize: '12px' }}>Xem</button>
+                                        <button onClick={() => setPreviewingPost(p)} style={{ padding: '5px 10px', background: 'rgba(0,0,0,0.06)', border: '1px solid var(--border)', color: 'var(--text-primary)', borderRadius: '6px', cursor: 'pointer', fontWeight: 600, fontSize: '12px' }}>Xem</button>
                                         <button
                                           onClick={async () => {
                                             try {
@@ -1011,7 +1011,7 @@ export default function Admin() {
                                 <div style={{ display: 'flex', gap: '6px' }}>
                                   <button
                                     onClick={() => setPreviewingFile(f)}
-                                    style={{ padding: '5px 10px', background: 'rgba(108,99,255,0.1)', border: '1px solid rgba(108,99,255,0.2)', color: 'var(--text-primary)', borderRadius: '6px', cursor: 'pointer', fontWeight: 600, fontSize: '12px', whiteSpace: 'nowrap' }}
+                                    style={{ padding: '5px 10px', background: 'rgba(0,0,0,0.06)', border: '1px solid var(--border)', color: 'var(--text-primary)', borderRadius: '6px', cursor: 'pointer', fontWeight: 600, fontSize: '12px', whiteSpace: 'nowrap' }}
                                   >
                                     <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
                                       <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -1173,7 +1173,7 @@ export default function Admin() {
                       <h4 style={{ fontSize: '15px', fontWeight: 700, color: 'var(--text-primary)', margin: '0 0 16px 0', borderBottom: '1px solid var(--border)', paddingBottom: '8px' }}>Bảng chi tiết số liệu</h4>
                       <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                         {[
-                          { label: 'Người dùng hoạt động', value: users.length, percent: ((users.length / (users.length + groups.length + totalAdmins || 1)) * 100).toFixed(1) + '%', color: '#6c63ff' },
+                          { label: 'Người dùng hoạt động', value: users.length, percent: ((users.length / (users.length + groups.length + totalAdmins || 1)) * 100).toFixed(1) + '%', color: 'var(--text-muted)' },
                           { label: 'Phòng học đã tạo', value: groups.length, percent: ((groups.length / (users.length + groups.length + totalAdmins || 1)) * 100).toFixed(1) + '%', color: '#3ecfcf' },
                           { label: 'Quản trị viên hệ thống', value: totalAdmins, percent: ((totalAdmins / (users.length + groups.length + totalAdmins || 1)) * 100).toFixed(1) + '%', color: '#ff6b9d' }
                         ].map((item, idx) => (

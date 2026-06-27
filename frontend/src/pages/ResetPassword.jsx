@@ -94,7 +94,7 @@ export default function ResetPassword() {
                 border: isActive ? '2.5px solid rgba(255,255,255,0.8)' : isCompleted ? 'none' : '1px solid rgba(255,255,255,0.1)',
                 color: isCompleted || isActive ? '#fff' : 'var(--text-muted)',
                 fontSize: '12px', fontWeight: 800,
-                boxShadow: isActive ? '0 0 16px rgba(108, 99, 255, 0.45)' : 'none',
+                boxShadow: isActive ? '0 0 16px rgba(0, 0, 0, 0.25)' : 'none',
                 transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
               }}>
                 {isCompleted ? (
@@ -121,7 +121,7 @@ export default function ResetPassword() {
   return (
     <div className="auth-page">
       {/* Dynamic Background blobs */}
-      <div style={{ position: 'absolute', top: '-10%', right: '-10%', width: '50vw', height: '50vw', background: 'radial-gradient(circle, rgba(108,99,255,0.06) 0%, transparent 60%)', pointerEvents: 'none' }} />
+      <div style={{ position: 'absolute', top: '-10%', right: '-10%', width: '50vw', height: '50vw', background: 'radial-gradient(circle, rgba(0,0,0,0.02) 0%, transparent 60%)', pointerEvents: 'none' }} />
       <div style={{ position: 'absolute', bottom: '-10%', left: '-10%', width: '50vw', height: '50vw', background: 'radial-gradient(circle, rgba(17,24,39,0.03) 0%, transparent 60%)', pointerEvents: 'none' }} />
 
       <div className="auth-card" style={{ animation: 'slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1)', backdropFilter: 'blur(20px)' }}>
@@ -177,7 +177,7 @@ export default function ResetPassword() {
                     value={password}
                     onChange={e => { setPassword(e.target.value); setError(''); }}
                     style={{ width: '100%', padding: '12px 42px 12px 42px', background: 'var(--bg-input)', border: '1px solid var(--border)', borderRadius: '12px', color: 'var(--text-primary)', fontSize: '14px', outline: 'none', transition: 'all 0.2s' }}
-                    onFocus={e => { e.target.style.borderColor = 'var(--primary)'; e.target.style.boxShadow = '0 0 0 3px rgba(108,99,255,0.15)'; }}
+                    onFocus={e => { e.target.style.borderColor = 'var(--primary)'; e.target.style.boxShadow = '0 0 0 3px rgba(0,0,0,0.08)'; }}
                     onBlur={e => { e.target.style.borderColor = 'var(--border)'; e.target.style.boxShadow = 'none'; }}
                   />
                   <button
@@ -224,7 +224,7 @@ export default function ResetPassword() {
                     value={confirmPassword}
                     onChange={e => { setConfirmPassword(e.target.value); setError(''); }}
                     style={{ width: '100%', padding: '12px 16px 12px 42px', background: 'var(--bg-input)', border: '1px solid var(--border)', borderRadius: '12px', color: 'var(--text-primary)', fontSize: '14px', outline: 'none', transition: 'all 0.2s' }}
-                    onFocus={e => { e.target.style.borderColor = 'var(--primary)'; e.target.style.boxShadow = '0 0 0 3px rgba(108,99,255,0.15)'; }}
+                    onFocus={e => { e.target.style.borderColor = 'var(--primary)'; e.target.style.boxShadow = '0 0 0 3px rgba(0,0,0,0.08)'; }}
                     onBlur={e => { e.target.style.borderColor = 'var(--border)'; e.target.style.boxShadow = 'none'; }}
                   />
                 </div>
@@ -234,9 +234,9 @@ export default function ResetPassword() {
                 type="submit"
                 className="btn btn-primary"
                 disabled={loading}
-                style={{ width: '100%', padding: '12px', borderRadius: '12px', background: 'linear-gradient(135deg, var(--primary), var(--primary-light))', border: 'none', color: '#fff', fontWeight: 700, fontSize: '14px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', boxShadow: '0 4px 15px rgba(108,99,255,0.25)', transition: 'all 0.25s' }}
-                onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-1px)'; e.currentTarget.style.boxShadow = '0 6px 20px rgba(108,99,255,0.35)'; }}
-                onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 4px 15px rgba(108,99,255,0.25)'; }}
+                style={{ width: '100%', padding: '12px', borderRadius: '12px', background: 'linear-gradient(135deg, var(--primary), var(--primary-light))', border: 'none', color: '#fff', fontWeight: 700, fontSize: '14px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', boxShadow: '0 4px 15px rgba(0,0,0,0.15)', transition: 'all 0.25s' }}
+                onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-1px)'; e.currentTarget.style.boxShadow = '0 6px 20px rgba(0,0,0,0.2)'; }}
+                onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 4px 15px rgba(0,0,0,0.15)'; }}
               >
                 {loading ? <span className="spinner" style={{ width: '16px', height: '16px', border: '2px solid rgba(255,255,255,0.3)', borderTopColor: '#fff', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} /> : null}
                 {loading ? 'Đang lưu...' : 'Xác nhận thay đổi'}
@@ -258,7 +258,7 @@ export default function ResetPassword() {
             <Link
               to="/login"
               className="btn btn-primary"
-              style={{ textDecoration: 'none', width: '100%', padding: '12px', borderRadius: '12px', background: 'linear-gradient(135deg, var(--primary), var(--primary-light))', border: 'none', color: '#fff', fontWeight: 700, fontSize: '14.5px', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '8px', boxShadow: '0 4px 15px rgba(108,99,255,0.25)', transition: 'all 0.25s' }}
+              style={{ textDecoration: 'none', width: '100%', padding: '12px', borderRadius: '12px', background: 'linear-gradient(135deg, var(--primary), var(--primary-light))', border: 'none', color: '#fff', fontWeight: 700, fontSize: '14.5px', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '8px', boxShadow: '0 4px 15px rgba(0,0,0,0.15)', transition: 'all 0.25s' }}
             >
               Đăng nhập ngay
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">

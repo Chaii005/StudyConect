@@ -569,7 +569,7 @@ export default function AppLayout({ children, hideNavbar = false, hideSidebar = 
                     <Link to="/profile" style={{ textDecoration: 'none', flex: 1, minWidth: 0 }}>
                       <div
                         style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 10px 10px 12px', transition: 'var(--transition)' }}
-                        onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(99, 102, 241, 0.08)')}
+                        onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(0, 0, 0, 0.04)')}
                         onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
                       >
                         <Avatar src={user?.avatar} initial={user?.fullName || 'U'} size={34} />

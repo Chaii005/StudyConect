@@ -77,7 +77,7 @@ export default function UserTable({ filteredUsers, admin, userSearch, setUserSea
                     <td style={{ padding: '16px 16px', whiteSpace: 'nowrap' }}>
                       <span style={{
                         fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', padding: '4px 10px', borderRadius: '20px',
-                        background: u.role === 'admin' ? 'rgba(255,107,157,0.15)' : 'rgba(108,99,255,0.15)',
+                        background: u.role === 'admin' ? 'rgba(255,107,157,0.15)' : 'rgba(0,0,0,0.06)',
                         color: 'var(--text-primary)',
                         border: '1px solid var(--border)',
                       }}>

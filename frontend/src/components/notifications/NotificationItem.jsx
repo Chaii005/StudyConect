@@ -28,7 +28,7 @@ export default function NotificationItem({
         borderBottom: '1px solid var(--border)',
         background: isUrgentDeadline
           ? (isUnread ? 'rgba(239,68,68,0.10)' : 'rgba(239,68,68,0.04)')
-          : (isUnread ? 'rgba(108,99,255,0.07)' : 'transparent'),
+          : (isUnread ? 'rgba(0,0,0,0.03)' : 'transparent'),
         display: 'flex',
         gap: 10,
         alignItems: 'flex-start',

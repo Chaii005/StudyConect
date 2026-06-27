@@ -54,7 +54,7 @@ export default function GroupTable({ filteredGroups, groupSearch, setGroupSearch
                     <div style={{ fontSize: '11.5px', color: 'var(--text-muted)', marginTop: '2px' }}>{g.description || 'Chưa có mô tả.'}</div>
                   </td>
                   <td style={{ padding: '16px 10px', whiteSpace: 'nowrap' }}>
-                    <span style={{ background: 'rgba(108,99,255,0.1)', color: 'var(--text-primary)', padding: '4px 10px', borderRadius: '12px', fontSize: '11.5px', fontWeight: 600 }}>
+                    <span style={{ background: 'rgba(0,0,0,0.06)', color: 'var(--text-primary)', padding: '4px 10px', borderRadius: '12px', fontSize: '11.5px', fontWeight: 600 }}>
                       {g.subject}
                     </span>
                   </td>

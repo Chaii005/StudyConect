@@ -65,7 +65,7 @@ function PageLoader() {
     }}>
       <div style={{
         width: '44px', height: '44px',
-        border: '3px solid rgba(108,99,255,0.2)',
+        border: '3px solid rgba(0,0,0,0.1)',
         borderTopColor: 'var(--primary)',
         borderRadius: '50%',
         animation: 'spin 0.8s linear infinite',
@@ -221,7 +221,7 @@ export default function App() {
 // Admin Stats bar component
 export default function AdminStats({ totalUsersCount, totalGroupsCount, totalAdminsCount }) {
   const stats = [
-    { label: 'Người dùng',    value: totalUsersCount,  color: '#6c63ff', border: 'rgba(108,99,255,0.30)', bg: 'rgba(108,99,255,0.10)' },
+    { label: 'Người dùng',    value: totalUsersCount,  color: 'var(--text-primary)', border: 'var(--border)', bg: 'rgba(0,0,0,0.06)' },
     { label: 'Phòng học',     value: totalGroupsCount, color: '#3ecfcf', border: 'rgba(62,207,207,0.30)',  bg: 'rgba(62,207,207,0.10)' },
     { label: 'Quản trị viên', value: totalAdminsCount, color: '#ff6b9d', border: 'rgba(255,107,157,0.30)', bg: 'rgba(255,107,157,0.10)' },
   ];
@@ -393,7 +393,7 @@ export default function GroupTable({ filteredGroups, groupSearch, setGroupSearch
                     <div style={{ fontSize: '11.5px', color: 'var(--text-muted)', marginTop: '2px' }}>{g.description || 'Chưa có mô tả.'}</div>
                   </td>
                   <td style={{ padding: '16px 10px', whiteSpace: 'nowrap' }}>
-                    <span style={{ background: 'rgba(108,99,255,0.1)', color: 'var(--text-primary)', padding: '4px 10px', borderRadius: '12px', fontSize: '11.5px', fontWeight: 600 }}>
+                    <span style={{ background: 'rgba(0,0,0,0.06)', color: 'var(--text-primary)', padding: '4px 10px', borderRadius: '12px', fontSize: '11.5px', fontWeight: 600 }}>
                       {g.subject}
                     </span>
                   </td>
@@ -673,7 +673,7 @@ export default function UserTable({ filteredUsers, admin, userSearch, setUserSea
                     <td style={{ padding: '16px 16px', whiteSpace: 'nowrap' }}>
                       <span style={{
                         fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', padding: '4px 10px', borderRadius: '20px',
-                        background: u.role === 'admin' ? 'rgba(255,107,157,0.15)' : 'rgba(108,99,255,0.15)',
+                        background: u.role === 'admin' ? 'rgba(255,107,157,0.15)' : 'rgba(0,0,0,0.06)',
                         color: 'var(--text-primary)',
                         border: '1px solid var(--border)',
                       }}>
@@ -807,8 +807,8 @@ export default function CallNotification() {
           50%       { box-shadow: 0 0 0 18px rgba(239, 68, 68, 0); }
         }
         @keyframes cn-avatar-glow {
-          0%, 100% { box-shadow: 0 0 0 4px rgba(108,99,255,0.3), 0 0 30px rgba(108,99,255,0.2); }
-          50%       { box-shadow: 0 0 0 8px rgba(108,99,255,0.5), 0 0 50px rgba(108,99,255,0.35); }
+          0%, 100% { box-shadow: 0 0 0 4px rgba(255,255,255,0.2), 0 0 30px rgba(255,255,255,0.1); }
+          50%       { box-shadow: 0 0 0 8px rgba(255,255,255,0.3), 0 0 50px rgba(255,255,255,0.2); }
         }
         @keyframes cn-wave {
           0%   { transform: scale(1); opacity: 0.8; }
@@ -840,7 +840,7 @@ export default function CallNotification() {
             border: '1px solid rgba(255,255,255,0.12)',
             borderRadius: '28px',
             padding: '36px 28px 28px',
-            boxShadow: '0 32px 80px rgba(0,0,0,0.7), 0 0 0 1px rgba(108,99,255,0.15)',
+            boxShadow: '0 32px 80px rgba(0,0,0,0.7), 0 0 0 1px rgba(255,255,255,0.08)',
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
@@ -852,7 +852,7 @@ export default function CallNotification() {
             {/* Decorative gradient top */}
             <div style={{
               position: 'absolute', top: 0, left: 0, right: 0, height: '3px',
-              background: 'linear-gradient(90deg, #6c63ff, #ff6b9d, #3ecfcf)',
+              background: 'linear-gradient(90deg, #FFFFFF, #D4D4D4, #AAAAAA)',
             }} />
 
             {/* Status label */}
@@ -864,11 +864,11 @@ export default function CallNotification() {
             }}>
               <span style={{
                 width: '22px', height: '22px', borderRadius: '6px', flexShrink: 0,
-                background: 'rgba(108,99,255,0.2)',
+                background: 'rgba(255,255,255,0.12)',
                 display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-                filter: 'drop-shadow(0 0 4px rgba(108,99,255,0.5))',
+                filter: 'drop-shadow(0 0 4px rgba(255,255,255,0.3))',
               }}>
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#a5b4fc" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#D4D4D4" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                   <path d="m22 8-6 4 6 4V8Z" />
                   <rect width="14" height="12" x="2" y="6" rx="2" ry="2" />
                 </svg>
@@ -882,7 +882,7 @@ export default function CallNotification() {
                 <div key={i} style={{
                   position: 'absolute', inset: '-12px',
                   borderRadius: '50%',
-                  border: '2px solid rgba(108,99,255,0.4)',
+                  border: '2px solid rgba(255,255,255,0.25)',
                   animation: `cn-wave 2s ease-out ${i * 0.6}s infinite`,
                 }} />
               ))}
@@ -1360,7 +1360,7 @@ export default function Spinner({ size = 'md', color = 'var(--primary-light)', l
           width: px,
           height: px,
           borderRadius: '50%',
-          border: `${Math.max(2, px * 0.12)}px solid rgba(108, 99, 255, 0.2)`,
+          border: `${Math.max(2, px * 0.12)}px solid rgba(0, 0, 0, 0.1)`,
           borderTopColor: color,
           animation: 'spin 0.7s linear infinite',
           flexShrink: 0,
@@ -1563,17 +1563,17 @@ export default function ConfirmModal({
     },
     info:    { 
       icon: (
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6366f1" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--text-primary)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
           <circle cx="12" cy="12" r="10" />
           <line x1="12" y1="16" x2="12" y2="12" />
           <line x1="12" y1="8" x2="12.01" y2="8" />
         </svg>
       ), 
-      color: '#6366f1', 
-      bg: 'rgba(99,102,241,0.12)',  
-      border: 'rgba(99,102,241,0.3)', 
-      btnBg: 'linear-gradient(135deg,#6366f1,#4f46e5)', 
-      btnShadow: '0 4px 14px rgba(99,102,241,0.4)' 
+      color: 'var(--text-primary)', 
+      bg: 'rgba(0,0,0,0.06)',  
+      border: 'var(--border)', 
+      btnBg: 'var(--primary)', 
+      btnShadow: 'none' 
     },
   };
   const v = variantMap[variant] || variantMap.danger;
@@ -2440,7 +2440,7 @@ export default function GroupChatPanel({
         return (
           <div
             style={{
-              background: 'rgba(108, 99, 255, 0.08)',
+              background: 'rgba(0, 0, 0, 0.04)',
               borderBottom: '1px solid var(--border)',
               padding: '10px 20px',
               display: 'flex',
@@ -2471,7 +2471,7 @@ export default function GroupChatPanel({
                     if (bubble) {
                       const origBg = bubble.style.background;
                       const origBorder = bubble.style.border;
-                      bubble.style.background = 'rgba(108, 99, 255, 0.25)';
+                      bubble.style.background = 'rgba(0, 0, 0, 0.12)';
                       bubble.style.border = '1px solid var(--primary)';
                       setTimeout(() => {
                         bubble.style.background = origBg;
@@ -2654,8 +2654,8 @@ export default function GroupChatPanel({
                     {msg.replyTo && (
                       <div
                         style={{
-                          background: isMe ? 'rgba(0,0,0,0.2)' : 'rgba(108,99,255,0.15)',
-                          borderLeft: '3px solid rgba(108,99,255,0.6)',
+                          background: isMe ? 'rgba(0,0,0,0.2)' : 'rgba(0,0,0,0.06)',
+                          borderLeft: '3px solid rgba(0,0,0,0.25)',
                           borderRadius: '6px',
                           padding: '6px 10px',
                           marginBottom: '8px',
@@ -2816,7 +2816,7 @@ export default function GroupChatPanel({
                             fontFamily: 'inherit',
                             transition: '0.15s',
                           }}
-                          onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(108,99,255,0.15)')}
+                          onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(0,0,0,0.08)')}
                           onMouseLeave={(e) => (e.currentTarget.style.background = 'rgba(255,255,255,0.07)')}
                         >
                           <span>{emoji}</span>
@@ -2877,8 +2877,8 @@ export default function GroupChatPanel({
         {replyTo && (
           <div
             style={{
-              background: 'rgba(108,99,255,0.1)',
-              border: '1.5px dashed rgba(108,99,255,0.4)',
+              background: 'rgba(0,0,0,0.04)',
+              border: '1.5px dashed rgba(0,0,0,0.2)',
               padding: '8px 14px',
               borderRadius: '10px',
               display: 'flex',
@@ -2921,8 +2921,8 @@ export default function GroupChatPanel({
         {chatAttachedFile && (
           <div
             style={{
-              background: 'rgba(108,99,255,0.1)',
-              border: '1.5px dashed var(--text-primary)',
+              background: 'rgba(0,0,0,0.04)',
+              border: '1.5px dashed var(--border)',
               padding: '8px 14px',
               borderRadius: '10px',
               display: 'flex',
@@ -3042,7 +3042,7 @@ export default function GroupChatPanel({
                     lineHeight: 1,
                     transition: '0.1s',
                   }}
-                  onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(108,99,255,0.15)')}
+                  onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(0,0,0,0.06)')}
                   onMouseLeave={(e) => (e.currentTarget.style.background = 'none')}
                 >
                   {emoji}
@@ -3103,7 +3103,7 @@ export default function GroupChatPanel({
                     key={m.id}
                     type="button"
                     onClick={() => insertMention(m)}
-                    onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(108,99,255,0.12)')}
+                    onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(0,0,0,0.06)')}
                     onMouseLeave={(e) => (e.currentTarget.style.background = 'none')}
                     style={{
                       width: '100%',
@@ -3191,7 +3191,7 @@ export default function GroupChatPanel({
               alignItems: 'center',
               justifyContent: 'center',
               transition: '0.2s',
-              boxShadow: chatInput.trim() || chatAttachedFile ? '0 4px 12px rgba(108,99,255,0.35)' : 'none',
+              boxShadow: chatInput.trim() || chatAttachedFile ? '0 4px 12px rgba(0,0,0,0.25)' : 'none',
             }}
             title="Gửi"
           >
@@ -3512,37 +3512,37 @@ export default function GroupDeadlines({
                             fontWeight: 700,
                             padding: '2px 8px',
                             borderRadius: '6px',
-                          background: d.assigneeId ? 'rgba(108,99,255,0.12)' : 'rgba(62,207,207,0.10)',
-                          color: 'var(--text-primary)',
-                          border: `1px solid ${
-                            d.assigneeId ? 'rgba(108,99,255,0.25)' : 'rgba(62,207,207,0.25)'
-                          }`,
-                          display: 'inline-flex',
-                          alignItems: 'center',
-                          gap: '4px'
-                        }}
-                      >
-                        {d.assigneeId ? (
-                          <>
-                            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-                              <circle cx="12" cy="7" r="4" />
-                            </svg>
-                            {d.assigneeName || 'Cá nhân'}
-                          </>
-                        ) : (
-                          <>
-                            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-                              <circle cx="9" cy="7" r="4" />
-                              <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
-                              <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-                            </svg>
-                            Cả nhóm
-                          </>
-                        )}
-                      </span>
-                    </div>
+                            background: d.assigneeId ? 'rgba(0,0,0,0.06)' : 'rgba(62,207,207,0.10)',
+                            color: 'var(--text-primary)',
+                            border: `1px solid ${
+                              d.assigneeId ? 'var(--border)' : 'rgba(62,207,207,0.25)'
+                            }`,
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '4px'
+                          }}
+                        >
+                          {d.assigneeId ? (
+                            <>
+                              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                                <circle cx="12" cy="7" r="4" />
+                              </svg>
+                              {d.assigneeName || 'Cá nhân'}
+                            </>
+                          ) : (
+                            <>
+                              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                                <circle cx="9" cy="7" r="4" />
+                                <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+                                <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                              </svg>
+                              Cả nhóm
+                            </>
+                          )}
+                        </span>
+                      </div>
                     <p style={{ color: 'var(--text-muted)', fontSize: '12px', margin: 0 }}>
                       <span style={{ color: overdue ? 'var(--error)' : 'var(--text-muted)', fontWeight: overdue ? 600 : 400 }}>
                         Hạn chót: {format24h(d.dueDate)}
@@ -4153,7 +4153,7 @@ export default function GroupDeadlines({
                             width: 28,
                             height: 28,
                             borderRadius: '50%',
-                            background: 'linear-gradient(135deg, var(--primary), #5b53e0)',
+                            background: 'linear-gradient(135deg, var(--text-muted), #666)',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
@@ -4186,8 +4186,8 @@ export default function GroupDeadlines({
                           display: 'inline-flex',
                           alignItems: 'center',
                           gap: '6px',
-                          background: 'rgba(108,99,255,0.1)',
-                          border: '1px solid rgba(108,99,255,0.2)',
+                          background: 'rgba(0,0,0,0.06)',
+                          border: '1px solid var(--border)',
                           borderRadius: '8px',
                           padding: '5px 12px',
                           fontSize: '12px',
@@ -4195,8 +4195,8 @@ export default function GroupDeadlines({
                           color: 'var(--text-primary)',
                           textDecoration: 'none',
                         }}
-                        onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(108,99,255,0.18)')}
-                        onMouseLeave={(e) => (e.currentTarget.style.background = 'rgba(108,99,255,0.1)')}
+                        onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(0,0,0,0.1)')}
+                        onMouseLeave={(e) => (e.currentTarget.style.background = 'rgba(0,0,0,0.06)')}
                       >
                         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: '4px' }}>
                           <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
@@ -4323,8 +4323,8 @@ export default function GroupDocuments({
                 height: '40px',
                 margin: '0 auto 10px',
                 borderRadius: '10px',
-                background: 'rgba(108,99,255,0.12)',
-                border: '1px solid rgba(108,99,255,0.25)',
+                background: 'rgba(0,0,0,0.06)',
+                border: '1px solid var(--border)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -4481,11 +4481,11 @@ export default function GroupDocuments({
                           style={{
                             fontSize: '11px',
                             fontWeight: 700,
-                            background: 'rgba(108,99,255,0.15)',
+                            background: 'rgba(0,0,0,0.06)',
                             color: 'var(--text-primary)',
                             padding: '2px 8px',
                             borderRadius: '4px',
-                            border: '1px solid rgba(108,99,255,0.2)'
+                            border: '1px solid var(--border)'
                           }}
                         >
                           {subject}
@@ -4665,7 +4665,7 @@ export default function GroupMembers({
               border: isLeader
                 ? '1.5px solid var(--text-primary)'
                 : isDeputy
-                ? '1.5px solid rgba(108, 99, 255, 0.35)'
+                ? '1.5px solid var(--border)'
                 : '1px solid var(--border)',
               borderRadius: 'var(--radius-md)',
               padding: '18px 20px',
@@ -4746,12 +4746,12 @@ export default function GroupMembers({
                   <span
                     style={{
                       fontSize: '11px',
-                      background: 'rgba(108, 99, 255, 0.12)',
+                      background: 'rgba(0, 0, 0, 0.04)',
                       color: 'var(--text-primary)',
                       padding: '2px 8px',
                       borderRadius: '10px',
                       fontWeight: 700,
-                      border: '1px solid rgba(108, 99, 255, 0.3)',
+                      border: '1px solid var(--border)',
                     }}
                   >
                     Phó nhóm
@@ -4799,11 +4799,11 @@ export default function GroupMembers({
                     style={{
                       padding: '7px 14px',
                       borderRadius: 'var(--radius-sm)',
-                      background: 'rgba(108, 99, 255, 0.1)',
+                      background: 'rgba(0, 0, 0, 0.04)',
                       color: 'var(--text-primary)',
                       fontWeight: 600,
                       fontSize: '13px',
-                      border: '1px solid rgba(108,99,255,0.3)',
+                      border: '1px solid var(--border)',
                     }}
                   >
                     Đã gửi lời mời cho bạn
@@ -4815,9 +4815,9 @@ export default function GroupMembers({
                     style={{
                       padding: '7px 14px',
                       borderRadius: 'var(--radius-sm)',
-                      border: '1px solid rgba(108, 99, 255, 0.35)',
+                      border: '1px solid var(--border)',
                       cursor: 'pointer',
-                      background: 'rgba(108, 99, 255, 0.08)',
+                      background: 'rgba(0, 0, 0, 0.04)',
                       color: 'var(--text-primary)',
                       fontWeight: 600,
                       fontSize: '13px',
@@ -4851,9 +4851,9 @@ export default function GroupMembers({
                     style={{
                       padding: '7px 14px',
                       borderRadius: 'var(--radius-sm)',
-                      border: '1px solid rgba(108, 99, 255, 0.35)',
+                      border: '1px solid var(--border)',
                       cursor: 'pointer',
-                      background: 'rgba(108, 99, 255, 0.08)',
+                      background: 'rgba(0, 0, 0, 0.04)',
                       color: 'var(--text-primary)',
                       fontWeight: 600,
                       fontSize: '13px',
@@ -5212,7 +5212,7 @@ export default function GroupSchedule({
                     justifyContent: 'space-between',
                     gap: '10px',
                     padding: '12px 16px',
-                    background: 'linear-gradient(135deg, rgba(62,207,207,0.07), rgba(108,99,255,0.07))',
+                    background: 'linear-gradient(135deg, rgba(62,207,207,0.07), rgba(0,0,0,0.03))',
                     border: '1px solid rgba(62,207,207,0.2)',
                     borderRadius: '10px',
                   }}
@@ -5272,7 +5272,7 @@ export default function GroupSchedule({
                         fontSize: '13px',
                         fontWeight: 700,
                         whiteSpace: 'nowrap',
-                        boxShadow: '0 2px 10px rgba(108,99,255,0.3)',
+                        boxShadow: '0 2px 10px rgba(0,0,0,0.1)',
                       }}
                     >
                       Mở phòng học
@@ -5377,13 +5377,13 @@ export default function GroupSchedule({
                         style={{
                           flexShrink: 0,
                           fontSize: '10px',
-                          background: 'rgba(108,99,255,0.12)',
-                          color: 'var(--text-primary)',
-                          padding: '3px 8px',
-                          borderRadius: '6px',
-                          fontWeight: 700,
-                          whiteSpace: 'nowrap',
-                          border: '1px solid rgba(108,99,255,0.2)',
+                           background: 'rgba(0,0,0,0.06)',
+                           color: 'var(--text-primary)',
+                           padding: '3px 8px',
+                           borderRadius: '6px',
+                           fontWeight: 700,
+                           whiteSpace: 'nowrap',
+                           border: '1px solid var(--border)',
                         }}
                       >
                         {format24h(sched.dateTime)}
@@ -5778,7 +5778,7 @@ export default function MessageMenu({ x, y, isMine, isPinned, canPin, onDelete, 
           onReply();
           onClose();
         }}
-        onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(108,99,255,0.1)')}
+        onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(0,0,0,0.06)')}
         onMouseLeave={(e) => (e.currentTarget.style.background = 'none')}
         style={{
           width: '100%',
@@ -5811,7 +5811,7 @@ export default function MessageMenu({ x, y, isMine, isPinned, canPin, onDelete, 
             onPin();
             onClose();
           }}
-          onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(108,99,255,0.1)')}
+          onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(0,0,0,0.06)')}
           onMouseLeave={(e) => (e.currentTarget.style.background = 'none')}
           style={{
             width: '100%',
@@ -6017,7 +6017,7 @@ export default function NotificationBell({ style }) {
         onClick={handleOpen}
         title="Thông báo"
         style={{
-          background: open ? 'rgba(99, 102, 241, 0.15)' : hovered ? 'rgba(99, 102, 241, 0.08)' : 'transparent',
+          background: open ? 'rgba(0, 0, 0, 0.08)' : hovered ? 'rgba(0, 0, 0, 0.04)' : 'transparent',
           border: 'none',
           borderRadius: '50%',
           width: '34px',
@@ -6217,7 +6217,7 @@ export default function NotificationItem({
         borderBottom: '1px solid var(--border)',
         background: isUrgentDeadline
           ? (isUnread ? 'rgba(239,68,68,0.10)' : 'rgba(239,68,68,0.04)')
-          : (isUnread ? 'rgba(108,99,255,0.07)' : 'transparent'),
+          : (isUnread ? 'rgba(0,0,0,0.03)' : 'transparent'),
         display: 'flex',
         gap: 10,
         alignItems: 'flex-start',
@@ -6496,7 +6496,7 @@ import { useToast } from '@/context/ToastContext';
 function SuggestAvatar({ src, initial }) {
   if (src) return <img src={src} alt="" style={{ width: 28, height: 28, borderRadius: '50%', objectFit: 'cover', flexShrink: 0 }} />;
   const firstChar = (initial || '?')[0];
-  const colors = ['#6c63ff', '#ff6b9d', '#3ecfcf', '#f59e0b', '#22c55e'];
+  const colors = ['#1a1a1a', '#ff6b9d', '#3ecfcf', '#f59e0b', '#22c55e'];
   const color = colors[(firstChar.charCodeAt(0) || 0) % colors.length];
   return (
     <div style={{ width: 28, height: 28, borderRadius: '50%', background: color, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px', fontWeight: 700, color: '#fff', flexShrink: 0 }}>
@@ -6672,7 +6672,7 @@ export default function CreatePostModal({ user, friends = [], myLeaderGroups = [
                 position: 'absolute',
                 left: '20px', right: '20px',
                 background: 'var(--bg-card)',
-                border: '1px solid rgba(108,99,255,0.35)',
+                border: '1px solid var(--border)',
                 borderRadius: '14px',
                 boxShadow: '0 12px 40px rgba(0,0,0,0.35)',
                 zIndex: 1000,
@@ -6683,7 +6683,7 @@ export default function CreatePostModal({ user, friends = [], myLeaderGroups = [
             >
               {/* Section header friends */}
               {sugs.some(s => s.type === 'friend') && (
-                <div style={{ padding: '6px 14px 4px', fontSize: '10px', fontWeight: 700, color: 'var(--text-primary)', textTransform: 'uppercase', letterSpacing: '0.05em', background: 'rgba(108,99,255,0.05)' }}>
+                <div style={{ padding: '6px 14px 4px', fontSize: '10px', fontWeight: 700, color: 'var(--text-primary)', textTransform: 'uppercase', letterSpacing: '0.05em', background: 'rgba(0,0,0,0.06)' }}>
                   👤 Bạn bè
                 </div>
               )}
@@ -6696,7 +6696,7 @@ export default function CreatePostModal({ user, friends = [], myLeaderGroups = [
                     style={{
                       display: 'flex', alignItems: 'center', gap: '10px',
                       padding: '8px 14px', cursor: 'pointer',
-                      background: realIdx === suggestIdx ? 'rgba(108,99,255,0.12)' : 'transparent',
+                      background: realIdx === suggestIdx ? 'rgba(0,0,0,0.06)' : 'transparent',
                       transition: 'background 0.15s',
                     }}
                     onMouseEnter={() => setSuggestIdx(realIdx)}
@@ -9000,7 +9000,7 @@ export default function useGroupDetail(groupId, user, addToast) {
                 gap: '10px',
                 padding: '10px 14px',
                 borderRadius: '8px',
-                background: selected === currentDeputyIds[0] ? 'rgba(108,99,255,0.1)' : 'var(--bg-input)',
+                background: selected === currentDeputyIds[0] ? 'rgba(0,0,0,0.06)' : 'var(--bg-input)',
                 border: selected === currentDeputyIds[0] ? '1.5px solid var(--primary-light)' : '1px solid var(--border)',
                 cursor: 'pointer',
               },
@@ -9030,7 +9030,7 @@ export default function useGroupDetail(groupId, user, addToast) {
                 gap: '10px',
                 padding: '10px 14px',
                 borderRadius: '8px',
-                background: selected === currentDeputyIds[1] ? 'rgba(108,99,255,0.1)' : 'var(--bg-input)',
+                background: selected === currentDeputyIds[1] ? 'rgba(0,0,0,0.06)' : 'var(--bg-input)',
                 border: selected === currentDeputyIds[1] ? '1.5px solid var(--primary-light)' : '1px solid var(--border)',
                 cursor: 'pointer',
               },
@@ -10933,7 +10933,7 @@ button {
 button:hover:not(:disabled) {
   transform: translateY(-2px);
   filter: brightness(1.1);
-  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.15);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 button:active:not(:disabled) {
@@ -11103,7 +11103,7 @@ button:active:not(:disabled) {
 
 .form-input:focus {
   border-color: var(--primary);
-  box-shadow: 0 0 0 3px rgba(108, 99, 255, 0.15);
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.08);
 }
 
 .form-input:focus + .input-icon,
@@ -11245,7 +11245,7 @@ input::-ms-clear {
 }
 .form-textarea:focus {
   border-color: var(--primary);
-  box-shadow: 0 0 0 3px rgba(108, 99, 255, 0.15);
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.08);
 }
 .form-textarea::placeholder { color: var(--text-muted); }
 
@@ -11528,8 +11528,8 @@ input::-ms-clear {
   transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 .profile-sidebar:hover {
-  border-color: rgba(99, 102, 241, 0.3);
-  box-shadow: 0 16px 36px -12px rgba(99, 102, 241, 0.15), 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+  border-color: var(--border);
+  box-shadow: 0 16px 36px -12px rgba(0, 0, 0, 0.15), 0 10px 30px -10px rgba(0, 0, 0, 0.5);
 }
 
 .avatar-wrap {
@@ -11545,12 +11545,12 @@ input::-ms-clear {
   border-radius: 50%;
   object-fit: cover;
   border: 3.5px solid var(--primary-light);
-  box-shadow: 0 0 25px rgba(108, 99, 255, 0.35), 0 0 0 6px rgba(108, 99, 255, 0.1);
+  box-shadow: 0 0 0 4px rgba(0, 0, 0, 0.08), 0 4px 16px rgba(0, 0, 0, 0.12);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 .avatar-img:hover {
   transform: scale(1.03);
-  box-shadow: 0 0 35px rgba(108, 99, 255, 0.55), 0 0 0 8px rgba(108, 99, 255, 0.15);
+  box-shadow: 0 0 0 6px rgba(0, 0, 0, 0.12), 0 6px 24px rgba(0, 0, 0, 0.18);
 }
 
 .avatar-placeholder {
@@ -11565,12 +11565,12 @@ input::-ms-clear {
   font-weight: 800;
   color: white;
   border: 3.5px solid var(--primary-light);
-  box-shadow: 0 0 25px rgba(108, 99, 255, 0.35), 0 0 0 6px rgba(108, 99, 255, 0.1);
+  box-shadow: 0 0 0 4px rgba(0, 0, 0, 0.08), 0 4px 16px rgba(0, 0, 0, 0.12);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 .avatar-placeholder:hover {
   transform: scale(1.03);
-  box-shadow: 0 0 35px rgba(108, 99, 255, 0.55), 0 0 0 8px rgba(108, 99, 255, 0.15);
+  box-shadow: 0 0 0 6px rgba(0, 0, 0, 0.12), 0 6px 24px rgba(0, 0, 0, 0.18);
 }
 
 .avatar-edit-btn {
@@ -11607,9 +11607,9 @@ input::-ms-clear {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  background: rgba(108, 99, 255, 0.15);
-  border: 1px solid rgba(108, 99, 255, 0.3);
-  color: var(--primary-light);
+  background: rgba(0, 0, 0, 0.06);
+  border: 1px solid var(--border);
+  color: var(--text-primary);
   padding: 4px 14px;
   border-radius: 20px;
   font-size: 12px;
@@ -11655,8 +11655,8 @@ input::-ms-clear {
   transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 .profile-card:hover {
-  border-color: rgba(99, 102, 241, 0.3);
-  box-shadow: 0 16px 36px -12px rgba(99, 102, 241, 0.15), 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+  border-color: var(--border);
+  box-shadow: 0 16px 36px -12px rgba(0, 0, 0, 0.15), 0 10px 30px -10px rgba(0, 0, 0, 0.5);
 }
 
 /* ─── Card Header (redesigned) ─── */
@@ -11685,21 +11685,21 @@ input::-ms-clear {
   width: 48px;
   height: 48px;
   border-radius: 14px;
-  background: linear-gradient(135deg, rgba(108, 99, 255, 0.25), rgba(62, 207, 207, 0.15));
-  border: 1px solid rgba(108, 99, 255, 0.3);
+  background: rgba(0, 0, 0, 0.04);
+  border: 1px solid var(--border);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--primary-light);
+  color: var(--text-primary);
   flex-shrink: 0;
-  box-shadow: 0 4px 12px rgba(108, 99, 255, 0.15);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
 }
 
 .card-header-icon-shield {
-  background: linear-gradient(135deg, rgba(62, 207, 207, 0.2), rgba(108, 99, 255, 0.2));
-  border-color: rgba(62, 207, 207, 0.3);
-  color: var(--secondary);
-  box-shadow: 0 4px 12px rgba(62, 207, 207, 0.12);
+  background: rgba(0, 0, 0, 0.04);
+  border-color: var(--border);
+  color: var(--text-secondary);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
 }
 
 .card-header-text h2 {
@@ -12184,7 +12184,7 @@ input::-ms-clear {
 }
 .document-upload-box:hover {
   border-color: var(--primary);
-  background: rgba(108,99,255,0.03);
+  background: rgba(0,0,0,0.03);
 }
 
 @media (max-width: 991px) {
@@ -13061,7 +13061,7 @@ export default function AppLayout({ children, hideNavbar = false, hideSidebar = 
                     <Link to="/profile" style={{ textDecoration: 'none', flex: 1, minWidth: 0 }}>
                       <div
                         style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 10px 10px 12px', transition: 'var(--transition)' }}
-                        onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(99, 102, 241, 0.08)')}
+                        onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(0, 0, 0, 0.04)')}
                         onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
                       >
                         <Avatar src={user?.avatar} initial={user?.fullName || 'U'} size={34} />
@@ -13584,7 +13584,7 @@ function MembersModal({ group, users, onClose }) {
                   </td>
                   <td style={{ padding: '12px 14px', color: 'var(--text-secondary)', fontSize: '12.5px' }}>{m.email}</td>
                   <td style={{ padding: '12px 14px' }}>
-                    <span style={{ fontSize: '11px', fontWeight: 650, padding: '2px 8px', borderRadius: '4px', background: m.role === 'admin' ? 'rgba(239,68,68,0.1)' : 'rgba(108,99,255,0.1)', color: m.role === 'admin' ? 'var(--error)' : 'var(--text-primary)' }}>
+                    <span style={{ fontSize: '11px', fontWeight: 650, padding: '2px 8px', borderRadius: '4px', background: m.role === 'admin' ? 'rgba(239,68,68,0.1)' : 'rgba(0,0,0,0.06)', color: m.role === 'admin' ? 'var(--error)' : 'var(--text-primary)' }}>
                       {m.role === 'admin' ? 'Admin' : 'Học sinh'}
                     </span>
                   </td>
@@ -14089,7 +14089,7 @@ export default function Admin() {
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              boxShadow: '0 8px 24px rgba(99, 102, 241, 0.4)',
+              boxShadow: '0 8px 24px rgba(0, 0, 0, 0.15)',
               marginBottom: '16px'
             }}>
               <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.25" strokeLinecap="round" strokeLinejoin="round">
@@ -14159,7 +14159,7 @@ export default function Admin() {
         }
         .admin-pill-tab:hover {
           color: var(--primary-light) !important;
-          background: rgba(99, 102, 241, 0.06) !important;
+          background: rgba(0, 0, 0, 0.06) !important;
           transform: translateY(-1px);
         }
         .admin-pill-tab:active {
@@ -14190,12 +14190,12 @@ export default function Admin() {
               width: '54px',
               height: '54px',
               borderRadius: '14px',
-              background: 'rgba(99, 102, 241, 0.12)',
-              border: '1px solid rgba(99, 102, 241, 0.25)',
+              background: 'rgba(0,0,0,0.06)',
+              border: '1px solid var(--border)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              boxShadow: '0 0 20px rgba(99, 102, 241, 0.2)'
+              boxShadow: 'none'
             }}>
               <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="var(--primary-light)" strokeWidth="2.25" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
@@ -14313,8 +14313,8 @@ export default function Admin() {
                   className="admin-pill-tab"
                   style={{
                     padding: '10px 18px',
-                    background: isActive ? 'rgba(99, 102, 241, 0.12)' : 'transparent',
-                    border: isActive ? '1px solid rgba(99, 102, 241, 0.25)' : '1px solid transparent',
+                    background: isActive ? 'rgba(0,0,0,0.06)' : 'transparent',
+                    border: isActive ? '1px solid var(--border)' : '1px solid transparent',
                     borderRadius: '12px',
                     cursor: 'pointer',
                     fontFamily: 'inherit',
@@ -14325,7 +14325,7 @@ export default function Admin() {
                     alignItems: 'center',
                     gap: '8px',
                     whiteSpace: 'nowrap',
-                    boxShadow: isActive ? '0 0 15px rgba(99, 102, 241, 0.1)' : 'none',
+                    boxShadow: 'none',
                   }}
                 >
                   <span style={{ display: 'inline-flex', alignItems: 'center' }}>{tab.icon}</span>
@@ -14334,7 +14334,7 @@ export default function Admin() {
                     <span style={{
                       background: tab.key === 'pendingFiles' && tab.count > 0
                         ? 'rgba(239,68,68,0.2)'
-                        : (isActive ? 'rgba(99, 102, 241, 0.2)' : 'rgba(255,255,255,0.06)'),
+                        : (isActive ? 'rgba(0,0,0,0.1)' : 'rgba(255,255,255,0.06)'),
                       color: tab.key === 'pendingFiles' && tab.count > 0
                         ? '#f87171'
                         : (isActive ? 'var(--text-primary)' : 'var(--text-muted)'),
@@ -14442,7 +14442,7 @@ export default function Admin() {
                                     <td style={{ padding: '16px', color: 'var(--text-muted)', whiteSpace: 'nowrap' }}>{new Date(p.createdAt).toLocaleString('vi-VN')}</td>
                                     <td style={{ padding: '16px', width: '1%', whiteSpace: 'nowrap' }}>
                                       <div style={{ display: 'flex', gap: '6px' }}>
-                                        <button onClick={() => setPreviewingPost(p)} style={{ padding: '5px 10px', background: 'rgba(108,99,255,0.1)', border: '1px solid rgba(108,99,255,0.2)', color: 'var(--text-primary)', borderRadius: '6px', cursor: 'pointer', fontWeight: 600, fontSize: '12px' }}>Xem</button>
+                                        <button onClick={() => setPreviewingPost(p)} style={{ padding: '5px 10px', background: 'rgba(0,0,0,0.06)', border: '1px solid var(--border)', color: 'var(--text-primary)', borderRadius: '6px', cursor: 'pointer', fontWeight: 600, fontSize: '12px' }}>Xem</button>
                                         <button
                                           onClick={async () => {
                                             try {
@@ -14525,7 +14525,7 @@ export default function Admin() {
                                 <div style={{ display: 'flex', gap: '6px' }}>
                                   <button
                                     onClick={() => setPreviewingFile(f)}
-                                    style={{ padding: '5px 10px', background: 'rgba(108,99,255,0.1)', border: '1px solid rgba(108,99,255,0.2)', color: 'var(--text-primary)', borderRadius: '6px', cursor: 'pointer', fontWeight: 600, fontSize: '12px', whiteSpace: 'nowrap' }}
+                                    style={{ padding: '5px 10px', background: 'rgba(0,0,0,0.06)', border: '1px solid var(--border)', color: 'var(--text-primary)', borderRadius: '6px', cursor: 'pointer', fontWeight: 600, fontSize: '12px', whiteSpace: 'nowrap' }}
                                   >
                                     <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
                                       <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -14687,7 +14687,7 @@ export default function Admin() {
                       <h4 style={{ fontSize: '15px', fontWeight: 700, color: 'var(--text-primary)', margin: '0 0 16px 0', borderBottom: '1px solid var(--border)', paddingBottom: '8px' }}>Bảng chi tiết số liệu</h4>
                       <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                         {[
-                          { label: 'Người dùng hoạt động', value: users.length, percent: ((users.length / (users.length + groups.length + totalAdmins || 1)) * 100).toFixed(1) + '%', color: '#6c63ff' },
+                          { label: 'Người dùng hoạt động', value: users.length, percent: ((users.length / (users.length + groups.length + totalAdmins || 1)) * 100).toFixed(1) + '%', color: 'var(--text-muted)' },
                           { label: 'Phòng học đã tạo', value: groups.length, percent: ((groups.length / (users.length + groups.length + totalAdmins || 1)) * 100).toFixed(1) + '%', color: '#3ecfcf' },
                           { label: 'Quản trị viên hệ thống', value: totalAdmins, percent: ((totalAdmins / (users.length + groups.length + totalAdmins || 1)) * 100).toFixed(1) + '%', color: '#ff6b9d' }
                         ].map((item, idx) => (
@@ -14754,7 +14754,7 @@ import { supabase } from '../config/supabaseClient';
 import { compressImage as compressImageFile } from '../utils/imageCompress';
 
 // ── Avatar ──────────────────────────────────────────────────────────
-function Avatar({ src, initial, color = '#6c63ff', size = 40 }) {
+function Avatar({ src, initial, color = '#3A3A3A', size = 40 }) {
   if (src) return (
     <img src={src} alt="" style={{ width: size, height: size, borderRadius: '50%', objectFit: 'cover', flexShrink: 0 }} />
   );
@@ -15130,7 +15130,7 @@ function ShareModal({ message, friends, onSend, onClose }) {
             <button key={f.userId} onClick={() => toggle(String(f.userId))} style={{
               display: 'flex', alignItems: 'center', gap: '10px', padding: '10px 12px',
               borderRadius: '10px', border: `1px solid ${selected.includes(String(f.userId)) ? 'var(--primary)' : 'var(--border)'}`,
-              background: selected.includes(String(f.userId)) ? 'rgba(108,99,255,0.1)' : 'none',
+              background: selected.includes(String(f.userId)) ? 'rgba(0,0,0,0.06)' : 'none',
               cursor: 'pointer', textAlign: 'left', transition: 'all 0.15s',
             }}>
               <Avatar src={f.avatar} initial={f.initial} color={colorOf(f.fullName)} size={36} />
@@ -15825,7 +15825,7 @@ function ConversationView({ user, friend, friends, onBack, onlineUserIds, onNick
       {bgToast && (
         <div style={{
           position: 'absolute', top: '16px', right: '16px', zIndex: 9999,
-          background: 'rgba(20,20,40,0.95)', border: '1px solid rgba(108,99,255,0.4)',
+          background: 'rgba(20,20,40,0.95)', border: '1px solid rgba(255,255,255,0.15)',
           borderRadius: '14px', padding: '12px 16px',
           display: 'flex', alignItems: 'center', gap: '10px',
           boxShadow: '0 8px 32px rgba(0,0,0,0.5)',
@@ -15884,9 +15884,9 @@ function ConversationView({ user, friend, friends, onBack, onlineUserIds, onNick
               title="Gọi video"
               style={{
                 width: 40, height: 40, borderRadius: '50%', border: 'none', cursor: 'pointer',
-                background: 'linear-gradient(135deg, #6c63ff, #5b53e0)',
+                background: 'linear-gradient(135deg, #1A1A1A, #3A3A3A)',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
-                boxShadow: '0 2px 10px rgba(108,99,255,0.4)', transition: 'all 0.2s', flexShrink: 0,
+                boxShadow: '0 2px 10px rgba(0,0,0,0.4)', transition: 'all 0.2s', flexShrink: 0,
               }}
               onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.1)'}
               onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}
@@ -16281,7 +16281,7 @@ function ConversationView({ user, friend, friends, onBack, onlineUserIds, onNick
           background: 'linear-gradient(135deg, var(--primary), #5b53e0)',
           border: 'none', cursor: 'pointer',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
-          boxShadow: '0 4px 16px rgba(108,99,255,0.5)',
+          boxShadow: '0 4px 16px rgba(0,0,0,0.3)',
           color: 'white', fontSize: '18px',
           zIndex: 10, transition: 'transform 0.15s',
           animation: 'fadeIn 0.2s ease',
@@ -16461,7 +16461,7 @@ function ConversationView({ user, friend, friends, onBack, onlineUserIds, onNick
           {showEmoji && <EmojiPicker onSelect={addEmoji} onClose={() => setShowEmoji(false)} />}
           <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
             <button onClick={() => setShowEmoji(v => !v)} title="Biểu cảm" style={{
-              background: showEmoji ? 'rgba(108,99,255,0.15)' : 'var(--bg-input)',
+              background: showEmoji ? 'rgba(0,0,0,0.08)' : 'var(--bg-input)',
               border: '1px solid var(--border)', borderRadius: '12px',
               width: '40px', height: '40px', cursor: 'pointer', fontSize: '18px',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -16661,7 +16661,7 @@ function ConversationView({ user, friend, friends, onBack, onlineUserIds, onNick
             marginTop: 24, padding: '12px 24px', background: 'var(--primary)',
             color: 'white', textDecoration: 'none', borderRadius: '12px',
             fontWeight: 600, fontSize: '15px', display: 'flex', alignItems: 'center', gap: '8px',
-            boxShadow: '0 4px 15px rgba(108,99,255,0.4)', transition: 'transform 0.2s'
+            boxShadow: '0 4px 15px rgba(0,0,0,0.35)', transition: 'transform 0.2s'
           }} 
           onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.05)'}
           onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}
@@ -17165,8 +17165,8 @@ function FriendList({ user, friends, onSelect, lastMessages, onlineUserIds }) {
                   {f.status === 'pending' ? (
                     <span style={{
                       fontSize: '9px',
-                      background: f.fromUserId === String(user.id) ? 'rgba(17, 24, 39, 0.04)' : 'rgba(99,102,241,0.15)',
-                      color: f.fromUserId === String(user.id) ? 'var(--text-primary)' : '#818cf8',
+                      background: f.fromUserId === String(user.id) ? 'rgba(17, 24, 39, 0.04)' : 'rgba(0,0,0,0.06)',
+                      color: f.fromUserId === String(user.id) ? 'var(--text-primary)' : 'var(--text-primary)',
                       padding: '2px 6px',
                       borderRadius: '8px',
                       fontWeight: 700,
@@ -17332,7 +17332,7 @@ export default function Chat() {
                   fontWeight: 800,
                   padding: '4px 12px',
                   borderRadius: '20px',
-                  boxShadow: '0 2px 8px rgba(108,99,255,0.45)',
+                  boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
                   letterSpacing: '0.3px',
                   display: 'flex',
                   alignItems: 'center',
@@ -17471,7 +17471,7 @@ export default function ForgotPassword() {
                 border: isActive ? '2.5px solid rgba(255,255,255,0.8)' : isCompleted ? 'none' : '1px solid rgba(255,255,255,0.1)',
                 color: isCompleted || isActive ? '#fff' : 'var(--text-muted)',
                 fontSize: '12px', fontWeight: 800,
-                boxShadow: isActive ? '0 0 16px rgba(108, 99, 255, 0.45)' : 'none',
+                boxShadow: isActive ? '0 0 16px rgba(0, 0, 0, 0.25)' : 'none',
                 transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
               }}>
                 {isCompleted ? (
@@ -17498,7 +17498,7 @@ export default function ForgotPassword() {
   return (
     <div className="auth-page">
       {/* Dynamic Background blobs */}
-      <div style={{ position: 'absolute', top: '-10%', right: '-10%', width: '50vw', height: '50vw', background: 'radial-gradient(circle, rgba(108,99,255,0.06) 0%, transparent 60%)', pointerEvents: 'none' }} />
+      <div style={{ position: 'absolute', top: '-10%', right: '-10%', width: '50vw', height: '50vw', background: 'radial-gradient(circle, rgba(0,0,0,0.02) 0%, transparent 60%)', pointerEvents: 'none' }} />
       <div style={{ position: 'absolute', bottom: '-10%', left: '-10%', width: '50vw', height: '50vw', background: 'radial-gradient(circle, rgba(17,24,39,0.03) 0%, transparent 60%)', pointerEvents: 'none' }} />
 
       <div className="auth-card" style={{ animation: 'slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1)', backdropFilter: 'blur(20px)' }}>
@@ -17554,7 +17554,7 @@ export default function ForgotPassword() {
                     value={email}
                     onChange={e => { setEmail(e.target.value); setError(''); }}
                     style={{ width: '100%', padding: '12px 16px 12px 42px', background: 'var(--bg-input)', border: '1px solid var(--border)', borderRadius: '12px', color: 'var(--text-primary)', fontSize: '14px', outline: 'none', transition: 'all 0.2s' }}
-                    onFocus={e => { e.target.style.borderColor = 'var(--primary)'; e.target.style.boxShadow = '0 0 0 3px rgba(108,99,255,0.15)'; }}
+                    onFocus={e => { e.target.style.borderColor = 'var(--primary)'; e.target.style.boxShadow = '0 0 0 3px rgba(0,0,0,0.08)'; }}
                     onBlur={e => { e.target.style.borderColor = 'var(--border)'; e.target.style.boxShadow = 'none'; }}
                   />
                 </div>
@@ -17564,9 +17564,9 @@ export default function ForgotPassword() {
                 type="submit"
                 className="btn btn-primary"
                 disabled={loading}
-                style={{ width: '100%', padding: '12px', borderRadius: '12px', background: 'linear-gradient(135deg, var(--primary), var(--primary-light))', border: 'none', color: '#fff', fontWeight: 700, fontSize: '14px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', boxShadow: '0 4px 15px rgba(108,99,255,0.25)', transition: 'all 0.25s' }}
-                onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-1px)'; e.currentTarget.style.boxShadow = '0 6px 20px rgba(108,99,255,0.35)'; }}
-                onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 4px 15px rgba(108,99,255,0.25)'; }}
+                style={{ width: '100%', padding: '12px', borderRadius: '12px', background: 'linear-gradient(135deg, var(--primary), var(--primary-light))', border: 'none', color: '#fff', fontWeight: 700, fontSize: '14px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', boxShadow: '0 4px 15px rgba(0,0,0,0.15)', transition: 'all 0.25s' }}
+                onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-1px)'; e.currentTarget.style.boxShadow = '0 6px 20px rgba(0,0,0,0.2)'; }}
+                onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 4px 15px rgba(0,0,0,0.15)'; }}
               >
                 {loading ? <span className="spinner" style={{ width: '16px', height: '16px', border: '2px solid rgba(255,255,255,0.3)', borderTopColor: '#fff', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} /> : null}
                 {loading ? 'Đang gửi...' : 'Gửi link khôi phục'}
@@ -17674,7 +17674,7 @@ import { useToast } from '../components/Toast';
 import { supabase } from '../config/supabaseClient';
 
 //  Avatar 
-function Avatar({ src, initial, color = '#6c63ff', size = 40 }) {
+function Avatar({ src, initial, color = '#3A3A3A', size = 40 }) {
   if (src) return (
     <img src={src} alt="" style={{ width: size, height: size, borderRadius: '50%', objectFit: 'cover', flexShrink: 0 }} />
   );
@@ -17799,7 +17799,7 @@ function Btn({ children, onClick, variant = 'primary', disabled = false }) {
       background: 'linear-gradient(135deg, var(--primary), var(--primary-light))',
       color: 'white',
       border: 'none',
-      boxShadow: hovered ? '0 4px 12px rgba(108,99,255,0.45)' : 'none',
+      boxShadow: hovered ? '0 4px 12px rgba(0,0,0,0.15)' : 'none',
     },
     secondary: {
       background: hovered ? 'rgba(255,255,255,0.06)' : 'transparent',
@@ -18188,7 +18188,7 @@ export default function Friends() {
                   !myLocation.province ? (
                     <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 'var(--radius)', padding: '32px 24px', textAlign: 'center' }}>
                       <div style={{ color: 'var(--text-primary)', display: 'flex', justifyContent: 'center', marginBottom: '12px' }}>
-                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" style={{ filter: 'drop-shadow(0 0 8px rgba(108,99,255,0.4))' }}>
+                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" style={{ filter: 'drop-shadow(0 0 8px rgba(0,0,0,0.15))' }}>
                           <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/>
                           <circle cx="12" cy="10" r="3"/>
                         </svg>
@@ -19273,14 +19273,14 @@ export default function GroupDetail() {
           <div className="group-header-content" style={{ padding: '28px 32px' }}>
             {/* Role pills */}
             <div style={{ display: 'flex', gap: '8px', marginBottom: '16px', flexWrap: 'wrap' }}>
-              <span style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', padding: '4px 12px', borderRadius: '6px', background: 'rgba(108,99,255,0.12)', color: 'var(--text-primary)', border: '1px solid rgba(108,99,255,0.25)' }}>
+              <span style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', padding: '4px 12px', borderRadius: '6px', background: 'rgba(0,0,0,0.04)', color: 'var(--text-primary)', border: '1px solid var(--border)' }}>
                 {h.group.subject}
               </span>
               <span style={{ fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', padding: '4px 12px', borderRadius: '6px', background: h.group.meetingMode === 'offline' ? 'rgba(16,185,129,0.1)' : 'rgba(99,179,237,0.1)', color: h.group.meetingMode === 'offline' ? '#10b981' : '#63b3ed', border: h.group.meetingMode === 'offline' ? '1px solid rgba(16,185,129,0.3)' : '1px solid rgba(99,179,237,0.3)' }}>
                 {h.group.meetingMode === 'offline' ? 'Offline' : 'Online'}
               </span>
               {h.group.creatorId === user?.id && <span style={{ fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', padding: '4px 12px', borderRadius: '6px', background: 'rgba(17, 24, 39, 0.04)', color: 'var(--text-primary)', border: '1px solid var(--border)' }}>Trưởng nhóm</span>}
-              {h.group.deputyId === user?.id && <span style={{ fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', padding: '4px 12px', borderRadius: '6px', background: 'rgba(108,99,255,0.1)', color: 'var(--text-primary)', border: '1px solid rgba(108,99,255,0.25)' }}>Phó nhóm</span>}
+              {h.group.deputyId === user?.id && <span style={{ fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', padding: '4px 12px', borderRadius: '6px', background: 'rgba(0,0,0,0.04)', color: 'var(--text-primary)', border: '1px solid var(--border)' }}>Phó nhóm</span>}
               {h.group.creatorId !== user?.id && h.group.deputyId !== user?.id && <span style={{ fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', padding: '4px 12px', borderRadius: '6px', background: 'rgba(255,255,255,0.04)', color: 'var(--text-muted)', border: '1px solid var(--border)' }}>Thành viên</span>}
             </div>
 
@@ -19719,7 +19719,7 @@ function CreateGroupModal({ formData, setFormData, meetingMode, setMeetingMode, 
           <>
             {/* Mode badge */}
             <div style={{ padding: '8px 18px 0' }}>
-              <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5, fontSize: 10, fontWeight: 700, padding: '3px 10px', borderRadius: 20, background: meetingMode === 'online' ? 'rgba(99,102,241,0.12)' : 'rgba(16,185,129,0.12)', color: meetingMode === 'online' ? 'var(--primary-light)' : '#10b981', border: `1px solid ${meetingMode === 'online' ? 'rgba(99,102,241,0.3)' : 'rgba(16,185,129,0.3)'}` }}>
+              <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5, fontSize: 10, fontWeight: 700, padding: '3px 10px', borderRadius: 20, background: meetingMode === 'online' ? 'rgba(0,0,0,0.06)' : 'rgba(16,185,129,0.12)', color: meetingMode === 'online' ? 'var(--text-primary)' : '#10b981', border: `1px solid ${meetingMode === 'online' ? 'var(--border)' : 'rgba(16,185,129,0.3)'}` }}>
                 {meetingMode === 'online' ? (
                   <>
                     <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -19782,7 +19782,7 @@ function CreateGroupModal({ formData, setFormData, meetingMode, setMeetingMode, 
                   {subjectMode === 'custom' && (
                     <input
                       className="form-input"
-                      style={{ padding: '9px 13px', fontSize: 13, borderColor: 'var(--primary-light)', boxShadow: '0 0 0 2px rgba(108,99,255,0.15)' }}
+                      style={{ padding: '9px 13px', fontSize: 13, borderColor: 'var(--primary-light)', boxShadow: '0 0 0 2px rgba(0,0,0,0.08)' }}
                       placeholder="Nhập tên môn học mới..."
                       value={customSubject}
                       onChange={e => {
@@ -19988,7 +19988,7 @@ function InviteFriendsModal({ group, currentUser, onClose, addToast }) {
           <button onClick={onClose} style={{ background: 'none', border: 'none', color: 'var(--text-muted)', fontSize: 20, cursor: 'pointer', lineHeight: 1, padding: 4, marginLeft: 8, flexShrink: 0 }}>✕</button>
         </div>
 
-        <div style={{ overflowY: 'auto', overscrollBehavior: 'contain', flex: 1, padding: '12px 16px', scrollbarWidth: 'thin', scrollbarColor: 'rgba(108,99,255,0.4) transparent' }}>
+        <div style={{ overflowY: 'auto', overscrollBehavior: 'contain', flex: 1, padding: '12px 16px', scrollbarWidth: 'thin', scrollbarColor: 'rgba(0,0,0,0.2) transparent' }}>
           {loading ? (
             <div style={{ textAlign: 'center', padding: '32px 0', color: 'var(--text-muted)', fontSize: 14 }}>
               <div style={{ fontSize: 28, marginBottom: 8 }}></div>Đang tải...
@@ -20006,7 +20006,7 @@ function InviteFriendsModal({ group, currentUser, onClose, addToast }) {
                 const isInviting = invitingIds[friend.userId];
                 const isGroupAdmin = String(friend.userId) === String(group.creatorId);
                 return (
-                  <div key={friend.userId} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '10px 12px', borderRadius: 10, background: isPending ? 'rgba(108,99,255,0.05)' : 'rgba(255,255,255,0.03)', border: `1px solid ${isPending ? 'rgba(108,99,255,0.25)' : 'var(--border)'}`, transition: 'all 0.2s' }}>
+                  <div key={friend.userId} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '10px 12px', borderRadius: 10, background: isPending ? 'rgba(0,0,0,0.03)' : 'rgba(255,255,255,0.03)', border: `1px solid ${isPending ? 'rgba(0,0,0,0.15)' : 'var(--border)'}`, transition: 'all 0.2s' }}>
                     {friend.avatar ? (
                       <img src={friend.avatar} alt={friend.fullName} style={{ width: 40, height: 40, borderRadius: '50%', objectFit: 'cover', flexShrink: 0, border: '2px solid var(--border)' }} />
                     ) : (
@@ -20030,14 +20030,14 @@ function InviteFriendsModal({ group, currentUser, onClose, addToast }) {
                         Trưởng nhóm
                       </span>
                     ) : isPending ? (
-                      <span style={{ flexShrink: 0, padding: '6px 12px', borderRadius: 8, background: 'rgba(108,99,255,0.1)', border: '1px solid rgba(108,99,255,0.3)', color: 'var(--text-primary)', fontWeight: 600, fontSize: 12, whiteSpace: 'nowrap' }}>
+                      <span style={{ flexShrink: 0, padding: '6px 12px', borderRadius: 8, background: 'rgba(0,0,0,0.06)', border: '1px solid var(--border)', color: 'var(--text-primary)', fontWeight: 600, fontSize: 12, whiteSpace: 'nowrap' }}>
                         Đã mời
                       </span>
                     ) : (
                       <button
                         onClick={() => handleInvite(friend)}
                         disabled={isInviting}
-                        style={{ flexShrink: 0, padding: '6px 14px', borderRadius: 8, border: '1px solid rgba(108,99,255,0.4)', background: isInviting ? 'rgba(108,99,255,0.05)' : 'rgba(108,99,255,0.12)', color: 'var(--text-primary)', fontWeight: 700, fontSize: 12, cursor: isInviting ? 'not-allowed' : 'pointer', opacity: isInviting ? 0.6 : 1, transition: 'all 0.15s', fontFamily: 'inherit', whiteSpace: 'nowrap' }}
+                        style={{ flexShrink: 0, padding: '6px 14px', borderRadius: 8, border: '1px solid var(--border)', background: isInviting ? 'rgba(0,0,0,0.03)' : 'rgba(0,0,0,0.06)', color: 'var(--text-primary)', fontWeight: 700, fontSize: 12, cursor: isInviting ? 'not-allowed' : 'pointer', opacity: isInviting ? 0.6 : 1, transition: 'all 0.15s', fontFamily: 'inherit', whiteSpace: 'nowrap' }}
                       >
                         {isInviting ? '...' : '+ Mời'}
                       </button>
@@ -20143,7 +20143,7 @@ function NearbyGroupsModal({ groups, user, onClose, addToast, joinRequestStatus,
       <div onClick={(e) => e.stopPropagation()} style={{ background: 'var(--bg-card)', width: '100%', maxWidth: '540px', maxHeight: 'calc(100vh - 80px)', borderRadius: '22px', border: '1px solid var(--border)', boxShadow: '0 32px 80px rgba(0,0,0,0.55)', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
 
         {/* Header */}
-        <div style={{ padding: '18px 22px 14px', borderBottom: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexShrink: 0, background: 'linear-gradient(135deg, rgba(99,102,241,0.06), rgba(16,185,129,0.04))' }}>
+        <div style={{ padding: '18px 22px 14px', borderBottom: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexShrink: 0, background: 'linear-gradient(135deg, rgba(0,0,0,0.03), rgba(0,0,0,0.01))' }}>
           <div>
             <h3 style={{ margin: 0, fontSize: 16, fontWeight: 800, color: 'var(--text-primary)', letterSpacing: '-0.3px' }}>Khám phá nhóm học lân cận</h3>
             <p style={{ margin: '3px 0 0', fontSize: 12, color: 'var(--text-muted)' }}>
@@ -20173,7 +20173,7 @@ function NearbyGroupsModal({ groups, user, onClose, addToast, joinRequestStatus,
         </div>
 
         {/* Groups List */}
-        <div style={{ flex: 1, overflowY: 'auto', overscrollBehavior: 'contain', padding: '16px 20px', display: 'flex', flexDirection: 'column', gap: 10, scrollbarWidth: 'thin', scrollbarColor: 'rgba(108,99,255,0.3) transparent' }}>
+        <div style={{ flex: 1, overflowY: 'auto', overscrollBehavior: 'contain', padding: '16px 20px', display: 'flex', flexDirection: 'column', gap: 10, scrollbarWidth: 'thin', scrollbarColor: 'rgba(0,0,0,0.15) transparent' }}>
           {filtered.length === 0 ? (
             <div style={{ textAlign: 'center', padding: '40px 12px', color: 'var(--text-muted)', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10 }}>
               <div style={{ width: 48, height: 48, borderRadius: '50%', background: 'rgba(255,255,255,0.04)', border: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 22, color: 'var(--text-muted)' }}>?</div>
@@ -20185,8 +20185,8 @@ function NearbyGroupsModal({ groups, user, onClose, addToast, joinRequestStatus,
               const isOnline = group.meetingMode === 'online';
               const distanceText = group.distance !== null ? `${group.distance.toFixed(1)} km` : group.matchedByText ? 'Gần bạn' : '';
               const modeColor = isOnline ? 'var(--text-primary)' : 'var(--text-primary)';
-              const modeBg = isOnline ? 'rgba(99,102,241,0.1)' : 'rgba(16,185,129,0.1)';
-              const modeBorder = isOnline ? 'rgba(99,102,241,0.25)' : 'rgba(16,185,129,0.25)';
+              const modeBg = isOnline ? 'rgba(0,0,0,0.06)' : 'rgba(16,185,129,0.1)';
+              const modeBorder = isOnline ? 'var(--border)' : 'rgba(16,185,129,0.25)';
 
               return (
                 <div key={group.id}
@@ -20548,7 +20548,7 @@ export default function Groups() {
           {SIDEBAR_ITEMS.map(item => (
             <Link key={item.to} to={item.to} onClick={() => setSidebarOpen(false)}
               style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '12px 14px', borderRadius: 12, textDecoration: 'none', color: 'var(--text-secondary)', fontSize: 14, fontWeight: 500, transition: 'var(--transition)', marginBottom: 4 }}
-              onMouseEnter={e => { e.currentTarget.style.background = 'rgba(108,99,255,0.12)'; e.currentTarget.style.color = 'var(--text-primary)'; }}
+              onMouseEnter={e => { e.currentTarget.style.background = 'rgba(0,0,0,0.06)'; e.currentTarget.style.color = 'var(--text-primary)'; }}
               onMouseLeave={e => { e.currentTarget.style.background = 'none'; e.currentTarget.style.color = 'var(--text-secondary)'; }}
             >
               <span>{item.label}</span>
@@ -20566,9 +20566,9 @@ export default function Groups() {
       {/* Button to open sidebar drawer (Mobile Only) */}
       <div className="mobile-only" style={{ maxWidth: '1100px', margin: '40px auto 0', padding: '0 24px' }}>
         <button onClick={() => setSidebarOpen(true)}
-          style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', background: 'rgba(99, 102, 241, 0.12)', border: '1.5px solid rgba(99, 102, 241, 0.3)', color: 'var(--text-primary)', padding: '6px 14px', borderRadius: '8px', fontSize: '13px', fontWeight: 600, cursor: 'pointer', transition: 'var(--transition)' }}
-          onMouseEnter={e => { e.currentTarget.style.background = 'rgba(99, 102, 241, 0.22)'; e.currentTarget.style.borderColor = 'var(--text-primary)'; }}
-          onMouseLeave={e => { e.currentTarget.style.background = 'rgba(99, 102, 241, 0.12)'; e.currentTarget.style.borderColor = 'rgba(99, 102, 241, 0.3)'; }}
+          style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', background: 'rgba(0,0,0,0.06)', border: '1.5px solid var(--border)', color: 'var(--text-primary)', padding: '6px 14px', borderRadius: '8px', fontSize: '13px', fontWeight: 600, cursor: 'pointer', transition: 'var(--transition)' }}
+          onMouseEnter={e => { e.currentTarget.style.background = 'rgba(0,0,0,0.1)'; e.currentTarget.style.borderColor = 'var(--text-primary)'; }}
+          onMouseLeave={e => { e.currentTarget.style.background = 'rgba(0,0,0,0.06)'; e.currentTarget.style.borderColor = 'var(--border)'; }}
         >
           ☰ Menu Tiện ích
         </button>
@@ -20681,7 +20681,7 @@ export default function Groups() {
               }}
               onMouseEnter={e => { 
                 e.currentTarget.style.color = 'var(--text-primary)'; 
-                e.currentTarget.style.borderColor = 'rgba(108,99,255,0.4)'; 
+                e.currentTarget.style.borderColor = 'var(--border-hover)'; 
                 setIsSearchExpanded(true);
               }}
               onMouseLeave={e => { e.currentTarget.style.color = 'var(--text-muted)'; e.currentTarget.style.borderColor = 'var(--border)'; }}
@@ -20763,7 +20763,7 @@ export default function Groups() {
                   <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12, marginBottom: '12px' }}>
                     <h3 style={{ fontSize: 18, fontWeight: 800, color: 'var(--text-primary)', margin: 0, lineHeight: 1.3, letterSpacing: '-0.01em' }}>{group.name}</h3>
                     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 6, flexShrink: 0 }}>
-                      <span className="badge-outline" style={{ borderColor: 'rgba(108,99,255,0.25)', color: 'var(--text-secondary)', background: 'rgba(108,99,255,0.08)', display: 'inline-flex', alignItems: 'center', gap: '5px', borderRadius: '10px', padding: '4px 10px', fontSize: '11px', fontWeight: 700 }}>
+                      <span className="badge-outline" style={{ borderColor: 'var(--border)', color: 'var(--text-secondary)', background: 'rgba(0,0,0,0.04)', display: 'inline-flex', alignItems: 'center', gap: '5px', borderRadius: '10px', padding: '4px 10px', fontSize: '11px', fontWeight: 700 }}>
                         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                           <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
                           <circle cx="9" cy="7" r="4" />
@@ -20824,7 +20824,7 @@ export default function Groups() {
                       ID: <strong style={{ color: 'var(--text-primary)' }}>{group.id}</strong>
                     </span>
                     {isCreator && <span style={{ fontSize: 11, fontWeight: 700, background: 'rgba(17, 24, 39, 0.04)', color: 'var(--text-primary)', padding: '2px 8px', borderRadius: 10, border: '1px solid var(--border)' }}>Trưởng nhóm</span>}
-                    {isDeputy && <span style={{ fontSize: 11, fontWeight: 700, background: 'rgba(108,99,255,0.12)', color: 'var(--text-primary)', padding: '2px 8px', borderRadius: 10, border: '1px solid rgba(108,99,255,0.25)' }}>Phó nhóm</span>}
+                    {isDeputy && <span style={{ fontSize: 11, fontWeight: 700, background: 'rgba(0,0,0,0.04)', color: 'var(--text-primary)', padding: '2px 8px', borderRadius: 10, border: '1px solid var(--border)' }}>Phó nhóm</span>}
                   </div>
 
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px', background: 'var(--bg-input)', border: '1px solid var(--border)', marginBottom: '8px', marginTop: '4px', padding: '6px 12px', borderRadius: '10px' }}>
@@ -21265,7 +21265,7 @@ export default function Groups() {
                 fontSize: '12px',
                 fontWeight: 700,
                 cursor: 'pointer',
-                boxShadow: '0 4px 12px rgba(108, 99, 255, 0.25)',
+                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.18)',
               }}
               onMouseEnter={e => { e.currentTarget.style.opacity = '0.9'; }}
               onMouseLeave={e => { e.currentTarget.style.opacity = '1'; }}
@@ -23206,6 +23206,7 @@ export default function MeetRoom() {
                       position: 'absolute', bottom: '-1px', right: '-1px',
                       width: '9px', height: '9px', borderRadius: '50%',
                       background: '#22c55e', border: '1.5px solid #0a0a14',
+                      // eslint-disable-next-line no-dupe-keys
                       background: '#525252', border: '1.5px solid #0a0a14',
                     }} />
                   </div>
@@ -26771,7 +26772,7 @@ export default function ResetPassword() {
                 border: isActive ? '2.5px solid rgba(255,255,255,0.8)' : isCompleted ? 'none' : '1px solid rgba(255,255,255,0.1)',
                 color: isCompleted || isActive ? '#fff' : 'var(--text-muted)',
                 fontSize: '12px', fontWeight: 800,
-                boxShadow: isActive ? '0 0 16px rgba(108, 99, 255, 0.45)' : 'none',
+                boxShadow: isActive ? '0 0 16px rgba(0, 0, 0, 0.25)' : 'none',
                 transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
               }}>
                 {isCompleted ? (
@@ -26798,7 +26799,7 @@ export default function ResetPassword() {
   return (
     <div className="auth-page">
       {/* Dynamic Background blobs */}
-      <div style={{ position: 'absolute', top: '-10%', right: '-10%', width: '50vw', height: '50vw', background: 'radial-gradient(circle, rgba(108,99,255,0.06) 0%, transparent 60%)', pointerEvents: 'none' }} />
+      <div style={{ position: 'absolute', top: '-10%', right: '-10%', width: '50vw', height: '50vw', background: 'radial-gradient(circle, rgba(0,0,0,0.02) 0%, transparent 60%)', pointerEvents: 'none' }} />
       <div style={{ position: 'absolute', bottom: '-10%', left: '-10%', width: '50vw', height: '50vw', background: 'radial-gradient(circle, rgba(17,24,39,0.03) 0%, transparent 60%)', pointerEvents: 'none' }} />
 
       <div className="auth-card" style={{ animation: 'slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1)', backdropFilter: 'blur(20px)' }}>
@@ -26854,7 +26855,7 @@ export default function ResetPassword() {
                     value={password}
                     onChange={e => { setPassword(e.target.value); setError(''); }}
                     style={{ width: '100%', padding: '12px 42px 12px 42px', background: 'var(--bg-input)', border: '1px solid var(--border)', borderRadius: '12px', color: 'var(--text-primary)', fontSize: '14px', outline: 'none', transition: 'all 0.2s' }}
-                    onFocus={e => { e.target.style.borderColor = 'var(--primary)'; e.target.style.boxShadow = '0 0 0 3px rgba(108,99,255,0.15)'; }}
+                    onFocus={e => { e.target.style.borderColor = 'var(--primary)'; e.target.style.boxShadow = '0 0 0 3px rgba(0,0,0,0.08)'; }}
                     onBlur={e => { e.target.style.borderColor = 'var(--border)'; e.target.style.boxShadow = 'none'; }}
                   />
                   <button
@@ -26901,7 +26902,7 @@ export default function ResetPassword() {
                     value={confirmPassword}
                     onChange={e => { setConfirmPassword(e.target.value); setError(''); }}
                     style={{ width: '100%', padding: '12px 16px 12px 42px', background: 'var(--bg-input)', border: '1px solid var(--border)', borderRadius: '12px', color: 'var(--text-primary)', fontSize: '14px', outline: 'none', transition: 'all 0.2s' }}
-                    onFocus={e => { e.target.style.borderColor = 'var(--primary)'; e.target.style.boxShadow = '0 0 0 3px rgba(108,99,255,0.15)'; }}
+                    onFocus={e => { e.target.style.borderColor = 'var(--primary)'; e.target.style.boxShadow = '0 0 0 3px rgba(0,0,0,0.08)'; }}
                     onBlur={e => { e.target.style.borderColor = 'var(--border)'; e.target.style.boxShadow = 'none'; }}
                   />
                 </div>
@@ -26911,9 +26912,9 @@ export default function ResetPassword() {
                 type="submit"
                 className="btn btn-primary"
                 disabled={loading}
-                style={{ width: '100%', padding: '12px', borderRadius: '12px', background: 'linear-gradient(135deg, var(--primary), var(--primary-light))', border: 'none', color: '#fff', fontWeight: 700, fontSize: '14px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', boxShadow: '0 4px 15px rgba(108,99,255,0.25)', transition: 'all 0.25s' }}
-                onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-1px)'; e.currentTarget.style.boxShadow = '0 6px 20px rgba(108,99,255,0.35)'; }}
-                onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 4px 15px rgba(108,99,255,0.25)'; }}
+                style={{ width: '100%', padding: '12px', borderRadius: '12px', background: 'linear-gradient(135deg, var(--primary), var(--primary-light))', border: 'none', color: '#fff', fontWeight: 700, fontSize: '14px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', boxShadow: '0 4px 15px rgba(0,0,0,0.15)', transition: 'all 0.25s' }}
+                onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-1px)'; e.currentTarget.style.boxShadow = '0 6px 20px rgba(0,0,0,0.2)'; }}
+                onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 4px 15px rgba(0,0,0,0.15)'; }}
               >
                 {loading ? <span className="spinner" style={{ width: '16px', height: '16px', border: '2px solid rgba(255,255,255,0.3)', borderTopColor: '#fff', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} /> : null}
                 {loading ? 'Đang lưu...' : 'Xác nhận thay đổi'}
@@ -26935,7 +26936,7 @@ export default function ResetPassword() {
             <Link
               to="/login"
               className="btn btn-primary"
-              style={{ textDecoration: 'none', width: '100%', padding: '12px', borderRadius: '12px', background: 'linear-gradient(135deg, var(--primary), var(--primary-light))', border: 'none', color: '#fff', fontWeight: 700, fontSize: '14.5px', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '8px', boxShadow: '0 4px 15px rgba(108,99,255,0.25)', transition: 'all 0.25s' }}
+              style={{ textDecoration: 'none', width: '100%', padding: '12px', borderRadius: '12px', background: 'linear-gradient(135deg, var(--primary), var(--primary-light))', border: 'none', color: '#fff', fontWeight: 700, fontSize: '14.5px', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '8px', boxShadow: '0 4px 15px rgba(0,0,0,0.15)', transition: 'all 0.25s' }}
             >
               Đăng nhập ngay
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">

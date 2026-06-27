@@ -318,7 +318,7 @@ export default function GroupSchedule({
                     justifyContent: 'space-between',
                     gap: '10px',
                     padding: '12px 16px',
-                    background: 'linear-gradient(135deg, rgba(62,207,207,0.07), rgba(108,99,255,0.07))',
+                    background: 'linear-gradient(135deg, rgba(62,207,207,0.07), rgba(0,0,0,0.03))',
                     border: '1px solid rgba(62,207,207,0.2)',
                     borderRadius: '10px',
                   }}
@@ -378,7 +378,7 @@ export default function GroupSchedule({
                         fontSize: '13px',
                         fontWeight: 700,
                         whiteSpace: 'nowrap',
-                        boxShadow: '0 2px 10px rgba(108,99,255,0.3)',
+                        boxShadow: '0 2px 10px rgba(0,0,0,0.1)',
                       }}
                     >
                       Mở phòng học
@@ -483,13 +483,13 @@ export default function GroupSchedule({
                         style={{
                           flexShrink: 0,
                           fontSize: '10px',
-                          background: 'rgba(108,99,255,0.12)',
-                          color: 'var(--text-primary)',
-                          padding: '3px 8px',
-                          borderRadius: '6px',
-                          fontWeight: 700,
-                          whiteSpace: 'nowrap',
-                          border: '1px solid rgba(108,99,255,0.2)',
+                           background: 'rgba(0,0,0,0.06)',
+                           color: 'var(--text-primary)',
+                           padding: '3px 8px',
+                           borderRadius: '6px',
+                           fontWeight: 700,
+                           whiteSpace: 'nowrap',
+                           border: '1px solid var(--border)',
                         }}
                       >
                         {format24h(sched.dateTime)}

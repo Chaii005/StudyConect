@@ -1,7 +1,7 @@
 // Admin Stats bar component
 export default function AdminStats({ totalUsersCount, totalGroupsCount, totalAdminsCount }) {
   const stats = [
-    { label: 'Người dùng',    value: totalUsersCount,  color: '#6c63ff', border: 'rgba(108,99,255,0.30)', bg: 'rgba(108,99,255,0.10)' },
+    { label: 'Người dùng',    value: totalUsersCount,  color: 'var(--text-primary)', border: 'var(--border)', bg: 'rgba(0,0,0,0.06)' },
     { label: 'Phòng học',     value: totalGroupsCount, color: '#3ecfcf', border: 'rgba(62,207,207,0.30)',  bg: 'rgba(62,207,207,0.10)' },
     { label: 'Quản trị viên', value: totalAdminsCount, color: '#ff6b9d', border: 'rgba(255,107,157,0.30)', bg: 'rgba(255,107,157,0.10)' },
   ];

@@ -102,8 +102,8 @@ export default function GroupDocuments({
                 height: '40px',
                 margin: '0 auto 10px',
                 borderRadius: '10px',
-                background: 'rgba(108,99,255,0.12)',
-                border: '1px solid rgba(108,99,255,0.25)',
+                background: 'rgba(0,0,0,0.06)',
+                border: '1px solid var(--border)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -260,11 +260,11 @@ export default function GroupDocuments({
                           style={{
                             fontSize: '11px',
                             fontWeight: 700,
-                            background: 'rgba(108,99,255,0.15)',
+                            background: 'rgba(0,0,0,0.06)',
                             color: 'var(--text-primary)',
                             padding: '2px 8px',
                             borderRadius: '4px',
-                            border: '1px solid rgba(108,99,255,0.2)'
+                            border: '1px solid var(--border)'
                           }}
                         >
                           {subject}

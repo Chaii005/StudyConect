@@ -276,37 +276,37 @@ export default function GroupDeadlines({
                             fontWeight: 700,
                             padding: '2px 8px',
                             borderRadius: '6px',
-                          background: d.assigneeId ? 'rgba(108,99,255,0.12)' : 'rgba(62,207,207,0.10)',
-                          color: 'var(--text-primary)',
-                          border: `1px solid ${
-                            d.assigneeId ? 'rgba(108,99,255,0.25)' : 'rgba(62,207,207,0.25)'
-                          }`,
-                          display: 'inline-flex',
-                          alignItems: 'center',
-                          gap: '4px'
-                        }}
-                      >
-                        {d.assigneeId ? (
-                          <>
-                            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-                              <circle cx="12" cy="7" r="4" />
-                            </svg>
-                            {d.assigneeName || 'Cá nhân'}
-                          </>
-                        ) : (
-                          <>
-                            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-                              <circle cx="9" cy="7" r="4" />
-                              <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
-                              <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-                            </svg>
-                            Cả nhóm
-                          </>
-                        )}
-                      </span>
-                    </div>
+                            background: d.assigneeId ? 'rgba(0,0,0,0.06)' : 'rgba(62,207,207,0.10)',
+                            color: 'var(--text-primary)',
+                            border: `1px solid ${
+                              d.assigneeId ? 'var(--border)' : 'rgba(62,207,207,0.25)'
+                            }`,
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '4px'
+                          }}
+                        >
+                          {d.assigneeId ? (
+                            <>
+                              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                                <circle cx="12" cy="7" r="4" />
+                              </svg>
+                              {d.assigneeName || 'Cá nhân'}
+                            </>
+                          ) : (
+                            <>
+                              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                                <circle cx="9" cy="7" r="4" />
+                                <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+                                <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                              </svg>
+                              Cả nhóm
+                            </>
+                          )}
+                        </span>
+                      </div>
                     <p style={{ color: 'var(--text-muted)', fontSize: '12px', margin: 0 }}>
                       <span style={{ color: overdue ? 'var(--error)' : 'var(--text-muted)', fontWeight: overdue ? 600 : 400 }}>
                         Hạn chót: {format24h(d.dueDate)}
@@ -917,7 +917,7 @@ export default function GroupDeadlines({
                             width: 28,
                             height: 28,
                             borderRadius: '50%',
-                            background: 'linear-gradient(135deg, var(--primary), #5b53e0)',
+                            background: 'linear-gradient(135deg, var(--text-muted), #666)',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
@@ -950,8 +950,8 @@ export default function GroupDeadlines({
                           display: 'inline-flex',
                           alignItems: 'center',
                           gap: '6px',
-                          background: 'rgba(108,99,255,0.1)',
-                          border: '1px solid rgba(108,99,255,0.2)',
+                          background: 'rgba(0,0,0,0.06)',
+                          border: '1px solid var(--border)',
                           borderRadius: '8px',
                           padding: '5px 12px',
                           fontSize: '12px',
@@ -959,8 +959,8 @@ export default function GroupDeadlines({
                           color: 'var(--text-primary)',
                           textDecoration: 'none',
                         }}
-                        onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(108,99,255,0.18)')}
-                        onMouseLeave={(e) => (e.currentTarget.style.background = 'rgba(108,99,255,0.1)')}
+                        onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(0,0,0,0.1)')}
+                        onMouseLeave={(e) => (e.currentTarget.style.background = 'rgba(0,0,0,0.06)')}
                       >
                         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: '4px' }}>
                           <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />

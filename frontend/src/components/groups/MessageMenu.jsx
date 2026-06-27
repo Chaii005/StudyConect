@@ -55,7 +55,7 @@ export default function MessageMenu({ x, y, isMine, isPinned, canPin, onDelete, 
           onReply();
           onClose();
         }}
-        onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(108,99,255,0.1)')}
+        onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(0,0,0,0.06)')}
         onMouseLeave={(e) => (e.currentTarget.style.background = 'none')}
         style={{
           width: '100%',
@@ -88,7 +88,7 @@ export default function MessageMenu({ x, y, isMine, isPinned, canPin, onDelete, 
             onPin();
             onClose();
           }}
-          onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(108,99,255,0.1)')}
+          onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(0,0,0,0.06)')}
           onMouseLeave={(e) => (e.currentTarget.style.background = 'none')}
           style={{
             width: '100%',
