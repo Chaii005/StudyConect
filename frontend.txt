@@ -22836,11 +22836,11 @@ export default function MeetRoom() {
 
         {/* ── Navbar ── */}
         <nav style={{
-          position: 'absolute',
+          position: isFullscreen ? 'absolute' : 'relative',
           top: 0, left: 0, right: 0, zIndex: 50,
-          opacity: showControls ? 1 : 0,
-          pointerEvents: showControls ? 'auto' : 'none',
-          background: 'rgba(10,10,20,0.75)',
+          opacity: isFullscreen ? (showControls ? 1 : 0) : 1,
+          pointerEvents: isFullscreen ? (showControls ? 'auto' : 'none') : 'auto',
+          background: isFullscreen ? 'rgba(10,10,20,0.75)' : '#0a0a14',
           backdropFilter: 'blur(20px)',
           borderBottom: '1px solid rgba(255,255,255,0.08)',
           display: 'flex', alignItems: 'center', justifyContent: 'space-between',
@@ -22849,6 +22849,7 @@ export default function MeetRoom() {
           overflow: 'visible',
           gap: '16px',
           transition: 'opacity 0.3s ease',
+          flexShrink: 0,
         }}>
           {/* Left: room info */}
           {!isFullscreen && (
@@ -22967,7 +22968,7 @@ export default function MeetRoom() {
         </nav>
 
         {/* ── Body ── */}
-        <div className="meet-body" style={{ flex: 1, display: 'flex', overflow: 'hidden', height: '100%', position: 'relative' }}>
+        <div className="meet-body" style={{ flex: 1, display: 'flex', overflow: 'hidden', height: isFullscreen ? '100%' : 'calc(100vh - 64px)', position: 'relative' }}>
 
           {/* ── Video Area ── */}
           <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden', padding: isFullscreen ? '0' : '20px', position: 'relative', height: '100%' }}>
@@ -23534,33 +23535,15 @@ export default function MeetRoom() {
               boxShadow: '-10px 0 30px rgba(0,0,0,0.05)',
               animation: 'slideIn 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards',
             }}>
-              {/* Header với Segmented Control cực kỳ cao cấp */}
+              {/* Header với Segmented Control cực kỳ cao cấp chứa 3 tab kéo giãn */}
               <div style={{
-                padding: '24px 20px 16px',
+                padding: '16px 16px 14px',
                 display: 'flex',
                 flexDirection: 'column',
-                gap: '16px',
                 flexShrink: 0,
                 background: '#ffffff',
                 borderBottom: '2.5px solid #171717',
               }}>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                  <h3 style={{ margin: 0, fontSize: '15px', fontWeight: 800, color: '#171717', letterSpacing: '-0.02em', textTransform: 'uppercase' }}>
-                    {tab === 'chat' ? 'Trò chuyện nhóm' : tab === 'timer' ? 'Đồng hồ Pomodoro' : 'Thành viên phòng'}
-                  </h3>
-                  <span style={{
-                    fontSize: '11px',
-                    background: '#f4f4f5',
-                    color: '#71717a',
-                    padding: '3px 8px',
-                    borderRadius: '20px',
-                    fontWeight: 700,
-                    letterSpacing: '0.02em'
-                  }}>
-                    {tab === 'chat' ? 'Realtime' : tab === 'timer' ? 'Tập trung' : `${allFeeds.length} Online`}
-                  </span>
-                </div>
-
                 {/* Pill Segmented Swapper */}
                 <div style={{
                   display: 'flex',
@@ -23577,14 +23560,14 @@ export default function MeetRoom() {
                       onClick={() => setTab(t.key)}
                       style={{
                         flex: 1,
-                        padding: '8px 10px',
+                        padding: '10px 12px',
                         border: 'none',
                         cursor: 'pointer',
                         background: tab === t.key ? '#ffffff' : 'transparent',
                         borderRadius: '8px',
                         color: tab === t.key ? '#171717' : '#71717a',
                         fontFamily: 'inherit',
-                        fontSize: '12.5px',
+                        fontSize: '13px',
                         fontWeight: tab === t.key ? 750 : 600,
                         display: 'flex',
                         alignItems: 'center',
