@@ -180,7 +180,7 @@ function CreateGroupModal({ formData, setFormData, meetingMode, setMeetingMode, 
           <>
             {/* Mode badge */}
             <div style={{ padding: '8px 18px 0' }}>
-              <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5, fontSize: 10, fontWeight: 700, padding: '3px 10px', borderRadius: 20, background: meetingMode === 'online' ? 'rgba(0,0,0,0.06)' : 'rgba(16,185,129,0.12)', color: meetingMode === 'online' ? 'var(--text-primary)' : '#10b981', border: `1px solid ${meetingMode === 'online' ? 'var(--border)' : 'rgba(16,185,129,0.3)'}` }}>
+              <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5, fontSize: 10, fontWeight: 700, padding: '3px 10px', borderRadius: 20, background: 'rgba(0,0,0,0.06)', color: 'var(--text-primary)', border: '1px solid var(--border)' }}>
                 {meetingMode === 'online' ? (
                   <>
                     <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -343,12 +343,12 @@ function CreateGroupModal({ formData, setFormData, meetingMode, setMeetingMode, 
               </div>
 
               {/* Toggle Riêng tư / Công khai */}
-              <div style={{ borderRadius: 10, border: `1.5px solid ${isPrivate ? 'var(--border)' : 'rgba(16,185,129,0.35)'}`, background: isPrivate ? 'var(--bg-input)' : 'rgba(16,185,129,0.04)', padding: '12px 16px', transition: 'all 0.25s' }}>
+              <div style={{ borderRadius: 10, border: `1.5px solid ${isPrivate ? 'rgba(0, 0, 0, 0.15)' : 'var(--border)'}`, background: isPrivate ? 'var(--bg-input)' : 'rgba(0, 0, 0, 0.04)', padding: '12px 16px', transition: 'all 0.25s' }}>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10 }}>
                   <div style={{ flex: 1 }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 3 }}>
                       <span style={{ fontSize: 14 }}>{isPrivate ? '🔒' : '🌐'}</span>
-                      <span style={{ fontSize: 13, fontWeight: 700, color: isPrivate ? 'var(--text-secondary)' : '#10b981' }}>
+                      <span style={{ fontSize: 13, fontWeight: 700, color: isPrivate ? 'var(--text-secondary)' : 'var(--text-primary)' }}>
                         {isPrivate ? 'Nhóm riêng tư' : 'Nhóm công khai'}
                       </span>
                     </div>
@@ -369,7 +369,7 @@ function CreateGroupModal({ formData, setFormData, meetingMode, setMeetingMode, 
                     })}
                     style={{
                       width: 44, height: 24, borderRadius: 12, border: 'none', cursor: 'pointer', flexShrink: 0,
-                      background: isPrivate ? 'var(--border)' : '#10b981',
+                      background: isPrivate ? 'rgba(0, 0, 0, 0.12)' : 'var(--primary)',
                       position: 'relative', transition: 'background 0.25s', padding: 0,
                     }}
                     title={isPrivate ? 'Đang tắt: Công khai — nhấn để chuyển sang Công khai' : 'Đang bật: Công khai — nhấn để chuyển sang Riêng tư'}
