@@ -2032,8 +2032,8 @@ export default function Groups() {
                   </div>
 
                   {group.meetingMode === 'offline' && !group.isPrivate && group.location && group.location.name && (
-                    <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px', background: 'rgba(16, 185, 129, 0.04)', padding: '6px 12px', borderRadius: '10px', border: '1px solid rgba(16, 185, 129, 0.15)', marginBottom: '8px' }}>
-                      <span style={{ fontSize: 13, flexShrink: 0, display: 'inline-flex', alignItems: 'center', color: 'var(--text-primary)', marginTop: '1px' }}>
+                    <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px', background: 'var(--bg-input)', padding: '8px 12px', borderRadius: '10px', border: '1px solid var(--border)', marginBottom: '8px' }}>
+                      <span style={{ fontSize: 13, flexShrink: 0, display: 'inline-flex', alignItems: 'center', color: 'var(--text-muted)', marginTop: '2px' }}>
                         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                           <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
                           <circle cx="12" cy="10" r="3" />
@@ -2041,7 +2041,7 @@ export default function Groups() {
                       </span>
                       <div style={{ minWidth: 0 }}>
                         <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-primary)', display: 'block', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{group.location.name}</span>
-                        {group.location.address && <span style={{ fontSize: 11, color: 'var(--text-secondary)', display: 'block', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{group.location.address}</span>}
+                        {group.location.address && <span style={{ fontSize: 11, color: 'var(--text-muted)', display: 'block', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{group.location.address}</span>}
                       </div>
                     </div>
                   )}
