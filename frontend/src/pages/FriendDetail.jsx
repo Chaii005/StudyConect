@@ -449,7 +449,7 @@ export default function FriendDetail() {
               onClick={() => setActiveTab('posts')}
               style={{
                 width: '100%',
-                padding: '8px 12px',
+                padding: '10px 12px',
                 borderRadius: '8px',
                 border: activeTab === 'posts' ? '1.5px solid var(--primary)' : '1px solid var(--border)',
                 background: activeTab === 'posts' ? 'var(--bg-input)' : 'transparent',
@@ -457,11 +457,12 @@ export default function FriendDetail() {
                 fontWeight: 700,
                 fontSize: '13px',
                 cursor: 'pointer',
-                transition: 'all 0.25s',
+                transition: 'all 0.2s ease-in-out',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                gap: '8px'
+                gap: '8px',
+                boxSizing: 'border-box'
               }}
               onMouseEnter={e => {
                 if (activeTab !== 'posts') {
@@ -472,7 +473,7 @@ export default function FriendDetail() {
               onMouseLeave={e => {
                 if (activeTab !== 'posts') {
                   e.currentTarget.style.borderColor = 'var(--border)';
-                  e.currentTarget.style.color = 'var(--text-primary)';
+                  e.currentTarget.style.color = 'var(--text-secondary)';
                 }
               }}
             >
@@ -483,12 +484,12 @@ export default function FriendDetail() {
               Lịch sử đăng bài
             </button>
 
-            {/* Thông quan thêm (Tab Button) */}
+            {/* Thông tin giới thiệu (Tab Button) */}
             <button
               onClick={() => setActiveTab('about')}
               style={{
                 width: '100%',
-                padding: '8px 12px',
+                padding: '10px 12px',
                 borderRadius: '8px',
                 border: activeTab === 'about' ? '1.5px solid var(--primary)' : '1px solid var(--border)',
                 background: activeTab === 'about' ? 'var(--bg-input)' : 'transparent',
@@ -496,11 +497,12 @@ export default function FriendDetail() {
                 fontWeight: 700,
                 fontSize: '13px',
                 cursor: 'pointer',
-                transition: 'all 0.25s',
+                transition: 'all 0.2s ease-in-out',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                gap: '8px'
+                gap: '8px',
+                boxSizing: 'border-box'
               }}
               onMouseEnter={e => {
                 if (activeTab !== 'about') {
@@ -511,7 +513,7 @@ export default function FriendDetail() {
               onMouseLeave={e => {
                 if (activeTab !== 'about') {
                   e.currentTarget.style.borderColor = 'var(--border)';
-                  e.currentTarget.style.color = 'var(--text-primary)';
+                  e.currentTarget.style.color = 'var(--text-secondary)';
                 }
               }}
             >
@@ -525,17 +527,31 @@ export default function FriendDetail() {
             {/* Nhắn tin */}
             <Link 
               to="/chat" 
-              className="btn btn-secondary" 
               style={{ 
-                borderRadius: '8px', 
-                fontSize: '13px', 
-                fontWeight: 600,
-                padding: '8px 12px',
+                width: '100%',
+                padding: '10px 12px',
+                borderRadius: '8px',
+                border: '1.5px solid var(--border)',
+                background: 'var(--bg-input)',
+                color: 'var(--text-primary)',
+                fontWeight: 700,
+                fontSize: '13px',
+                cursor: 'pointer',
+                transition: 'all 0.2s ease-in-out',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 gap: '8px',
-                textDecoration: 'none'
+                textDecoration: 'none',
+                boxSizing: 'border-box'
+              }}
+              onMouseEnter={e => {
+                e.currentTarget.style.borderColor = 'var(--primary)';
+                e.currentTarget.style.color = 'var(--primary)';
+              }}
+              onMouseLeave={e => {
+                e.currentTarget.style.borderColor = 'var(--border)';
+                e.currentTarget.style.color = 'var(--text-primary)';
               }}
             >
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
@@ -547,19 +563,31 @@ export default function FriendDetail() {
             {/* Gọi Video */}
             <button 
               onClick={handleStartCall}
-              className="btn btn-primary"
               style={{ 
-                borderRadius: '8px', 
-                fontSize: '13px', 
+                width: '100%',
+                padding: '10px 12px',
+                borderRadius: '8px',
+                border: '1.5px solid var(--primary)',
+                background: 'var(--primary)',
+                color: '#ffffff',
                 fontWeight: 700,
-                padding: '9px 12px',
+                fontSize: '13px',
+                cursor: 'pointer',
+                transition: 'all 0.2s ease-in-out',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                gap: '8px'
+                gap: '8px',
+                boxSizing: 'border-box'
+              }}
+              onMouseEnter={e => {
+                e.currentTarget.style.opacity = '0.9';
+              }}
+              onMouseLeave={e => {
+                e.currentTarget.style.opacity = '1';
               }}
             >
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ffffff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
                 <path d="m22 8-6 4 6 4V8Z" />
                 <rect width="14" height="12" x="2" y="6" rx="2" ry="2" />
               </svg>
