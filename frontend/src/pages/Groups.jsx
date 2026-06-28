@@ -9,7 +9,7 @@ import ConfirmModal from '../components/ConfirmModal';
 import { supabase } from '../config/supabaseClient';
 import { formatBytes } from '../utils';
 
-import { geocodeAddress, staticMapUrl, googleMapsSearchUrl } from '../utils/geocoding';
+import { geocodeAddress, staticMapUrl, googleMapsSearchUrl, autocompletePlaces, getPlaceDetails } from '../utils/geocoding';
 
 const SIDEBAR_ITEMS = [
   { label: 'Chat', to: '/chat' },
@@ -27,6 +27,12 @@ function CreateGroupModal({ formData, setFormData, meetingMode, setMeetingMode, 
   const [customSubject, setCustomSubject] = useState('');
   const [subjectDropdownOpen, setSubjectDropdownOpen] = useState(false);
   const [maxMembersDropdownOpen, setMaxMembersDropdownOpen] = useState(false);
+
+  const [suggestions, setSuggestions] = useState([]);
+  const [placesError, setPlacesError] = useState('');
+  const sessionTokenRef = useRef(typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substring(2) + Date.now().toString(36));
+  const ignoreNextAutocompleteRef = useRef(false);
+  const ignoreNextGeocodeRef = useRef(false);
 
   // Load môn học theo ngành khi step 2 mở ra
   useEffect(() => {
@@ -48,10 +54,92 @@ function CreateGroupModal({ formData, setFormData, meetingMode, setMeetingMode, 
     });
   };
 
+  // Google Places Autocomplete: Debounce 350ms
+  useEffect(() => {
+    if (meetingMode !== 'offline' || !customName || customName.trim().length < 2) {
+      setSuggestions([]);
+      return;
+    }
+    if (ignoreNextAutocompleteRef.current) {
+      ignoreNextAutocompleteRef.current = false;
+      return;
+    }
+
+    const timer = setTimeout(async () => {
+      const res = await autocompletePlaces(customName, sessionTokenRef.current);
+      if (res && res.error === 403) {
+        setPlacesError(res.message || 'Places API error (403)');
+        setSuggestions([]);
+        return;
+      }
+      setPlacesError('');
+      setSuggestions(Array.isArray(res) ? res : []);
+    }, 350);
+
+    return () => clearTimeout(timer);
+  }, [customName, meetingMode]);
+
+  // Click chọn 1 gợi ý từ Autocomplete
+  const handleSelectSuggestion = async (suggestion) => {
+    ignoreNextAutocompleteRef.current = true;
+    ignoreNextGeocodeRef.current = true;
+    setCustomName(suggestion.text);
+    setSuggestions([]);
+    
+    setGeoLoading(true);
+    const detail = await getPlaceDetails(suggestion.placeId);
+    setGeoLoading(false);
+    
+    if (detail) {
+      if (detail.error === 403) {
+        setPlacesError(detail.message || 'Places API error (403)');
+        return;
+      }
+      
+      const parts = suggestion.text.split(',').map(p => p.trim());
+      const province = parts[parts.length - 1] || 'Hà Nội';
+      const district = parts[parts.length - 2] || '';
+      const ward = parts[parts.length - 3] || '';
+      
+      setSelectedLocation({
+        name: suggestion.text,
+        address: suggestion.text,
+        province,
+        district,
+        ward,
+        lat: detail.lat,
+        lng: detail.lng,
+        formattedAddress: detail.formattedAddress || suggestion.text
+      });
+    } else {
+      const parts = suggestion.text.split(',').map(p => p.trim());
+      const province = parts[parts.length - 1] || 'Hà Nội';
+      const district = parts[parts.length - 2] || '';
+      const ward = parts[parts.length - 3] || '';
+      setSelectedLocation({
+        name: suggestion.text,
+        address: suggestion.text,
+        province,
+        district,
+        ward,
+        lat: null,
+        lng: null,
+        formattedAddress: suggestion.text
+      });
+    }
+    
+    // Tạo session token mới cho lượt tìm tiếp theo
+    sessionTokenRef.current = typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substring(2) + Date.now().toString(36);
+  };
+
+  // Fallback Geocoding cũ: Debounce 1200ms
   useEffect(() => {
     if (meetingMode !== 'offline' || !customName || customName.trim().length <= 5) return;
+    if (ignoreNextGeocodeRef.current) {
+      ignoreNextGeocodeRef.current = false;
+      return;
+    }
 
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     setGeoLoading(true);
     const timer = setTimeout(async () => {
       const geo = await geocodeAddress(customName);
@@ -391,7 +479,7 @@ function CreateGroupModal({ formData, setFormData, meetingMode, setMeetingMode, 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', padding: '12px 14px', borderRadius: '12px', background: 'var(--bg-input)', border: '1px solid var(--border)' }}>
                   <div className="form-group" style={{ marginBottom: 0 }}>
                     <label className="form-label" style={{ fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 6 }}>Tên địa điểm học tập *</label>
-                    <div className="form-input-wrap">
+                    <div className="form-input-wrap" style={{ position: 'relative' }}>
                       <input
                         className="form-input"
                         style={{ padding: '9px 13px', fontSize: 13 }}
@@ -400,6 +488,62 @@ function CreateGroupModal({ formData, setFormData, meetingMode, setMeetingMode, 
                         onChange={e => handleCustomLocationChange(e.target.value)}
                         required
                       />
+                      
+                      {suggestions.length > 0 && (
+                        <div style={{
+                          position: 'absolute',
+                          top: '100%',
+                          left: 0,
+                          right: 0,
+                          marginTop: 4,
+                          background: 'var(--bg-card)',
+                          border: '1px solid var(--border)',
+                          borderRadius: 10,
+                          boxShadow: '0 8px 24px rgba(0,0,0,0.25)',
+                          zIndex: 1000,
+                          maxHeight: 180,
+                          overflowY: 'auto',
+                          padding: 4
+                        }}>
+                          {suggestions.map((s, idx) => (
+                            <div
+                              key={s.placeId || idx}
+                              onClick={() => handleSelectSuggestion(s)}
+                              style={{
+                                padding: '8px 12px',
+                                borderRadius: 6,
+                                cursor: 'pointer',
+                                fontSize: 12.5,
+                                color: 'var(--text-primary)',
+                                transition: 'background 0.15s',
+                                textAlign: 'left'
+                              }}
+                              onMouseEnter={e => e.currentTarget.style.background = 'rgba(0,0,0,0.04)'}
+                              onMouseLeave={e => e.currentTarget.style.background = 'none'}
+                            >
+                              📍 {s.text}
+                            </div>
+                          ))}
+                        </div>
+                      )}
+
+                      {placesError && (
+                        <div style={{
+                          marginTop: 6,
+                          padding: '10px 12px',
+                          background: 'rgba(239, 68, 68, 0.08)',
+                          border: '1px solid rgba(239, 68, 68, 0.2)',
+                          borderRadius: 10,
+                          color: '#f87171',
+                          fontSize: 11,
+                          lineHeight: 1.4
+                        }}>
+                          ⚠️ <strong>Lỗi Places API (403):</strong> {placesError}. 
+                          <div style={{ marginTop: 4 }}>
+                            Vui lòng kiểm tra và kích hoạt <strong>Places API (New)</strong> trong Google Cloud Console cho API Key này.
+                          </div>
+                        </div>
+                      )}
                     </div>
                   </div>
 

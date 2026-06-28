@@ -46,3 +46,57 @@ export function staticMapUrl({ lat, lng, zoom = 15, width = 480, height = 180 })
 export function googleMapsSearchUrl(address) {
   return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`;
 }
+
+export async function autocompletePlaces(input, sessionToken) {
+  if (!input?.trim() || input.trim().length < 2 || !API_KEY || API_KEY === 'YOUR_GOOGLE_MAPS_API_KEY_HERE') {
+    return [];
+  }
+  try {
+    const res = await fetch('https://places.googleapis.com/v1/places:autocomplete', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Goog-Api-Key': API_KEY,
+        'X-Goog-FieldMask': 'suggestions.placePrediction.text,suggestions.placePrediction.placeId',
+      },
+      body: JSON.stringify({ input, languageCode: 'vi', regionCode: 'VN', sessionToken }),
+    });
+    if (res.status === 403) {
+      const json = await res.json().catch(() => ({}));
+      return { error: 403, message: json.error?.message || 'Permission Denied (403)' };
+    }
+    const json = await res.json();
+    if (!json.suggestions) return [];
+    return json.suggestions
+      .filter(s => s.placePrediction)
+      .map(s => ({ placeId: s.placePrediction.placeId, text: s.placePrediction.text.text }));
+  } catch (err) {
+    if (import.meta.env.DEV) {
+      console.error('autocompletePlaces catch error:', err);
+    }
+    return [];
+  }
+}
+
+export async function getPlaceDetails(placeId) {
+  if (!placeId || !API_KEY) return null;
+  try {
+    const res = await fetch(
+      `https://places.googleapis.com/v1/places/${placeId}?fields=location,formattedAddress&key=${API_KEY}`
+    );
+    if (res.status === 403) {
+      const json = await res.json().catch(() => ({}));
+      return { error: 403, message: json.error?.message || 'Permission Denied (403)' };
+    }
+    const json = await res.json();
+    if (json.location) {
+      return { lat: json.location.latitude, lng: json.location.longitude, formattedAddress: json.formattedAddress };
+    }
+  } catch (err) {
+    if (import.meta.env.DEV) {
+      console.error('getPlaceDetails catch error:', err);
+    }
+  }
+  return null;
+}
+
