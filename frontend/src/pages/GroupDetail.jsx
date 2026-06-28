@@ -136,7 +136,7 @@ export default function GroupDetail() {
 
   return (
     <>
-      <div className="group-detail-container" style={{ maxWidth: '1100px', margin: '0 auto', padding: '40px 24px 48px' }}>
+      <div className="group-detail-container" style={{ maxWidth: '1100px', margin: '0 auto', padding: '40px 48px 48px' }}>
 
         {/* ── Group Header Card ── */}
         <div className="group-header-card" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 'var(--radius-lg)', marginBottom: '28px', overflow: 'hidden', boxShadow: 'var(--shadow)' }}>

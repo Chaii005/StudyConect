@@ -142,7 +142,7 @@ export default function GroupSchedule({
                   <input
                     type="text"
                     className="form-input no-icon"
-                    style={{ padding: '7px 12px', fontSize: '13px' }}
+                    style={{ height: '38px', boxSizing: 'border-box', padding: '0 12px', fontSize: '13px' }}
                     placeholder="Chủ đề hoặc nội dung buổi học hôm nay"
                     value={newScheduleTopic}
                     onChange={(e) => setNewScheduleTopic(e.target.value)}
@@ -156,7 +156,7 @@ export default function GroupSchedule({
                   <input
                     type="datetime-local"
                     className="form-input no-icon"
-                    style={{ padding: '7px 12px', fontSize: '13px' }}
+                    style={{ height: '38px', boxSizing: 'border-box', padding: '0 12px', fontSize: '13px' }}
                     value={newScheduleDateTime}
                     min={new Date(new Date() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 16)}
                     max={(() => { const d = new Date(); d.setDate(d.getDate() + 7); return new Date(d - d.getTimezoneOffset() * 60000).toISOString().slice(0, 16); })()}
@@ -198,9 +198,13 @@ export default function GroupSchedule({
                       required
                       readOnly={!overrideLocation && group?.location}
                       style={{
+                        height: '38px',
+                        boxSizing: 'border-box',
+                        paddingLeft: '12px',
                         paddingRight: (!overrideLocation && group?.location) ? '100px' : '12px',
                         backgroundColor: (!overrideLocation && group?.location) ? 'rgba(255,255,255,0.05)' : undefined,
-                        color: (!overrideLocation && group?.location) ? 'var(--text-secondary)' : undefined
+                        color: (!overrideLocation && group?.location) ? 'var(--text-secondary)' : undefined,
+                        fontSize: '13px'
                       }}
                     />
                     {!overrideLocation && group?.location && (
@@ -277,7 +281,7 @@ export default function GroupSchedule({
                   )}
                 </div>
               ) : (
-                <div className="flex-wrap-responsive" style={{ display: 'flex', gap: '10px', alignItems: 'stretch' }}>
+                <div className="flex-wrap-responsive" style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
                   <div className="form-input-wrap" style={{ flex: 1 }}>
                     <input
                       type="text"
@@ -286,6 +290,7 @@ export default function GroupSchedule({
                       value={newScheduleLocation}
                       onChange={(e) => setNewScheduleLocation(e.target.value)}
                       required
+                      style={{ height: '38px', boxSizing: 'border-box', padding: '0 12px', fontSize: '13px' }}
                     />
                   </div>
                   <button
@@ -294,9 +299,12 @@ export default function GroupSchedule({
                     title="Tạo link phòng học trực tuyến"
                     className="btn-mono"
                     style={{
+                      height: '38px',
+                      boxSizing: 'border-box',
                       flexShrink: 0,
-                      display: 'flex',
+                      display: 'inline-flex',
                       alignItems: 'center',
+                      justifyContent: 'center',
                       gap: '8px',
                       padding: '0 18px',
                       fontSize: '13px',
@@ -685,7 +693,8 @@ export default function GroupSchedule({
                   required
                   style={{
                     width: '100%',
-                    padding: '10px 14px',
+                    height: '38px',
+                    padding: '0 14px',
                     background: 'var(--bg-input)',
                     border: '1px solid var(--border)',
                     borderRadius: 'var(--radius-sm)',
@@ -709,7 +718,8 @@ export default function GroupSchedule({
                   required
                   style={{
                     width: '100%',
-                    padding: '10px 14px',
+                    height: '38px',
+                    padding: '0 14px',
                     background: 'var(--bg-input)',
                     border: '1px solid var(--border)',
                     borderRadius: 'var(--radius-sm)',
@@ -732,7 +742,8 @@ export default function GroupSchedule({
                   placeholder="Địa điểm hoặc link meet"
                   style={{
                     width: '100%',
-                    padding: '10px 14px',
+                    height: '38px',
+                    padding: '0 14px',
                     background: 'var(--bg-input)',
                     border: '1px solid var(--border)',
                     borderRadius: 'var(--radius-sm)',

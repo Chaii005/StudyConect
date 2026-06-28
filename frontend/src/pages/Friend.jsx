@@ -657,11 +657,16 @@ export default function Friends() {
 
       <style>{`
         .friend-page-container {
-          padding: 24px 24px;
+          padding: 0 24px 24px;
           max-width: 100%;
           width: 100%;
           box-sizing: border-box;
           overflow-x: hidden;
+        }
+        @media (max-width: 991px) {
+          .friend-page-container {
+            padding: 0 8px 16px;
+          }
         }
         .premium-panel {
           background: #ffffff;
