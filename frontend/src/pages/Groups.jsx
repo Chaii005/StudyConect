@@ -1793,12 +1793,14 @@ export default function Groups() {
             <h2 className="page-title">Nhóm Học Tập</h2>
             <p className="page-subtitle">Khám phá và tham gia các nhóm học phù hợp với bạn</p>
           </div>
-          <div style={{ display: 'flex', gap: '12px' }}>
+          <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
             <button
               className="btn"
               onClick={() => setShowModal(true)}
               style={{
-                padding: '10px 22px',
+                padding: '0 22px',
+                height: '42px',
+                boxSizing: 'border-box',
                 whiteSpace: 'nowrap',
                 flexShrink: 0,
                 width: 'auto',
@@ -1838,7 +1840,9 @@ export default function Groups() {
               className="btn"
               onClick={() => setShowNearbyModal(true)}
               style={{
-                padding: '10px 22px',
+                padding: '0 22px',
+                height: '42px',
+                boxSizing: 'border-box',
                 whiteSpace: 'nowrap',
                 flexShrink: 0,
                 width: 'auto',
@@ -1907,7 +1911,7 @@ export default function Groups() {
           ) : (
             <div 
               className="premium-panel search-panel" 
-              style={{ flex: 1, margin: 0, display: 'flex', alignItems: 'center', gap: '10px' }}
+              style={{ flex: 1, margin: 0, display: 'flex', alignItems: 'center', gap: '10px', height: '100%', boxSizing: 'border-box' }}
               onMouseLeave={() => { if (!searchQuery.trim()) setIsSearchExpanded(false); }}
             >
               <span style={{ fontSize: '18px', display: 'flex', alignItems: 'center' }}>
@@ -2223,12 +2227,13 @@ export default function Groups() {
                   <div style={{ marginTop: '16px', borderTop: '1px solid var(--border)', paddingTop: '14px' }}>
                     {isMember ? (
                       <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                        <div style={{ display: 'flex', gap: '10px' }}>
+                        <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
                           <Link 
                             to={`/groups/${group.id}`} 
                             style={{ 
                               flex: 1, 
-                              padding: '9px', 
+                              height: '38px',
+                              boxSizing: 'border-box',
                               textAlign: 'center', 
                               textDecoration: 'none', 
                               fontSize: '13px', 
@@ -2238,7 +2243,9 @@ export default function Groups() {
                               background: 'var(--text-primary)', 
                               boxShadow: '0 4px 12px rgba(0, 0, 0, 0.2)', 
                               transition: 'all 0.2s ease',
-                              display: 'inline-block'
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              justifyContent: 'center'
                             }}
                             onMouseEnter={e => {
                               e.currentTarget.style.transform = 'translateY(-1px)';
@@ -2253,7 +2260,9 @@ export default function Groups() {
                           </Link>
                           <button 
                             style={{ 
-                              padding: '9px 18px', 
+                              height: '38px',
+                              padding: '0 18px',
+                              boxSizing: 'border-box',
                               fontSize: '13px', 
                               fontWeight: 600, 
                               borderRadius: '8px', 
@@ -2261,7 +2270,10 @@ export default function Groups() {
                               color: 'var(--text-primary)', 
                               border: '1px solid var(--border)', 
                               cursor: 'pointer', 
-                              transition: 'all 0.2s ease' 
+                              transition: 'all 0.2s ease',
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              justifyContent: 'center'
                             }} 
                             onClick={() => handleLeave(group)}
                             onMouseEnter={e => {
