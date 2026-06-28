@@ -835,34 +835,6 @@ export default function Admin() {
               );
             })}
           </div>
-          <div style={{ display: 'flex', alignItems: 'center' }}>
-            <button 
-              onClick={adminLogout} 
-              style={{ 
-                padding: '10px 20px', 
-                fontSize: '12.5px', 
-                fontWeight: 700,
-                background: 'rgba(239,68,68,0.08)', 
-                border: '1px solid rgba(239,68,68,0.2)', 
-                color: '#f87171', 
-                borderRadius: '12px',
-                cursor: 'pointer',
-                transition: 'all 0.2s ease',
-                fontFamily: 'inherit',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '6px'
-              }}
-              onMouseEnter={e => { e.currentTarget.style.background = 'rgba(239,68,68,0.15)'; e.currentTarget.style.color = '#ef4444'; }}
-              onMouseLeave={e => { e.currentTarget.style.background = 'rgba(239,68,68,0.08)'; e.currentTarget.style.color = '#f87171'; }}
-            >
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
-                <path d="M7 11V7a5 5 0 0 1 10 0v4" />
-              </svg>
-              Đăng xuất Quản trị
-            </button>
-          </div>
         </div>
 
         {/* Content */}
