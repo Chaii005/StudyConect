@@ -466,11 +466,7 @@ export default function AppLayout({ children, hideNavbar = false, hideSidebar = 
             )}
 
 
-            {displayUser && (
-              <div className="flex-desktop-only" style={{ alignItems: 'center' }}>
-                <NotificationBell />
-              </div>
-            )}
+
 
 
             {displayUser && location.pathname !== '/groups' && (
@@ -590,6 +586,8 @@ export default function AppLayout({ children, hideNavbar = false, hideSidebar = 
                         </div>
                       </div>
                     </Link>
+                    <div style={{ width: '2px', height: '34px', background: 'var(--text-primary)', margin: '0 8px' }} />
+                    <NotificationBell />
                   </div>
                 )}
 
