@@ -366,8 +366,7 @@ export default function useGroupDetail(groupId, user, addToast) {
         {
           event: 'DELETE',
           schema: 'public',
-          table: 'messages',
-          filter: `group_id=eq.${groupId}`
+          table: 'messages'
         },
         (payload) => {
           if (!payload.old?.id) return;
@@ -509,8 +508,7 @@ export default function useGroupDetail(groupId, user, addToast) {
         {
           event: 'DELETE',
           schema: 'public',
-          table: 'deadlines',
-          filter: `group_id=eq.${groupId}`
+          table: 'deadlines'
         },
         (payload) => {
           if (!payload.old?.id) return;
@@ -582,8 +580,7 @@ export default function useGroupDetail(groupId, user, addToast) {
         {
           event: 'DELETE',
           schema: 'public',
-          table: 'schedules',
-          filter: `group_id=eq.${groupId}`
+          table: 'schedules'
         },
         (payload) => {
           if (!payload.old?.id) return;
