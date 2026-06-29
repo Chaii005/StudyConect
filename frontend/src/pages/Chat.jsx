@@ -507,7 +507,7 @@ function MenuBtn({ icon, label, onClick, danger }) {
 }
 
 // ── ConversationView ───────────────────────────────────────────────
-function ConversationView({ user, friend, friends, onBack, onlineUserIds, onNicknameChange, onRelationChange }) {
+function ConversationView({ user, friend, friends, onBack, onlineUserIds, onNicknameChange, onRelationChange, chatBg, setChatBg }) {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
   const [sending, setSending] = useState(false);
@@ -533,7 +533,7 @@ function ConversationView({ user, friend, friends, onBack, onlineUserIds, onNick
   const [renameVal, setRenameVal] = useState('');
   const [showClearConfirm, setShowClearConfirm] = useState(false);
   const [showMenuDropdown, setShowMenuDropdown] = useState(false);
-  const [chatBg, setChatBg] = useState('');
+  const [bgMode, setBgMode] = useState('landscape');
   const [showBgModal, setShowBgModal] = useState(false);
   const [bgFilePreview, setBgFilePreview] = useState('');
   const [bgPos, setBgPos] = useState('center');
@@ -547,6 +547,12 @@ function ConversationView({ user, friend, friends, onBack, onlineUserIds, onNick
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setNickname(n);
   }, [user.id, friend.userId]);
+
+  useEffect(() => {
+    setChatBg('');
+    setBgFilePreview('');
+    setBgPos('center');
+  }, [friend.userId, setChatBg]);
 
   const handleRenameClick = () => {
     setRenameVal(nickname);
@@ -1261,8 +1267,10 @@ function ConversationView({ user, friend, friends, onBack, onlineUserIds, onNick
                     setShowMenuDropdown(false);
                     const savedUrl = chatBg ? chatBg.split('|')[0] : '';
                     const savedPos = chatBg && chatBg.includes('|') ? chatBg.split('|')[1] : 'center';
+                    const savedMode = chatBg && chatBg.split('|').length > 2 ? chatBg.split('|')[2] : 'landscape';
                     setBgFilePreview(savedUrl.startsWith('data:') ? savedUrl : '');
                     setBgPos(savedPos);
+                    setBgMode(savedMode);
                     setShowBgModal(true);
                   }}
                   style={{
@@ -1357,34 +1365,42 @@ function ConversationView({ user, friend, friends, onBack, onlineUserIds, onNick
           position: 'relative',
           overscrollBehavior: 'contain',
           background: chatBg 
-            ? `linear-gradient(rgba(10, 10, 20, 0.6), rgba(10, 10, 20, 0.6)), url(${chatBg.split('|')[0]}) ${chatBg.split('|')[1] || 'center'}/cover no-repeat`
+            ? `linear-gradient(rgba(10, 10, 20, 0.65), rgba(10, 10, 20, 0.65)), url(${chatBg.split('|')[0]}) ${chatBg.split('|')[1] || 'center'}/cover no-repeat`
             : undefined,
           transition: 'background 0.3s ease',
         }}>
         {groupedMsgs.length === 0 && (
-          <div style={{ textAlign: 'center', padding: '40px 0', color: 'var(--text-muted)', fontSize: '14px' }}>
+          <div style={{ textAlign: 'center', padding: '40px 0', color: chatBg ? '#cbd5e1' : 'var(--text-muted)', fontSize: '14px' }}>
             <div style={{ fontSize: '40px', marginBottom: '12px' }}>{friend.status === 'pending' ? '🤝' : '💬'}</div>
             {friend.status === 'pending' ? (
               friend.fromUserId === String(user.id) ? (
                 <>
-                  Đang chờ <strong>{nickname || friend.fullName}</strong> phản hồi lời mời kết bạn.
+                  Đang chờ <strong style={{ color: chatBg ? '#ffffff' : 'var(--text-primary)' }}>{nickname || friend.fullName}</strong> phản hồi lời mời kết bạn.
                 </>
               ) : (
                 <>
-                  Bạn có một lời mời kết bạn từ <strong>{nickname || friend.fullName}</strong>.
+                  Bạn có một lời mời kết bạn từ <strong style={{ color: chatBg ? '#ffffff' : 'var(--text-primary)' }}>{nickname || friend.fullName}</strong>.
                 </>
               )
             ) : (
               <>
-                Bắt đầu nhắn tin với <strong>{nickname || friend.fullName}</strong>!
+                Bắt đầu nhắn tin với <strong style={{ color: chatBg ? '#ffffff' : 'var(--text-primary)' }}>{nickname || friend.fullName}</strong>!
               </>
             )}
           </div>
         )}
         {groupedMsgs.map((item, idx) => {
           if (item.type === 'date') return (
-            <div key={`date-${idx}`} style={{ textAlign: 'center', margin: '12px 0 8px', fontSize: '11px', color: 'var(--text-muted)' }}>
-              <span style={{ background: 'var(--bg)', padding: '2px 12px', borderRadius: '10px', border: '1px solid var(--border)' }}>{item.label}</span>
+            <div key={`date-${idx}`} style={{ textAlign: 'center', margin: '12px 0 8px', fontSize: '11px', color: chatBg ? '#cbd5e1' : 'var(--text-muted)' }}>
+              <span style={{
+                background: chatBg ? 'rgba(0, 0, 0, 0.6)' : 'var(--bg)',
+                padding: '3px 14px',
+                borderRadius: '12px',
+                border: chatBg ? '1px solid rgba(255, 255, 255, 0.18)' : '1px solid var(--border)',
+                color: chatBg ? '#ffffff' : 'var(--text-primary)',
+                fontWeight: 600,
+                boxShadow: chatBg ? '0 2px 8px rgba(0,0,0,0.2)' : 'none'
+              }}>{item.label}</span>
             </div>
           );
           const m = item.data;
@@ -1392,8 +1408,8 @@ function ConversationView({ user, friend, friends, onBack, onlineUserIds, onNick
           
           if (m.content?.startsWith('[chat_background]')) {
             return (
-              <div key={m.id} style={{ textAlign: 'center', margin: '16px 0', fontSize: '12px', color: 'var(--text-muted)' }}>
-                <span style={{ padding: '6px 16px', borderRadius: '16px', background: 'rgba(0,0,0,0.4)', color: 'white', border: '1px solid rgba(255,255,255,0.1)', backdropFilter: 'blur(4px)' }}>
+              <div key={m.id} style={{ textAlign: 'center', margin: '16px 0', fontSize: '12px', color: chatBg ? '#cbd5e1' : 'var(--text-muted)' }}>
+                <span style={{ padding: '6px 16px', borderRadius: '16px', background: 'rgba(0,0,0,0.5)', color: 'white', border: '1px solid rgba(255,255,255,0.15)', backdropFilter: 'blur(4px)' }}>
                   {isMine ? 'Bạn đã thay đổi hình nền' : `${nickname || friend.fullName} đã thay đổi hình nền`}
                 </span>
               </div>
@@ -1414,8 +1430,8 @@ function ConversationView({ user, friend, friends, onBack, onlineUserIds, onNick
                 : `${friend.fullName} đã xóa biệt danh`;
             }
             return (
-              <div key={m.id} style={{ textAlign: 'center', margin: '16px 0', fontSize: '12px', color: 'var(--text-muted)' }}>
-                <span style={{ padding: '6px 16px', borderRadius: '16px', background: 'rgba(0,0,0,0.4)', color: 'white', border: '1px solid rgba(255,255,255,0.1)', backdropFilter: 'blur(4px)' }}>
+              <div key={m.id} style={{ textAlign: 'center', margin: '16px 0', fontSize: '12px', color: chatBg ? '#cbd5e1' : 'var(--text-muted)' }}>
+                <span style={{ padding: '6px 16px', borderRadius: '16px', background: 'rgba(0,0,0,0.5)', color: 'white', border: '1px solid rgba(255,255,255,0.15)', backdropFilter: 'blur(4px)' }}>
                   {msgText}
                 </span>
               </div>
@@ -1548,7 +1564,7 @@ function ConversationView({ user, friend, friends, onBack, onlineUserIds, onNick
                     ) : m.content}
                   </div>
 
-                  <span style={{ fontSize: '10px', color: 'var(--text-muted)', padding: '0 2px' }}>
+                  <span style={{ fontSize: '10px', color: chatBg ? '#cbd5e1' : 'var(--text-muted)', padding: '0 2px' }}>
                     {fmtFull(m.createdAt)}
                   </span>
                 </div>
@@ -1860,9 +1876,9 @@ function ConversationView({ user, friend, friends, onBack, onlineUserIds, onNick
         <div
           style={{
             position: 'fixed', inset: 0, zIndex: 9998,
-            background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(8px)',
+            background: 'rgba(10, 10, 20, 0.75)', backdropFilter: 'blur(12px)',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
-            animation: 'fadeIn 0.2s ease',
+            animation: 'fadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
           }}
           onClick={() => setDeleteConfirmId(null)}
         >
@@ -1871,45 +1887,17 @@ function ConversationView({ user, friend, friends, onBack, onlineUserIds, onNick
               background: 'var(--bg-card)',
               border: '2.5px solid var(--border)',
               borderRadius: '16px',
-              padding: '28px 32px',
+              padding: '32px 36px',
               maxWidth: '380px',
               width: '90%',
-              boxShadow: '0 20px 40px rgba(0,0,0,0.15)',
+              boxShadow: 'var(--shadow-lg)',
               position: 'relative',
-              overflow: 'hidden',
               textAlign: 'center',
             }}
             onClick={e => e.stopPropagation()}
           >
-            {/* Danger indicator top border line */}
-            <div style={{
-              position: 'absolute', top: 0, left: 0, right: 0, height: '6px',
-              background: 'linear-gradient(90deg, #ef4444, #b91c1c)'
-            }} />
-
-            <div style={{ color: '#ef4444', display: 'flex', justifyContent: 'center', marginBottom: '16px', marginTop: '8px' }}>
-              <div style={{
-                background: 'rgba(239, 68, 68, 0.1)',
-                border: '1.5px solid rgba(239, 68, 68, 0.3)',
-                borderRadius: '50%',
-                width: '56px',
-                height: '56px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                boxShadow: '0 4px 12px rgba(239, 68, 68, 0.1)',
-              }}>
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                  <polyline points="3 6 5 6 21 6" />
-                  <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
-                  <line x1="10" y1="11" x2="10" y2="17" />
-                  <line x1="14" y1="11" x2="14" y2="17" />
-                </svg>
-              </div>
-            </div>
-
-            <h3 style={{ margin: '0 0 8px', fontSize: '18px', fontWeight: 800, color: 'var(--text-primary)', letterSpacing: '-0.3px' }}>Xóa tin nhắn?</h3>
-            <p style={{ margin: '0 0 24px', fontSize: '13.5px', color: 'var(--text-secondary)', lineHeight: 1.5 }}>
+            <h3 style={{ margin: '0 0 12px', fontSize: '20px', fontWeight: 900, color: 'var(--text-primary)', fontFamily: "'Fraunces', serif" }}>Xóa tin nhắn?</h3>
+            <p style={{ margin: '0 0 28px', fontSize: '13.5px', color: 'var(--text-secondary)', lineHeight: 1.5 }}>
               Tin nhắn này sẽ bị xóa vĩnh viễn khỏi cuộc trò chuyện của bạn và không thể khôi phục lại.
             </p>
 
@@ -1917,38 +1905,36 @@ function ConversationView({ user, friend, friends, onBack, onlineUserIds, onNick
               <button
                 onClick={() => setDeleteConfirmId(null)}
                 style={{
-                  flex: 1, padding: '10px', borderRadius: '10px',
-                  border: '1px solid var(--border)', background: 'var(--bg-input)',
+                  flex: 1, padding: '12px', borderRadius: '10px',
+                  border: '1.5px solid var(--border)', background: 'var(--bg-input)',
                   color: 'var(--text-primary)', fontWeight: 700, cursor: 'pointer',
                   fontFamily: 'inherit', fontSize: '14px', transition: 'all 0.2s',
-                  boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
                 }}
                 onMouseEnter={e => {
                   e.currentTarget.style.background = '#000000';
                   e.currentTarget.style.color = '#ffffff';
+                  e.currentTarget.style.borderColor = '#000000';
                 }}
                 onMouseLeave={e => {
                   e.currentTarget.style.background = 'var(--bg-input)';
                   e.currentTarget.style.color = 'var(--text-primary)';
+                  e.currentTarget.style.borderColor = 'var(--border)';
                 }}
               >Hủy</button>
               
               <button
                 onClick={confirmDelete}
                 style={{
-                  flex: 1, padding: '10px', borderRadius: '10px',
+                  flex: 1, padding: '12px', borderRadius: '10px',
                   border: '1.5px solid var(--border)', background: '#ef4444',
                   color: 'white', fontWeight: 700, cursor: 'pointer',
                   fontFamily: 'inherit', fontSize: '14px', transition: 'all 0.2s',
-                  boxShadow: '0 4px 12px rgba(239, 68, 68, 0.2)',
                 }}
                 onMouseEnter={e => {
                   e.currentTarget.style.background = '#dc2626';
-                  e.currentTarget.style.transform = 'translateY(-1px)';
                 }}
                 onMouseLeave={e => {
                   e.currentTarget.style.background = '#ef4444';
-                  e.currentTarget.style.transform = 'none';
                 }}
               >Xóa</button>
             </div>
@@ -2214,10 +2200,10 @@ function ConversationView({ user, friend, friends, onBack, onlineUserIds, onNick
           <div
             style={{
               background: 'var(--bg-card)',
-              border: '1px solid var(--border)',
-              borderRadius: '20px',
-              padding: '20px',
-              width: '340px',
+              border: '2.5px solid var(--border)',
+              borderRadius: '16px',
+              padding: '28px 32px',
+              width: '380px',
               maxWidth: 'calc(100vw - 40px)',
               boxShadow: 'var(--shadow-lg)',
               maxHeight: '85vh',
@@ -2237,19 +2223,19 @@ function ConversationView({ user, friend, friends, onBack, onlineUserIds, onNick
                   style={{
                     display: 'block',
                     textAlign: 'center',
-                    padding: '16px',
+                    padding: '20px',
                     background: 'var(--bg-input)',
                     border: '2px dashed var(--border)',
-                    borderRadius: '14px',
+                    borderRadius: '12px',
                     cursor: 'pointer',
                     color: 'var(--text-primary)',
                     fontSize: '14px',
-                    fontWeight: 600,
+                    fontWeight: 700,
                     transition: 'all 0.2s',
                   }}
                   onMouseEnter={e => {
-                    e.currentTarget.style.background = 'var(--bg-card)';
-                    e.currentTarget.style.borderColor = 'var(--primary)';
+                    e.currentTarget.style.background = 'rgba(0, 0, 0, 0.04)';
+                    e.currentTarget.style.borderColor = 'var(--text-primary)';
                   }}
                   onMouseLeave={e => {
                     e.currentTarget.style.background = 'var(--bg-input)';
@@ -2267,133 +2253,203 @@ function ConversationView({ user, friend, friends, onBack, onlineUserIds, onNick
               </div>
             )}
 
+            {/* Vùng chọn kiểu hiển thị khung chat */}
+            {bgFilePreview && (
+              <div style={{ marginBottom: '20px' }}>
+                <label style={{ display: 'block', fontSize: '12px', color: 'var(--text-secondary)', fontWeight: 700, marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                  Kiểu hiển thị khung chat
+                </label>
+                <div style={{ display: 'flex', gap: '8px' }}>
+                  {[
+                    { mode: 'portrait', label: 'Khung đứng (Ảnh dọc)' },
+                    { mode: 'landscape', label: 'Khung ngang (Phủ rộng)' }
+                  ].map(item => {
+                    const isActive = bgMode === item.mode;
+                    return (
+                      <button
+                        key={item.mode}
+                        onClick={() => setBgMode(item.mode)}
+                        style={{
+                          flex: 1, padding: '10px 8px', borderRadius: '10px',
+                          background: isActive ? '#000000' : 'var(--bg-input)',
+                          border: '1.5px solid var(--border)',
+                          color: isActive ? '#ffffff' : 'var(--text-primary)',
+                          cursor: 'pointer', fontSize: '12px', fontWeight: isActive ? 700 : 600, transition: 'all 0.2s',
+                        }}
+                        onMouseEnter={e => {
+                          if (!isActive) e.currentTarget.style.background = 'rgba(0,0,0,0.06)';
+                        }}
+                        onMouseLeave={e => {
+                          if (!isActive) e.currentTarget.style.background = 'var(--bg-input)';
+                        }}
+                      >
+                        {item.label}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
             {/* Vùng điều chỉnh vị trí ảnh */}
             {bgFilePreview && (
               <div style={{ marginBottom: '20px' }}>
-                <label style={{ display: 'block', fontSize: '12px', color: 'var(--text-secondary)', fontWeight: 600, marginBottom: '8px' }}>
-                  Điều chỉnh vị trí ảnh (Gốc ảnh)
+                <label style={{ display: 'block', fontSize: '12px', color: 'var(--text-secondary)', fontWeight: 700, marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                  Điều chỉnh gốc ảnh nền
                 </label>
                 <div style={{ display: 'flex', gap: '8px' }}>
-                  {['top', 'center', 'bottom'].map(pos => (
-                    <button
-                      key={pos}
-                      onClick={() => setBgPos(pos)}
-                      style={{
-                        flex: 1, padding: '8px', borderRadius: '10px',
-                        background: bgPos === pos ? 'var(--primary)' : 'rgba(255,255,255,0.05)',
-                        border: `1px solid ${bgPos === pos ? 'var(--primary)' : 'rgba(255,255,255,0.1)'}`,
-                        color: bgPos === pos ? 'white' : 'var(--text-secondary)',
-                        cursor: 'pointer', fontSize: '12px', fontWeight: 600, transition: 'all 0.2s',
-                      }}
-                    >
-                      {pos === 'top' ? 'Trên cùng' : pos === 'center' ? 'Chính giữa' : 'Dưới cùng'}
-                    </button>
-                  ))}
+                  {['top', 'center', 'bottom'].map(pos => {
+                    const isActive = bgPos === pos;
+                    return (
+                      <button
+                        key={pos}
+                        onClick={() => setBgPos(pos)}
+                        style={{
+                          flex: 1, padding: '10px 8px', borderRadius: '10px',
+                          background: isActive ? '#000000' : 'var(--bg-input)',
+                          border: '1.5px solid var(--border)',
+                          color: isActive ? '#ffffff' : 'var(--text-primary)',
+                          cursor: 'pointer', fontSize: '12px', fontWeight: isActive ? 700 : 600, transition: 'all 0.2s',
+                        }}
+                        onMouseEnter={e => {
+                          if (!isActive) e.currentTarget.style.background = 'rgba(0,0,0,0.06)';
+                        }}
+                        onMouseLeave={e => {
+                          if (!isActive) e.currentTarget.style.background = 'var(--bg-input)';
+                        }}
+                      >
+                        {pos === 'top' ? 'Trên cùng' : pos === 'center' ? 'Chính giữa' : 'Dưới cùng'}
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
             )}
 
             {/* Xem trước ảnh nền */}
             {bgFilePreview && (
-              <div style={{ marginBottom: '24px' }}>
+              <div style={{ marginBottom: '28px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                  <label style={{ display: 'block', fontSize: '12px', color: 'var(--text-secondary)', fontWeight: 600, margin: 0 }}>
+                  <label style={{ display: 'block', fontSize: '12px', color: 'var(--text-secondary)', fontWeight: 700, margin: 0, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
                     Xem trước hình nền
                   </label>
                   <label style={{
-                    fontSize: '11px', color: 'var(--text-primary)', fontWeight: 600, cursor: 'pointer',
-                    background: 'rgba(35,97,95,0.1)', padding: '4px 10px', borderRadius: '6px', margin: 0
-                  }}>
+                    fontSize: '11px', color: 'var(--text-primary)', fontWeight: 700, cursor: 'pointer',
+                    background: 'var(--bg-input)', border: '1.5px solid var(--border)', padding: '4px 10px', borderRadius: '8px', margin: 0,
+                    transition: 'all 0.2s'
+                  }}
+                  onMouseEnter={e => {
+                    e.currentTarget.style.background = '#000000';
+                    e.currentTarget.style.color = '#ffffff';
+                  }}
+                  onMouseLeave={e => {
+                    e.currentTarget.style.background = 'var(--bg-input)';
+                    e.currentTarget.style.color = 'var(--text-primary)';
+                  }}
+                  >
                     Đổi ảnh
                     <input type="file" accept="image/*" onChange={handleBgFileChange} style={{ display: 'none' }} />
                   </label>
                 </div>
                 <div
                   style={{
-                    width: '100%',
-                    height: '120px',
-                    borderRadius: '14px',
-                    background: `linear-gradient(rgba(10, 10, 20, 0.5), rgba(10, 10, 20, 0.5)), url(${bgFilePreview}) ${bgPos}/cover no-repeat`,
-                    border: '1px solid rgba(255, 255, 255, 0.08)',
+                    width: bgMode === 'portrait' ? '120px' : '100%',
+                    height: '140px',
+                    margin: '0 auto',
+                    borderRadius: '12px',
+                    background: `linear-gradient(rgba(10, 10, 20, 0.55), rgba(10, 10, 20, 0.55)), url(${bgFilePreview}) ${bgPos}/cover no-repeat`,
+                    border: '2.5px solid var(--border)',
+                    boxShadow: 'var(--shadow-sm)',
+                    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                   }}
                 />
               </div>
             )}
 
             {/* Action buttons */}
-            <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+            <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
               <button
                 onClick={() => handleSaveBg('')}
                 style={{
                   flex: 1,
-                  padding: '12px',
-                  background: 'none',
-                  border: '1px solid rgba(239, 68, 68, 0.3)',
-                  borderRadius: '14px',
+                  padding: '12px 8px',
+                  background: 'var(--bg-input)',
+                  border: '1.5px solid var(--border)',
+                  borderRadius: '10px',
                   color: '#ef4444',
                   fontFamily: 'inherit',
                   cursor: 'pointer',
                   fontSize: '13px',
-                  fontWeight: 600,
+                  fontWeight: 700,
                   transition: 'all 0.2s',
                 }}
                 onMouseEnter={e => {
-                  e.currentTarget.style.background = 'rgba(239, 68, 68, 0.08)';
+                  e.currentTarget.style.background = '#ef4444';
+                  e.currentTarget.style.color = '#ffffff';
                 }}
                 onMouseLeave={e => {
-                  e.currentTarget.style.background = 'none';
+                  e.currentTarget.style.background = 'var(--bg-input)';
+                  e.currentTarget.style.color = '#ef4444';
                 }}
               >
-                Về mặc định
+                Mặc định
               </button>
               
               <button
                 onClick={() => setShowBgModal(false)}
                 style={{
                   flex: 1,
-                  padding: '12px',
+                  padding: '12px 8px',
                   background: 'var(--bg-input)',
                   border: '1px solid var(--border)',
-                  borderRadius: '14px',
+                  borderRadius: '10px',
                   color: 'var(--text-secondary)',
                   fontFamily: 'inherit',
                   cursor: 'pointer',
-                  fontSize: '14px',
-                  fontWeight: 600,
+                  fontSize: '13px',
+                  fontWeight: 700,
                   transition: 'all 0.2s',
                 }}
                 onMouseEnter={e => {
-                  e.currentTarget.style.background = 'var(--bg-card)';
+                  e.currentTarget.style.background = '#000000';
+                  e.currentTarget.style.color = '#ffffff';
+                  e.currentTarget.style.borderColor = '#000000';
                 }}
                 onMouseLeave={e => {
                   e.currentTarget.style.background = 'var(--bg-input)';
+                  e.currentTarget.style.color = 'var(--text-secondary)';
+                  e.currentTarget.style.borderColor = 'var(--border)';
                 }}
               >
                 Hủy bỏ
               </button>
               
               <button
-                onClick={() => handleSaveBg(bgFilePreview ? `${bgFilePreview}|${bgPos}` : '')}
+                onClick={() => handleSaveBg(bgFilePreview ? `${bgFilePreview}|${bgPos}|${bgMode}` : '')}
                 disabled={!bgFilePreview}
                 style={{
                   flex: 1,
-                  padding: '12px',
-                  background: 'linear-gradient(135deg, var(--primary), var(--primary-light))',
-                  border: 'none',
-                  borderRadius: '14px',
+                  padding: '12px 8px',
+                  background: 'var(--primary)',
+                  border: '1.5px solid var(--border)',
+                  borderRadius: '10px',
                   color: 'white',
                   fontWeight: 700,
                   fontFamily: 'inherit',
                   cursor: 'pointer',
-                  fontSize: '14px',
+                  fontSize: '13px',
                   transition: 'all 0.2s',
                   opacity: (!bgFilePreview) ? 0.5 : 1,
                 }}
                 onMouseEnter={e => {
-                  if (bgFilePreview) e.currentTarget.style.opacity = '0.9';
+                  if (bgFilePreview) {
+                    e.currentTarget.style.background = 'var(--primary-light)';
+                  }
                 }}
                 onMouseLeave={e => {
-                  if (bgFilePreview) e.currentTarget.style.opacity = '1';
+                  if (bgFilePreview) {
+                    e.currentTarget.style.background = 'var(--primary)';
+                  }
                 }}
               >
                 Áp dụng
@@ -2556,6 +2612,8 @@ export default function Chat() {
 
 
   const [selectedFriend, setSelectedFriend] = useState(null);
+  const [chatBg, setChatBg] = useState('');
+  const bgMode = chatBg && chatBg.split('|').length > 2 ? chatBg.split('|')[2] : 'landscape';
 
   useEffect(() => {
     if (selectedFriend?.userId) {
@@ -2761,6 +2819,10 @@ export default function Chat() {
             padding: 0,
             background: isMobile ? 'var(--bg-card)' : undefined,
             overflow: 'hidden', display: 'flex', flexDirection: 'column', height: '100%',
+            maxWidth: (!isMobile && bgMode === 'portrait') ? '480px' : '100%',
+            margin: (!isMobile && bgMode === 'portrait') ? '0 auto' : '0',
+            width: '100%',
+            transition: 'max-width 0.3s cubic-bezier(0.4, 0, 0.2, 1), margin 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
           }}>
             <ConversationView
               user={user}
@@ -2782,6 +2844,8 @@ export default function Chat() {
                   refresh();
                 }
               }}
+              chatBg={chatBg}
+              setChatBg={setChatBg}
             />
           </div>
         )}

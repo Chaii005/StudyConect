@@ -575,52 +575,24 @@ export default function MyDocuments() {
       {deleteConfirm && (
         <div onClick={() => setDeleteConfirm(null)} style={{
           position: 'fixed', inset: 0, zIndex: 5000,
-          background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(8px)',
+          background: 'rgba(10, 10, 20, 0.75)', backdropFilter: 'blur(12px)',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
           padding: '24px',
-          animation: 'fadeIn 0.2s ease',
+          animation: 'fadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
         }}>
           <div onClick={e => e.stopPropagation()} style={{
             background: 'var(--bg-card)',
-            borderRadius: '16px',
-            padding: '28px 32px',
-            maxWidth: '420px',
-            width: '100%',
             border: '2.5px solid var(--border)',
-            textAlign: 'center',
-            boxShadow: '0 20px 40px rgba(0,0,0,0.15)',
+            borderRadius: '16px',
+            padding: '32px 36px',
+            maxWidth: '380px',
+            width: '90%',
+            boxShadow: 'var(--shadow-lg)',
             position: 'relative',
-            overflow: 'hidden',
+            textAlign: 'center',
           }}>
-            {/* Red accent strip at the top */}
-            <div style={{
-              position: 'absolute', top: 0, left: 0, right: 0, height: '6px',
-              background: 'linear-gradient(90deg, #ef4444, #b91c1c)'
-            }} />
-
-            <div style={{ color: '#ef4444', display: 'flex', justifyContent: 'center', marginBottom: '16px', marginTop: '8px' }}>
-              <div style={{
-                background: 'rgba(239, 68, 68, 0.1)',
-                border: '1.5px solid rgba(239, 68, 68, 0.3)',
-                borderRadius: '50%',
-                width: '60px',
-                height: '60px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                boxShadow: '0 4px 12px rgba(239, 68, 68, 0.1)',
-              }}>
-                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                  <polyline points="3 6 5 6 21 6"/>
-                  <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
-                  <line x1="10" y1="11" x2="10" y2="17"/>
-                  <line x1="14" y1="11" x2="14" y2="17"/>
-                </svg>
-              </div>
-            </div>
-
-            <h3 style={{ fontSize: '18px', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '8px', letterSpacing: '-0.3px' }}>Xóa tài liệu?</h3>
-            <p style={{ color: 'var(--text-secondary)', fontSize: '13.5px', lineHeight: 1.5, marginBottom: '24px' }}>
+            <h3 style={{ margin: '0 0 12px', fontSize: '20px', fontWeight: 900, color: 'var(--text-primary)', fontFamily: "'Fraunces', serif" }}>Xóa tài liệu?</h3>
+            <p style={{ color: 'var(--text-secondary)', fontSize: '13.5px', lineHeight: 1.5, marginBottom: '28px' }}>
               Bạn có chắc muốn xóa <strong style={{ color: 'var(--text-primary)', wordBreak: 'break-all' }}>{deleteConfirm.fileName}</strong>?
               Hành động này không thể hoàn tác.
             </p>
@@ -628,7 +600,7 @@ export default function MyDocuments() {
             <div style={{ display: 'flex', gap: '12px', justifyContent: 'center' }}>
               <button onClick={() => setDeleteConfirm(null)} style={{
                 flex: 1,
-                padding: '10px 24px',
+                padding: '12px',
                 borderRadius: '10px',
                 cursor: 'pointer',
                 background: 'var(--bg-input)',
@@ -638,21 +610,22 @@ export default function MyDocuments() {
                 fontWeight: 700,
                 fontFamily: 'inherit',
                 transition: 'all 0.2s',
-                boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
               }}
               onMouseEnter={e => {
                 e.currentTarget.style.background = '#000000';
                 e.currentTarget.style.color = '#ffffff';
+                e.currentTarget.style.borderColor = '#000000';
               }}
               onMouseLeave={e => {
                 e.currentTarget.style.background = 'var(--bg-input)';
                 e.currentTarget.style.color = 'var(--text-primary)';
+                e.currentTarget.style.borderColor = 'var(--border)';
               }}
               >Hủy</button>
               
               <button onClick={() => handleDelete(deleteConfirm)} style={{
                 flex: 1,
-                padding: '10px 24px',
+                padding: '12px',
                 borderRadius: '10px',
                 cursor: 'pointer',
                 background: '#ef4444',
@@ -662,15 +635,12 @@ export default function MyDocuments() {
                 fontWeight: 700,
                 fontFamily: 'inherit',
                 transition: 'all 0.2s',
-                boxShadow: '0 4px 12px rgba(239, 68, 68, 0.2)',
               }}
               onMouseEnter={e => {
                 e.currentTarget.style.background = '#dc2626';
-                e.currentTarget.style.transform = 'translateY(-1px)';
               }}
               onMouseLeave={e => {
                 e.currentTarget.style.background = '#ef4444';
-                e.currentTarget.style.transform = 'none';
               }}
               >Xóa</button>
             </div>
