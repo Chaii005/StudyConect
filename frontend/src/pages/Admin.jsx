@@ -488,12 +488,12 @@ export default function Admin() {
     }
   }, [loadData, admin]);
 
-  // Sync admin dashboard states using Realtime incremental updates
+  // Sync admin dashboard states using Realtime updates
   useEffect(() => {
     if (!admin) return;
 
     const channel = supabase
-      .channel('groups-list-realtime')
+      .channel('admin-dashboard-realtime')
       // 1. Users table changes
       .on(
         'postgres_changes',
@@ -502,40 +502,12 @@ export default function Admin() {
           schema: 'public',
           table: 'users'
         },
-        async (payload) => {
-          if (payload.eventType === 'INSERT') {
-            const newUser = {
-              id: payload.new.id,
-              fullName: payload.new.full_name,
-              email: payload.new.email,
-              role: payload.new.role,
-              university: payload.new.university,
-              major: payload.new.major,
-              bio: payload.new.bio,
-              isBanned: payload.new.is_banned,
-              warnCount: payload.new.warn_count,
-              createdAt: payload.new.created_at
-            };
-            setUsers((prev) => {
-              if (prev.some(u => u.id === newUser.id)) return prev;
-              return [newUser, ...prev];
-            });
-          } else if (payload.eventType === 'UPDATE') {
-            const updatedUser = {
-              id: payload.new.id,
-              fullName: payload.new.full_name,
-              email: payload.new.email,
-              role: payload.new.role,
-              university: payload.new.university,
-              major: payload.new.major,
-              bio: payload.new.bio,
-              isBanned: payload.new.is_banned,
-              warnCount: payload.new.warn_count,
-              createdAt: payload.new.created_at
-            };
-            setUsers((prev) => prev.map(u => u.id === updatedUser.id ? { ...u, ...updatedUser } : u));
-          } else if (payload.eventType === 'DELETE') {
-            setUsers((prev) => prev.filter(u => u.id !== payload.old.id));
+        async () => {
+          try {
+            const allUsers = await adminGetUsers();
+            setUsers(allUsers);
+          } catch (err) {
+            if (import.meta.env.DEV) console.warn('Error reloading users:', err);
           }
         }
       )
@@ -547,42 +519,29 @@ export default function Admin() {
           schema: 'public',
           table: 'study_groups'
         },
-        async (payload) => {
-          if (payload.eventType === 'INSERT') {
-            const newGroup = {
-              id: payload.new.id,
-              name: payload.new.name,
-              subject: payload.new.subject,
-              major: payload.new.major,
-              description: payload.new.description,
-              creatorId: payload.new.creator_id,
-              deputyId: payload.new.deputy_id,
-              meetingMode: payload.new.meeting_mode,
-              location: payload.new.location,
-              members: payload.new.members || [],
-              createdAt: payload.new.created_at
-            };
-            setGroups((prev) => {
-              if (prev.some(g => g.id === newGroup.id)) return prev;
-              return [newGroup, ...prev];
-            });
-          } else if (payload.eventType === 'UPDATE') {
-            const updatedGroup = {
-              id: payload.new.id,
-              name: payload.new.name,
-              subject: payload.new.subject,
-              major: payload.new.major,
-              description: payload.new.description,
-              creatorId: payload.new.creator_id,
-              deputyId: payload.new.deputy_id,
-              meetingMode: payload.new.meeting_mode,
-              location: payload.new.location,
-              members: payload.new.members || [],
-              createdAt: payload.new.created_at
-            };
-            setGroups((prev) => prev.map(g => g.id === updatedGroup.id ? { ...g, ...updatedGroup } : g));
-          } else if (payload.eventType === 'DELETE') {
-            setGroups((prev) => prev.filter(g => g.id !== payload.old.id));
+        async () => {
+          try {
+            const allGroups = await adminGetGroups();
+            setGroups(allGroups);
+          } catch (err) {
+            if (import.meta.env.DEV) console.warn('Error reloading groups:', err);
+          }
+        }
+      )
+      // 2b. Group members table changes (crucial for updating membership count and roles in Admin panel)
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'group_members'
+        },
+        async () => {
+          try {
+            const allGroups = await adminGetGroups();
+            setGroups(allGroups);
+          } catch (err) {
+            if (import.meta.env.DEV) console.warn('Error reloading groups on membership change:', err);
           }
         }
       )
@@ -594,56 +553,12 @@ export default function Admin() {
           schema: 'public',
           table: 'files'
         },
-        async (payload) => {
-          if (payload.eventType === 'INSERT' || payload.eventType === 'UPDATE') {
-            const isApproved = payload.new.approved;
-            if (isApproved) {
-              setPendingFiles((prev) => prev.filter(f => String(f.id) !== String(payload.new.id)));
-            } else {
-              try {
-                const { data: relData } = await supabase
-                  .from('files')
-                  .select('users(full_name), study_groups(name)')
-                  .eq('id', payload.new.id)
-                  .single();
-                const formattedFile = {
-                  id: payload.new.id.toString(),
-                  groupId: payload.new.group_id.toString(),
-                  userId: payload.new.user_id,
-                  userFullName: relData?.users?.full_name || 'Thành viên',
-                  groupName: relData?.study_groups?.name || 'Nhóm học',
-                  fileName: payload.new.file_name,
-                  fileSize: payload.new.file_size,
-                  fileType: payload.new.file_type,
-                  fileData: payload.new.file_url,
-                  createdAt: payload.new.created_at
-                };
-                setPendingFiles((prev) => {
-                  const filtered = prev.filter(f => String(f.id) !== String(formattedFile.id));
-                  return [formattedFile, ...filtered];
-                });
-              } catch (err) {
-                // fallback if query fails
-                const formattedFile = {
-                  id: payload.new.id.toString(),
-                  groupId: payload.new.group_id.toString(),
-                  userId: payload.new.user_id,
-                  userFullName: 'Thành viên',
-                  groupName: 'Nhóm học',
-                  fileName: payload.new.file_name,
-                  fileSize: payload.new.file_size,
-                  fileType: payload.new.file_type,
-                  fileData: payload.new.file_url,
-                  createdAt: payload.new.created_at
-                };
-                setPendingFiles((prev) => {
-                  const filtered = prev.filter(f => String(f.id) !== String(formattedFile.id));
-                  return [formattedFile, ...filtered];
-                });
-              }
-            }
-          } else if (payload.eventType === 'DELETE') {
-            setPendingFiles((prev) => prev.filter(f => String(f.id) !== String(payload.old.id)));
+        async () => {
+          try {
+            const allPendingFiles = await getPendingFiles();
+            setPendingFiles(allPendingFiles);
+          } catch (err) {
+            if (import.meta.env.DEV) console.warn('Error reloading pending files:', err);
           }
         }
       )
@@ -655,51 +570,12 @@ export default function Admin() {
           schema: 'public',
           table: 'posts'
         },
-        async (payload) => {
-          if (payload.eventType === 'INSERT' || payload.eventType === 'UPDATE') {
-            const isApproved = payload.new.approved;
-            if (isApproved) {
-              setPendingPosts((prev) => prev.filter(p => String(p.id) !== String(payload.new.id)));
-            } else {
-              try {
-                const { data: relData } = await supabase
-                  .from('posts')
-                  .select('users(full_name, avatar)')
-                  .eq('id', payload.new.id)
-                  .single();
-                const formattedPost = {
-                  id: payload.new.id.toString(),
-                  userId: payload.new.user_id,
-                  userFullName: relData?.users?.full_name || 'Người dùng',
-                  userAvatar: relData?.users?.avatar || '',
-                  content: payload.new.content,
-                  image: payload.new.image || null,
-                  tag: payload.new.tag || null,
-                  createdAt: payload.new.created_at
-                };
-                setPendingPosts((prev) => {
-                  const filtered = prev.filter(p => String(p.id) !== String(formattedPost.id));
-                  return [formattedPost, ...filtered];
-                });
-              } catch (err) {
-                const formattedPost = {
-                  id: payload.new.id.toString(),
-                  userId: payload.new.user_id,
-                  userFullName: 'Người dùng',
-                  userAvatar: '',
-                  content: payload.new.content,
-                  image: payload.new.image || null,
-                  tag: payload.new.tag || null,
-                  createdAt: payload.new.created_at
-                };
-                setPendingPosts((prev) => {
-                  const filtered = prev.filter(p => String(p.id) !== String(formattedPost.id));
-                  return [formattedPost, ...filtered];
-                });
-              }
-            }
-          } else if (payload.eventType === 'DELETE') {
-            setPendingPosts((prev) => prev.filter(p => String(p.id) !== String(payload.old.id)));
+        async () => {
+          try {
+            const allPendingPosts = await getPendingPosts();
+            setPendingPosts(allPendingPosts);
+          } catch (err) {
+            if (import.meta.env.DEV) console.warn('Error reloading pending posts:', err);
           }
         }
       )
