@@ -143,6 +143,11 @@ export default function useNotifications(userId) {
         const joinedIds = joinedMembers.map(m => m.group_id);
         joinedIds.forEach(id => userGroupIds.add(Number(id)));
         myGroupIdsRef.current = joinedIds.map(Number);
+        joinedMembers.forEach(m => {
+          if (m.study_groups?.name) {
+            groupNamesRef.current[Number(m.group_id)] = m.study_groups.name;
+          }
+        });
 
         // Notify user about group joins and role upgrades in the notification bell
         joinedMembers.forEach(m => {
@@ -602,6 +607,9 @@ export default function useNotifications(userId) {
       if (myCreatedGroups && myCreatedGroups.length > 0) {
         const myGroupIds = myCreatedGroups.map(g => g.id);
         myCreatedGroupIdsRef.current = myGroupIds.map(Number);
+        myCreatedGroups.forEach(g => {
+          groupNamesRef.current[Number(g.id)] = g.name;
+        });
         const { data: pendingRequests } = await supabase
           .from('group_join_requests')
           .select(`
@@ -804,6 +812,43 @@ export default function useNotifications(userId) {
     }
   }, [userId]);
 
+  const groupNamesRef = useRef({});
+  const userNamesCacheRef = useRef({});
+
+  const addIncrementalNotif = useCallback((newNotif) => {
+    setNotifs(prev => {
+      if (prev.some(n => n.key === newNotif.key)) return prev;
+      const updated = [newNotif, ...prev];
+      return updated.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    });
+  }, []);
+
+  const getGroupName = async (groupId) => {
+    if (groupNamesRef.current[groupId]) return groupNamesRef.current[groupId];
+    try {
+      const { data } = await supabase.from('study_groups').select('name').eq('id', groupId).single();
+      if (data?.name) {
+        groupNamesRef.current[groupId] = data.name;
+      }
+      return data?.name || 'Nhóm học';
+    } catch {
+      return 'Nhóm học';
+    }
+  };
+
+  const getUserName = async (userId) => {
+    if (userNamesCacheRef.current[userId]) return userNamesCacheRef.current[userId];
+    try {
+      const { data } = await supabase.from('users').select('full_name').eq('id', userId).single();
+      if (data?.full_name) {
+        userNamesCacheRef.current[userId] = data.full_name;
+      }
+      return data?.full_name || 'Thành viên';
+    } catch {
+      return 'Thành viên';
+    }
+  };
+
   const debounceRef = useRef(null);
 
   const refreshDebounced = useCallback(() => {
@@ -821,25 +866,311 @@ export default function useNotifications(userId) {
     // Channel name unique mỗi mount để tránh duplicate subscription
     const notifChannel = supabase
       .channel(`notif-${userId}`)
+      // friendships
       .on(
         'postgres_changes',
-        { event: '*', schema: 'public', table: 'friendships', filter: `to_user_id=eq.${userId}` },
-        () => refreshDebounced()
+        { event: '*', schema: 'public', table: 'friendships' },
+        (payload) => {
+          if (payload.eventType === 'INSERT' || payload.eventType === 'UPDATE') {
+            const f = payload.new;
+            if (!f) return;
+            if (f.status === 'pending' && String(f.to_user_id) === String(userId)) {
+              getUserName(f.from_user_id).then(senderName => {
+                addIncrementalNotif({
+                  key: `friendreq:${f.id}`,
+                  type: 'friendreq',
+                  title: 'Lời mời kết bạn',
+                  body: `${senderName} muốn kết bạn với bạn`,
+                  createdAt: f.created_at,
+                  requestId: f.id.toString(),
+                  fromUserId: f.from_user_id,
+                  fromUserName: senderName,
+                });
+              });
+            } else if (f.status === 'accepted' && String(f.from_user_id) === String(userId)) {
+              getUserName(f.to_user_id).then(userName => {
+                addIncrementalNotif({
+                  key: `friendaccept:${f.id}`,
+                  type: 'friendaccept',
+                  title: 'Kết bạn thành công',
+                  body: `${userName} đã đồng ý lời mời kết bạn của bạn`,
+                  createdAt: f.accepted_at || f.created_at,
+                });
+              });
+            }
+          }
+        }
       )
+      // group_invites
       .on(
         'postgres_changes',
-        { event: '*', schema: 'public', table: 'friendships', filter: `from_user_id=eq.${userId}` },
-        () => refreshDebounced()
+        { event: 'INSERT', schema: 'public', table: 'group_invites' },
+        (payload) => {
+          const inv = payload.new;
+          if (!inv) return;
+          if (String(inv.invitee_id) !== String(userId)) return;
+          if (inv.status !== 'pending') return;
+          Promise.all([getUserName(inv.inviter_id), getGroupName(Number(inv.group_id))]).then(([inviterName, groupName]) => {
+            addIncrementalNotif({
+              key: `groupinvite:${inv.id}`,
+              type: 'groupinvite',
+              title: 'Lời mời vào nhóm',
+              body: `${inviterName} mời bạn tham gia nhóm "${groupName}"`,
+              createdAt: inv.created_at,
+              inviteId: inv.id.toString(),
+              groupId: inv.group_id.toString(),
+              groupName: groupName,
+            });
+          });
+        }
       )
+      // group_members
       .on(
         'postgres_changes',
-        { event: '*', schema: 'public', table: 'group_invites', filter: `invitee_id=eq.${userId}` },
-        () => refreshDebounced()
+        { event: '*', schema: 'public', table: 'group_members' },
+        (payload) => {
+          if (payload.eventType === 'INSERT') {
+            const m = payload.new;
+            if (!m) return;
+            getGroupName(Number(m.group_id)).then(groupName => {
+              if (String(m.user_id) === String(userId)) {
+                if (!myGroupIdsRef.current.includes(Number(m.group_id))) {
+                  myGroupIdsRef.current.push(Number(m.group_id));
+                }
+                if (m.role === 'member') {
+                  addIncrementalNotif({
+                    key: `groupjoin:${m.group_id}`,
+                    type: 'groupjoin',
+                    title: 'Gia nhập nhóm thành công',
+                    body: `Bạn đã tham gia nhóm học tập "${groupName}"`,
+                    createdAt: m.joined_at || new Date().toISOString(),
+                    groupId: m.group_id.toString(),
+                  });
+                } else if (m.role === 'admin') {
+                  addIncrementalNotif({
+                    key: `groupdeputy:${m.group_id}`,
+                    type: 'groupdeputy',
+                    title: 'Bổ nhiệm phó nhóm',
+                    body: `Bạn đã được bổ nhiệm làm Phó nhóm của "${groupName}"`,
+                    createdAt: m.joined_at || new Date().toISOString(),
+                    groupId: m.group_id.toString(),
+                  });
+                }
+              } else {
+                if (!myGroupIdsRef.current.includes(Number(m.group_id))) return;
+                getUserName(m.user_id).then(userName => {
+                  addIncrementalNotif({
+                    key: `othergroupjoin:${m.group_id}:${m.user_id}`,
+                    type: 'othergroupjoin',
+                    title: 'Thành viên mới gia nhập',
+                    body: `${userName} đã tham gia nhóm "${groupName}"`,
+                    createdAt: m.joined_at || new Date().toISOString(),
+                    groupId: m.group_id.toString(),
+                  });
+                });
+              }
+            });
+          }
+        }
       )
+      // schedules
       .on(
         'postgres_changes',
-        { event: '*', schema: 'public', table: 'group_members', filter: `user_id=eq.${userId}` },
-        () => refreshDebounced()
+        { event: 'INSERT', schema: 'public', table: 'schedules' },
+        (payload) => {
+          const s = payload.new;
+          if (!s) return;
+          if (!myGroupIdsRef.current.includes(Number(s.group_id))) return;
+          getGroupName(Number(s.group_id)).then(groupName => {
+            addIncrementalNotif({
+              key: `schedule:${s.id}`,
+              type: 'schedule',
+              title: `Lịch học mới: "${s.topic}"`,
+              body: `Nhóm ${groupName} • ${new Date(s.date_time).toLocaleString('vi-VN')}`,
+              createdAt: s.created_at,
+              groupId: s.group_id.toString(),
+            });
+          });
+        }
+      )
+      // deadlines
+      .on(
+        'postgres_changes',
+        { event: 'INSERT', schema: 'public', table: 'deadlines' },
+        (payload) => {
+          const d = payload.new;
+          if (!d) return;
+          if (!myGroupIdsRef.current.includes(Number(d.group_id))) return;
+          if (d.assignee_id && String(d.assignee_id) !== String(userId)) return;
+          const isPersonal = d.assignee_id;
+          getGroupName(Number(d.group_id)).then(groupName => {
+            addIncrementalNotif({
+              key: `deadline:${d.id}`,
+              type: 'deadline',
+              title: `Deadline mới: "${d.title}"`,
+              body: `${isPersonal ? '👤 Giao cho bạn' : '👥 Cả nhóm'} • Nhóm ${groupName} • Hạn: ${new Date(d.due_date).toLocaleString('vi-VN')}`,
+              createdAt: d.created_at,
+              groupId: d.group_id.toString(),
+            });
+          });
+        }
+      )
+      // messages
+      .on(
+        'postgres_changes',
+        { event: 'INSERT', schema: 'public', table: 'messages' },
+        (payload) => {
+          const m = payload.new;
+          if (!m) return;
+          const senderId = m.sender_id;
+          if (String(senderId) === String(userId)) return;
+
+          if (m.group_id) {
+            if (!myGroupIdsRef.current.includes(Number(m.group_id))) return;
+            const rawContent = m.content || '';
+            const isMeetroom = m.meetroom_id || rawContent.startsWith('[meetroom:');
+            getGroupName(Number(m.group_id)).then(groupName => {
+              if (isMeetroom) {
+                const cleanText = rawContent.startsWith('[meetroom:') 
+                  ? rawContent.replace(/^\[meetroom:[^\]]+\]\s*/, '') 
+                  : rawContent;
+                addIncrementalNotif({
+                  key: `groupcall:${m.id}`,
+                  type: 'groupcall',
+                  title: `Cuộc gọi trong "${groupName}"`,
+                  body: cleanText || 'Cuộc gọi nhóm học tập đã bắt đầu.',
+                  createdAt: m.created_at,
+                  groupId: m.group_id.toString(),
+                });
+              } else {
+                getUserName(senderId).then(senderName => {
+                  addIncrementalNotif({
+                    key: `groupmsg:${m.id}`,
+                    type: 'groupmsg',
+                    title: `👥 Tin nhắn mới trong "${groupName}"`,
+                    body: `${senderName}: ${rawContent}`,
+                    createdAt: m.created_at,
+                    groupId: m.group_id.toString(),
+                  });
+                });
+              }
+            });
+          } else if (String(m.receiver_id) === String(userId)) {
+            if (m.content?.startsWith('[chat_background]:')) return;
+            getUserName(senderId).then(senderName => {
+              if (m.content?.startsWith('📵')) {
+                addIncrementalNotif({
+                  key: `missedcall:in:${m.id}`,
+                  type: 'missedcall',
+                  title: 'Cuộc gọi nhỡ',
+                  body: `Bạn đã bỏ lỡ cuộc gọi từ ${senderName}`,
+                  createdAt: m.created_at,
+                  senderId: m.sender_id.toString(),
+                });
+              } else {
+                const displayContent = (m.content?.startsWith('data:image') || (m.content?.startsWith('http') && m.content?.match(/\.(jpeg|jpg|gif|png)/i)))
+                  ? '📷 Đã gửi một ảnh'
+                  : m.content || '';
+                addIncrementalNotif({
+                  key: `privatemsg:${m.id}`,
+                  type: 'privatemsg',
+                  title: `Tin nhắn từ ${senderName}`,
+                  body: displayContent,
+                  createdAt: m.created_at,
+                  senderId: m.sender_id.toString(),
+                });
+              }
+            });
+          }
+        }
+      )
+      // files
+      .on(
+        'postgres_changes',
+        { event: 'INSERT', schema: 'public', table: 'files' },
+        (payload) => {
+          const rf = payload.new;
+          if (!rf) return;
+          if (String(rf.user_id) === String(userId)) return;
+          if (!myGroupIdsRef.current.includes(Number(rf.group_id))) return;
+          Promise.all([getUserName(rf.user_id), getGroupName(Number(rf.group_id))]).then(([userName, groupName]) => {
+            addIncrementalNotif({
+              key: `file:upload:${rf.id}`,
+              type: 'fileupload',
+              title: 'Tài liệu nhóm mới',
+              body: `${userName} đã tải lên tài liệu "${rf.file_name}" trong nhóm "${groupName}"`,
+              createdAt: rf.created_at,
+              groupId: rf.group_id.toString(),
+            });
+          });
+        }
+      )
+      // group_join_requests
+      .on(
+        'postgres_changes',
+        { event: 'INSERT', schema: 'public', table: 'group_join_requests' },
+        (payload) => {
+          const r = payload.new;
+          if (!r) return;
+          if (!myCreatedGroupIdsRef.current.includes(Number(r.group_id))) return;
+          if (r.status !== 'pending') return;
+          Promise.all([getUserName(r.user_id), getGroupName(Number(r.group_id))]).then(([requesterName, groupName]) => {
+            addIncrementalNotif({
+              key: `joinrequest:${r.id}`,
+              type: 'joinrequest',
+              title: 'Yêu cầu tham gia nhóm',
+              body: `${requesterName} xin tham gia nhóm học tập "${groupName}"`,
+              createdAt: r.created_at,
+              requestId: r.id.toString(),
+              groupId: r.group_id.toString(),
+              fromUserId: r.user_id,
+              requesterName: requesterName,
+            });
+          });
+        }
+      )
+      // post_tags
+      .on(
+        'postgres_changes',
+        { event: 'INSERT', schema: 'public', table: 'post_tags' },
+        (payload) => {
+          const t = payload.new;
+          if (!t) return;
+          supabase
+            .from('posts')
+            .select('user_id, users(full_name)')
+            .eq('id', t.post_id)
+            .single()
+            .then(({ data: postData }) => {
+              if (!postData) return;
+              const taggerName = postData.users?.full_name || 'Ai đó';
+              const isCreator = String(postData.user_id) === String(userId);
+              if (isCreator) return;
+
+              if (t.target_type === 'user' && String(t.target_id) === String(userId)) {
+                addIncrementalNotif({
+                  key: `posttag:db:${t.id}`,
+                  type: 'posttag_user',
+                  title: 'Bạn được tag trong một bài viết',
+                  body: `${taggerName} đã tag bạn trong một bài viết`,
+                  createdAt: t.created_at,
+                  postId: String(t.post_id),
+                });
+              } else if (t.target_type === 'group' && myGroupIdsRef.current.includes(Number(t.target_id))) {
+                getGroupName(Number(t.target_id)).then(gName => {
+                  addIncrementalNotif({
+                    key: `posttagg:db:${t.id}`,
+                    type: 'posttag_group',
+                    title: `Nhóm "${gName}" được tag`,
+                    body: `${taggerName} đã tag nhóm "${gName}" trong một bài viết`,
+                    createdAt: t.created_at,
+                    postId: String(t.post_id),
+                    groupId: String(t.target_id),
+                  });
+                });
+              }
+            });
+        }
       )
       .subscribe();
 
@@ -854,7 +1185,7 @@ export default function useNotifications(userId) {
       supabase.removeChannel(notifChannel);
       if (debounceRef.current) clearTimeout(debounceRef.current);
     };
-  }, [refresh, refreshDebounced, userId]);
+  }, [refresh, refreshDebounced, userId, addIncrementalNotif]);
 
   const markAllRead = useCallback(() => {
     const newSeen = new Set([...seen, ...notifs.map(n => n.key)]);

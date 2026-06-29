@@ -345,6 +345,17 @@ export default function GroupChatPanel({
               return acc;
             }, {});
 
+            const isMeetroomMsg = msg.meetroom_id || msg.content?.startsWith('[meetroom:');
+            let meetroomId = msg.meetroom_id;
+            let meetroomText = msg.content;
+            if (msg.content?.startsWith('[meetroom:')) {
+              const match = msg.content.match(/^\[meetroom:([^\]]+)\]/);
+              if (match) {
+                meetroomId = match[1];
+                meetroomText = msg.content.replace(/^\[meetroom:[^\]]+\]\s*/, '');
+              }
+            }
+
             return (
               <div
                 key={msg.id}
@@ -354,7 +365,7 @@ export default function GroupChatPanel({
                   alignItems: 'flex-start',
                   gap: '10px',
                   flexDirection: isMe ? 'row-reverse' : 'row',
-                  maxWidth: '78%',
+                  maxWidth: isMeetroomMsg ? '85%' : '78%',
                   alignSelf: isMe ? 'flex-end' : 'flex-start',
                   transition: 'background 0.5s ease',
                   padding: '4px 8px',
@@ -428,20 +439,65 @@ export default function GroupChatPanel({
                     onContextMenu={(e) => openContextMenu(e, msg)}
                     onDoubleClick={(e) => openContextMenu(e, msg)}
                     style={{
-                      background: isMe ? 'var(--primary)' : 'rgba(255,255,255,0.05)',
-                      border: isMe ? 'none' : '1px solid var(--border)',
-                      color: isMe ? '#fff' : 'var(--text-primary)',
-                      padding: '10px 14px',
+                      background: isMeetroomMsg 
+                        ? 'rgba(16, 185, 129, 0.1)' 
+                        : (isMe ? 'var(--primary)' : 'rgba(255,255,255,0.05)'),
+                      border: isMeetroomMsg 
+                        ? '1.5px solid rgba(16, 185, 129, 0.3)' 
+                        : (isMe ? 'none' : '1px solid var(--border)'),
+                      color: isMe && !isMeetroomMsg ? '#fff' : 'var(--text-primary)',
+                      padding: '12px 16px',
                       borderRadius: isMe ? '16px 4px 16px 16px' : '4px 16px 16px 16px',
                       fontSize: '14px',
                       lineHeight: 1.5,
                       wordBreak: 'break-word',
-                      boxShadow: '0 2px 8px rgba(0,0,0,0.12)',
+                      boxShadow: isMeetroomMsg ? '0 4px 12px rgba(16, 185, 129, 0.15)' : '0 2px 8px rgba(0,0,0,0.12)',
                       cursor: 'context-menu',
                       transition: 'background 0.3s ease, border-color 0.3s ease',
+                      minWidth: isMeetroomMsg ? '240px' : undefined,
                     }}
                   >
-                    {/* Reply preview */}
+                    {isMeetroomMsg ? (
+                      <div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px', color: '#10b981', fontWeight: 700 }}>
+                          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M23 7l-7 5 7 5V7z" />
+                            <rect x="1" y="5" width="15" height="14" rx="2" ry="2" />
+                          </svg>
+                          <span>Cuộc gọi nhóm học tập</span>
+                        </div>
+                        <p style={{ margin: '0 0 12px 0', fontSize: '13px', color: 'var(--text-secondary)' }}>
+                          {meetroomText || 'Cuộc gọi nhóm học tập đã bắt đầu.'}
+                        </p>
+                        {meetroomId && (
+                          <a
+                            href={`/room/${meetroomId}?group=${encodeURIComponent(group?.name || '')}&groupId=${group?.id || ''}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            style={{
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              gap: '6px',
+                              background: 'linear-gradient(135deg, #10b981, #059669)',
+                              color: '#fff',
+                              textDecoration: 'none',
+                              padding: '8px 16px',
+                              borderRadius: '8px',
+                              fontSize: '13.5px',
+                              fontWeight: 700,
+                              boxShadow: '0 2px 8px rgba(16, 185, 129, 0.3)',
+                              transition: 'opacity 0.2s',
+                            }}
+                            onMouseEnter={(e) => e.currentTarget.style.opacity = 0.9}
+                            onMouseLeave={(e) => e.currentTarget.style.opacity = 1}
+                          >
+                            Tham gia cuộc gọi
+                          </a>
+                        )}
+                      </div>
+                    ) : (
+                      <>
+                        {/* Reply preview */}
                     {msg.replyTo && (
                       <div
                         style={{
@@ -583,6 +639,8 @@ export default function GroupChatPanel({
                           </div>
                         );
                       })()}
+                      </>
+                    )}
                   </div>
 
                   {/* Reaction counts */}

@@ -333,9 +333,8 @@ export default function useGroupDetail(groupId, user, addToast) {
           filter: `group_id=eq.${groupId}`
         },
         (payload) => {
-          // Bỏ qua meetroom messages
           const msg = payload.new;
-          if (!msg || msg.meetroom_id || msg.content?.startsWith('[meetroom:')) return;
+          if (!msg) return;
 
           // Dùng cache member hoặc fallback
           const senderId = msg.sender_id?.toString();
@@ -347,6 +346,7 @@ export default function useGroupDetail(groupId, user, addToast) {
             userFullName: cachedMember?.fullName || 'Thành viên',
             userAvatar: cachedMember?.avatar || '',
             content: msg.content,
+            meetroom_id: msg.meetroom_id || null,
             fileAttachment: msg.file_attachment || null,
             replyTo: msg.reply_to || null,
             isPinned: msg.is_pinned || false,
@@ -382,6 +382,49 @@ export default function useGroupDetail(groupId, user, addToast) {
   // fetchChatMessages cố tình không có trong deps để tránh re-subscribe mỗi lần render
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [group, groupId]);
+
+  // Group members and roles Realtime listener
+  useEffect(() => {
+    if (!groupId) return;
+
+    const memberChannel = supabase
+      .channel(`group-members-${groupId}`)
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'group_members',
+          filter: `group_id=eq.${groupId}`
+        },
+        async (payload) => {
+          if (payload.eventType === 'DELETE') {
+            const oldMember = payload.old;
+            if (oldMember && String(oldMember.user_id) === String(user?.id)) {
+              addToast('Bạn đã bị xóa khỏi nhóm học tập này!', 'warning');
+              navigate('/groups');
+              return;
+            }
+          }
+
+          // Fetch the updated group details to sync all roles and members list
+          try {
+            const updatedGroup = await getGroupById(groupId);
+            if (updatedGroup) {
+              setGroup(updatedGroup);
+              fetchGroupMembersDetails(updatedGroup.members);
+            }
+          } catch (err) {
+            if (import.meta.env.DEV) console.warn('Lỗi đồng bộ thông tin nhóm Realtime:', err);
+          }
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(memberChannel);
+    };
+  }, [groupId, user?.id, navigate, addToast, fetchGroupMembersDetails]);
 
   // Sync last seen chat time when chat is active
   useEffect(() => {
@@ -1236,12 +1279,19 @@ export default function useGroupDetail(groupId, user, addToast) {
     }
   };
 
+  const currentUserRole = group
+    ? (String(group.creatorId) === String(user?.id)
+      ? 'creator'
+      : ((group.deputyIds?.some(id => String(id) === String(user?.id)) || String(group.deputyId) === String(user?.id)) ? 'admin' : 'member'))
+    : 'member';
+
   const unreadChatCount = chatMessages.filter(msg => {
     return String(msg.userId) !== String(user?.id) && new Date(msg.createdAt) > new Date(chatLastSeenTime);
   }).length;
 
   return {
     group,
+    currentUserRole,
     loading,
     activeTab,
     setActiveTab,

@@ -176,6 +176,9 @@ function usePrivateWebRTC({ callId, user, mode, micOn, camOn, onHangup }) {
         };
 
         pc.onconnectionstatechange = () => {
+          if (import.meta.env.DEV) {
+            console.log(`[PrivateCall] Connection state changed:`, pc.connectionState);
+          }
           if (['disconnected', 'failed', 'closed'].includes(pc.connectionState)) {
             setConnected(false);
             setRemoteStream(null);
@@ -185,6 +188,12 @@ function usePrivateWebRTC({ callId, user, mode, micOn, camOn, onHangup }) {
               clearInterval(readyIntervalRef.current);
               readyIntervalRef.current = null;
             }
+          }
+        };
+
+        pc.oniceconnectionstatechange = () => {
+          if (import.meta.env.DEV) {
+            console.log(`[PrivateCall] ICE Connection state changed:`, pc.iceConnectionState);
           }
         };
 
@@ -361,11 +370,11 @@ function CtrlBtn({ onClick, title, active = true, danger = false, children }) {
 function VideoTile({ stream, name, avatar, muted = false, camOff = false, mirrored = false, style = {} }) {
   const ref = useRef(null);
   useEffect(() => {
-    if (ref.current && stream && !camOff) {
+    if (ref.current && stream) {
       ref.current.srcObject = stream;
       ref.current.play().catch(() => {});
     }
-  }, [stream, camOff]);
+  }, [stream]);
 
   const isConnecting = !stream;
 
@@ -378,7 +387,7 @@ function VideoTile({ stream, name, avatar, muted = false, camOff = false, mirror
       display: 'flex', alignItems: 'center', justifyContent: 'center',
       ...style,
     }}>
-      {stream && !camOff ? (
+      {stream && (
         <video
           ref={ref}
           autoPlay playsInline muted={muted}
@@ -387,15 +396,21 @@ function VideoTile({ stream, name, avatar, muted = false, camOff = false, mirror
             width: '100%', height: '100%',
             objectFit: 'cover',
             transform: mirrored ? 'scaleX(-1)' : 'none',
+            display: camOff ? 'none' : 'block',
           }}
         />
-      ) : (
+      )}
+
+      {(camOff || !stream) && (
         <div style={{
           display: 'flex', flexDirection: 'column',
           alignItems: 'center', gap: '20px',
           background: `radial-gradient(circle at center, ${colorOf(name)}22 0%, #0a0a1a 70%)`,
           width: '100%', height: '100%',
           justifyContent: 'center',
+          position: 'absolute',
+          inset: 0,
+          zIndex: 2,
         }}>
           <div style={{ position: 'relative', marginBottom: isConnecting ? '10px' : '0px' }}>
             {isConnecting && [0, 1, 2].map(i => (
@@ -429,6 +444,7 @@ function VideoTile({ stream, name, avatar, muted = false, camOff = false, mirror
         borderRadius: '10px', padding: '5px 12px',
         fontSize: '13px', fontWeight: 600, color: '#fff',
         border: '1px solid rgba(255,255,255,0.08)',
+        zIndex: 5,
       }}>
         {name}
       </div>

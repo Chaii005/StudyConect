@@ -31,7 +31,7 @@ function VideoTile({ stream, name, avatar, muted: mutedProp = false, camOff = fa
       ref.current.srcObject = stream;
       ref.current.play().catch(() => {});
     }
-  }, [stream, camOff, screenSharing]);
+  }, [stream, screenSharing]);
 
   // Khi đang share màn hình: không mirror, dùng contain để thấy full màn hình
   const effectiveMirrored = screenSharing ? false : mirrored;
@@ -81,23 +81,27 @@ function VideoTile({ stream, name, avatar, muted: mutedProp = false, camOff = fa
             Bạn đang chia sẻ màn hình
           </span>
         </div>
-      ) : stream && !camOff ? (
+      ) : (
         <>
-          <video
-            ref={ref}
-            autoPlay
-            playsInline
-            disablePictureInPicture
-            muted={mutedProp || isLocal}
-            style={{
-              width: '100%', height: '100%',
-              objectFit: fullScreen ? 'cover' : objectFit,
-              transform: effectiveMirrored ? 'scaleX(-1)' : 'none',
-              background: '#000',
-            }}
-          />
-          {/* Nút lật camera chỉ hiện khi là local và KHÔNG đang share màn hình */}
-          {isLocal && onToggleMirror && !screenSharing && (
+          {stream && (
+            <video
+              ref={ref}
+              autoPlay
+              playsInline
+              disablePictureInPicture
+              muted={mutedProp || isLocal}
+              style={{
+                width: '100%', height: '100%',
+                objectFit: fullScreen ? 'cover' : objectFit,
+                transform: effectiveMirrored ? 'scaleX(-1)' : 'none',
+                background: '#000',
+                display: camOff ? 'none' : 'block',
+              }}
+            />
+          )}
+
+          {/* Nút lật camera chỉ hiện khi là local và KHÔNG đang share màn hình và đang bật camera */}
+          {isLocal && onToggleMirror && !screenSharing && !camOff && (
             <button
               onClick={(e) => { e.stopPropagation(); onToggleMirror(); }}
               style={{
@@ -116,6 +120,7 @@ function VideoTile({ stream, name, avatar, muted: mutedProp = false, camOff = fa
               🔄 Lật camera
             </button>
           )}
+
           {/* Badge "Đang chia sẻ màn hình" */}
           {screenSharing && !isLocal && (
             <div style={{
@@ -131,30 +136,38 @@ function VideoTile({ stream, name, avatar, muted: mutedProp = false, camOff = fa
               Đang chia sẻ màn hình
             </div>
           )}
+
+          {/* Hiển thị avatar/đang kết nối/camera tắt khi camOff hoặc không có stream */}
+          {(camOff || !stream) && (
+            <div style={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              gap: '16px',
+              width: '100%',
+              height: '100%',
+              justifyContent: 'center',
+              position: 'absolute',
+              inset: 0,
+              background: 'radial-gradient(circle at center, rgba(255, 255, 255, 0.12) 0%, rgba(13, 13, 24, 1) 100%)',
+              zIndex: 2,
+            }}>
+              <div style={{
+                padding: '6px',
+                borderRadius: '50%',
+                background: 'rgba(255,255,255,0.03)',
+                border: '1.5px solid rgba(255,255,255,0.08)',
+                boxShadow: '0 12px 30px rgba(0,0,0,0.4)',
+                transition: 'transform 0.3s ease',
+              }}>
+                <Avatar src={avatar} name={name} size={fullScreen ? 110 : 76} />
+              </div>
+              <span style={{ fontSize: '13px', color: 'rgba(255,255,255,0.45)', fontWeight: 500, letterSpacing: '0.02em' }}>
+                {!stream ? 'Đang kết nối...' : 'Camera tắt'}
+              </span>
+            </div>
+          )}
         </>
-      ) : (
-        <div style={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          gap: '16px',
-          width: '100%',
-          height: '100%',
-          justifyContent: 'center',
-          background: 'radial-gradient(circle at center, rgba(255, 255, 255, 0.12) 0%, rgba(13, 13, 24, 1) 100%)',
-        }}>
-          <div style={{
-            padding: '6px',
-            borderRadius: '50%',
-            background: 'rgba(255,255,255,0.03)',
-            border: '1.5px solid rgba(255,255,255,0.08)',
-            boxShadow: '0 12px 30px rgba(0,0,0,0.4)',
-            transition: 'transform 0.3s ease',
-          }}>
-            <Avatar src={avatar} name={name} size={fullScreen ? 110 : 76} />
-          </div>
-          <span style={{ fontSize: '13px', color: 'rgba(255,255,255,0.45)', fontWeight: 500, letterSpacing: '0.02em' }}>Camera tắt</span>
-        </div>
       )}
 
       {/* Name tag */}
@@ -395,9 +408,18 @@ function useWebRTC({ roomId, user, micOn, camOn, onForceMute }) {
     };
 
     pc.onconnectionstatechange = () => {
+      if (import.meta.env.DEV) {
+        console.log(`[Meetroom] Connection state changed for peer ${peerId}:`, pc.connectionState);
+      }
       if (['disconnected', 'failed', 'closed'].includes(pc.connectionState)) {
         setRemoteFeeds(prev => { const n = { ...prev }; delete n[peerId]; return n; });
         delete peersRef.current[peerId];
+      }
+    };
+
+    pc.oniceconnectionstatechange = () => {
+      if (import.meta.env.DEV) {
+        console.log(`[Meetroom] ICE Connection state changed for peer ${peerId}:`, pc.iceConnectionState);
       }
     };
 

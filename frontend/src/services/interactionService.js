@@ -1062,7 +1062,6 @@ export const getChatMessages = async (groupId) => {
 
   const reversedData = (data || []).reverse();
   return reversedData
-    .filter(c => !c.meetroom_id && !c.content?.startsWith('[meetroom:'))
     .map(c => ({
       id: c.id.toString(),
       groupId: c.group_id.toString(),
@@ -1070,6 +1069,7 @@ export const getChatMessages = async (groupId) => {
       userFullName: c.users?.full_name || 'Thành viên',
       userAvatar: c.users?.avatar || '',
       content: c.content,
+      meetroom_id: c.meetroom_id || null,
       fileAttachment: c.file_attachment || null,
       replyTo: c.reply_to || null,
       isPinned: c.is_pinned || false,
