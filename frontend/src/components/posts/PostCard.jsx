@@ -72,14 +72,7 @@ export default function PostCard({ post, currentUser, onLike, onDelete, onCommen
 
   return (
     <article
-      style={{
-        background: 'var(--bg-card)',
-        border: '1.5px solid var(--border)',
-        borderRadius: 'var(--radius-lg)',
-        marginBottom: '14px',
-        overflow: 'hidden',
-        transition: 'border-color 0.25s, box-shadow 0.25s',
-      }}
+      className="post-card"
       onMouseEnter={(e) => {
         e.currentTarget.style.borderColor = 'rgba(42, 117, 118, 0.35)';
         e.currentTarget.style.boxShadow = '0 4px 24px rgba(42, 117, 118, 0.06)';
@@ -90,7 +83,7 @@ export default function PostCard({ post, currentUser, onLike, onDelete, onCommen
       }}
     >
       {/* Author row */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '16px 18px 0' }}>
+      <div className="post-card-header">
         <Link to={profileUrl} style={{ textDecoration: 'none' }}>
           <Avatar src={post.userAvatar} initial={post.userFullName || 'U'} size={46} />
         </Link>
@@ -146,7 +139,7 @@ export default function PostCard({ post, currentUser, onLike, onDelete, onCommen
       </div>
 
       {/* Content */}
-      <div style={{ padding: '12px 18px 14px' }}>
+      <div className="post-card-content">
         <p style={{ fontSize: '15px', lineHeight: 1.75, color: 'var(--text-primary)', margin: 0, whiteSpace: 'pre-wrap' }}>
           {isLong && !expanded ? renderContent.slice(0, 200) + '…' : renderContent}
         </p>
@@ -257,6 +250,7 @@ export default function PostCard({ post, currentUser, onLike, onDelete, onCommen
                   />
                   {replies.length > 0 && (
                     <div
+                      className="comment-replies-container"
                       style={{
                         marginLeft: depth < 1 ? '40px' : '20px',
                         marginTop: '8px',

@@ -16,7 +16,7 @@ import {
   deleteMessage,
 } from '../services/chatServiceTEMP.js';
 import { supabase } from '../config/supabaseClient';
-import { compressImage as compressImageFile } from '../utils/imageCompress';
+import useMobile from '@/hooks/useMobile';
 
 // ── Avatar ──────────────────────────────────────────────────────────
 function Avatar({ src, initial, color = '#3A3A3A', size = 40 }) {
@@ -2629,7 +2629,7 @@ export default function Chat() {
   const [lastMessages, setLastMessages] = useState({});
   const [totalUnread, setTotalUnread] = useState(0);
   const [loading, setLoading] = useState(true);
-  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+  const isMobile = useMobile();
 
   const friendsRef = useRef([]);
   useEffect(() => {
@@ -2688,12 +2688,6 @@ export default function Chat() {
       supabase.removeChannel(channel);
     };
   }, [user?.id]);
-
-  useEffect(() => {
-    const handleResize = () => setIsMobile(window.innerWidth <= 768);
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
 
   useEffect(() => { if (!isAuth) { navigate('/login'); } }, [isAuth, navigate]);
 

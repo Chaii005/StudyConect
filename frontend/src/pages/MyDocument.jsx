@@ -220,6 +220,7 @@ export default function MyDocuments() {
 
   useEffect(() => {
     if (!user?.id) return;
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     loadFiles();
 
     const channelName = `my-documents-realtime-${user.id}`;
